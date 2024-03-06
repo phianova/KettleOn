@@ -25,6 +25,7 @@
     "postcss": "^8.4.35",
     "react": "^18",
     "react-dom": "^18",
+    "simplex-noise": "^4.0.1",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.1",
     "zod": "^3.22.4"
