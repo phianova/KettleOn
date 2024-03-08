@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/auth/[kindeAuth]/route.js"],
+  "include": ["video.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/auth/[kindeAuth]/route.js", "src/components/ui/wavy-background.jsx", "src/components/ui/infinite-moving-cards.jsx"],
   "exclude": ["node_modules"]
 }
