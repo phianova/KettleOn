@@ -1,4 +1,4 @@
-
+import { trpc } from "@/app/_trpc/client";
 const clientId = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_ID
 const clientSecret = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_SECRET
 
@@ -27,7 +27,7 @@ export async function getAccessToken() {
     return data.access_token;
 }
 
-export const addUser = async (e : any, props: any) => {
+export const createUser = async (e : any, props: any) => {
 e.preventDefault();
 
 const accessToken = await getAccessToken()
@@ -82,18 +82,47 @@ const inputBody = {
     answer: ""
   }
 
+  console.log(JSON.stringify(dbInputBody))
 
-  await fetch("/api/trpc/addUser",
-  {
-    method: 'POST',
-    body: JSON.stringify(dbInputBody),
-  })
-  .then(function(res) {
-      return res.json();
-  }).then(function(body) {
-      console.log(body);
-  });
+
+//   {
+//     method: 'POST',
+//     body: JSON.stringify(dbInputBody),
+//   })
+//   .then(function(res) {
+//       console.log("res")
+//       console.log(res)
+//       return res.json();
+//   }).then(function(body) {
+//       console.log(body);
+//   });
   
+  const { mutate: addUser } = trpc.addUser.useMutation(
+    {
+      onSuccess: () => {
+        console.log("success")
+      },
+      onError: () => {
+        console.log("error")
+      }
+    }
+  )
+
+  addUser(
+    {
+      email: e.target.email.value,
+      username: e.target.given_name.value + " " + e.target.family_name.value,
+      team: props.organisation,
+      company: e.target.company.value,
+      role: e.target.role.value,
+      image: "",
+      bio: "",
+      prompt: "",
+      answer: ""
+    }
+  )
+
+
 }
 
 

@@ -12,8 +12,9 @@ const t = initTRPC.create()
 
 const isAuth = t.middleware(async(opts) => {
     const { getUser } = getKindeServerSession() 
+    console.log("got to isAuth")
     const user = (await getUser()) as any
-
+    
     if (!user || !user.email) {
         throw new Error("Unauthorized")
     }
