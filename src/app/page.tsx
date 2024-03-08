@@ -1,55 +1,30 @@
-"use client"
-// import Image from "next/image";
-// import { serverClient } from "../trpc/server-client";
-import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
-import {useState, useEffect} from "react";
 
+import Image from "next/image";
+import styles from "./page.module.css";
 
-export default async function Home() {
-  // const connected = await serverClient.apiTest();
-  // const test = {
-  //   title: "title",
-  //   quote: "description",
-  //   name: "image"     
-  // }
-  
-  const [content, setContent] = useState([
-    {
-      title: "info1.1",
-      quote: "info1.2",
-      name: "info1.3"     
-    },
-    {
-      title: "info2.1",
-      quote: "info2.2",
-      name: "info2.3"     
-    },
-    {
-      title: "info3.1",
-      quote: "info3.2",
-      name: "info3.3"     
-    }
-  ])
-  
-  
-
-  // useEffect(() => {
-    
-  //   setContent(test)
-  // }, [])
-
-
-  
-  
-
+export default function Home() {
   return (
-   <><main>
-    
-
-        <h1>Main Page</h1>
-        <InfiniteMovingCards items={content} className={undefined}/>
-        {/* <p>{connected}</p> */}
-
-    </main> </>
+    <main className={styles.main}>
+      
+      <div className="ml-80">
+        {/* <div>KettleOn</div> */}
+        <div className="flex">
+      <button className="mr-2 bg-transparent hover:bg-gray-900 text-black font-semibold hover:text-white py-2 px-4 border border-black hover:border-transparent rounded">
+  Sign In
+</button>  
+<button className="bg-transparent hover:bg-gray-900 text-black font-semibold hover:text-white py-2 px-4 border border-black hover:border-transparent rounded">
+  Register
+</button> 
+</div>
+      </div>
+     <video 
+    src={require("../../public/loopHD.mp4")}
+    autoPlay
+    muted
+    loop
+    className={styles.video}
+/> 
+    </main>
   );
 }
+

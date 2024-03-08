@@ -2,6 +2,7 @@
 
 import { cn } from "../../../utils/cn";
 import React, { useEffect, useState } from "react";
+import Image from 'next/image'
 
 export const InfiniteMovingCards = ({
   items,
@@ -11,9 +12,10 @@ export const InfiniteMovingCards = ({
   className,
 }: {
   items: {
-    quote: string;
-    name: string;
     title: string;
+    image: string;
+    description: string;
+    link: string;
   }[];
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
@@ -92,26 +94,37 @@ export const InfiniteMovingCards = ({
               background:
                 "linear-gradient(180deg, var(--slate-800), var(--slate-900)",
             }}
-            key={item.name}
+            key={item.title}
           >
             <blockquote>
               <div
                 aria-hidden="true"
                 className="user-select-none -z-1 pointer-events-none absolute -left-0.5 -top-0.5 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
               ></div>
-              <span className=" relative z-20 text-sm leading-[1.6] text-gray-100 font-normal">
-                {item.quote}
+              <span className=" relative z-20 text-base font-semibold leading-[1.6] text-gray-100 font-normal">
+                {item.title}
               </span>
               <div className="relative z-20 mt-6 flex flex-row items-center">
                 <span className="flex flex-col gap-1">
-                  <span className=" text-sm leading-[1.6] text-gray-400 font-normal">
-                    {item.name}
+                  
+                  <span className=" text-sm mb-3 leading-[1.6] text-gray-400 font-normal">
+                    {item.description}
                   </span>
-                  <span className=" text-sm leading-[1.6] text-gray-400 font-normal">
-                    {item.title}
-                  </span>
+                  
+                  {/* <Image src={item.image}/> */}
                 </span>
               </div>
+              <div className="rounded-2xl">
+              <a  href={item.link}>
+              <Image className="rounded-2xl"
+                      src={item.image}
+                      width={500}
+                      height={200}
+                      alt="Activity"
+              />
+              </a>
+              </div>
+              
             </blockquote>
           </li>
         ))}

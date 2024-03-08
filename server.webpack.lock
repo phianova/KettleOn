@@ -1,0 +1,6 @@
+{
+  "https://backgroundmusic.uk/dailyoperation/video/loopHD.mp4": { "integrity": "sha512-rcR4Ggrs0HRKPXRTAUdfM95vrV0ZRfpSlEmy0EuVGJHiuQq2mttGm+p0vwOXtiFG+GlkhOo4GaDY8Zk79CqX2Q==", "contentType": "video/mp4" },
+  "https://backgroundmusic.uk/dailyoperation/video/loopHD2.mp4": { "integrity": "sha512-PgWzfhTcYyIv4DJnemhOMX+esrWNho1gbr8M6fyR0umpAcGcHD4vmhQrv3V9P4XWLhsBfN1/+ZIePrfhbpRsNA==", "contentType": "video/mp4" },
+  "https://backgroundmusic.uk/dailyoperation/video/loopHD2.webm": { "integrity": "sha512-sh5f5xLu51CBHRhLvDyNZeUG8cpqOYLqtyYOt/Chfc/agPr/WoovnB8HqsiN6w6GAvkjRFF2LIRbgNJZaqSHZw==", "contentType": "video/webm" },
+  "version": 1
+}
