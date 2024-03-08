@@ -1,7 +1,7 @@
 "use client";
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {useKindeBrowserClient} from "@kinde-oss/kinde-auth-nextjs";
-import {useRouter} from "next/navigation";
+import {useRouter, redirect} from "next/navigation";
 import AddUserForm from '../../../components/AddUserForm';
 import {LogoutLink} from "@kinde-oss/kinde-auth-nextjs/components";
 
@@ -13,11 +13,8 @@ export default function managePage() {
     let role : string | null | undefined;
     let roleArray : string[] | undefined;
 
-    const {isAuthenticated, user, permissions} = useKindeBrowserClient();
-    const currentUserData = user
-    const roleData = permissions
     const router = useRouter()
-
+    const [loaded, setLoaded] = useState("")
     const teamUsers = [
         {displayName: "User One",
         email: "email@email.com"},
@@ -26,7 +23,10 @@ export default function managePage() {
         {displayName: "User Three",
         email: "email@email.com"}
     ]
-    
+
+    const { isAuthenticated, isLoading, user, permissions} = useKindeBrowserClient();
+    const currentUserData = user
+    const roleData = permissions
 
     displayName = (currentUserData?.given_name ? currentUserData?.given_name : "") + " " + (currentUserData?.family_name ? currentUserData?.family_name : "")
     currentUser = currentUserData?.email;
@@ -37,17 +37,19 @@ export default function managePage() {
     console.log(roleData, user)
     console.log ("authenticated: ", isAuthenticated, "user data: ", currentUser, organisation, role)
 
-    if (!isAuthenticated) {
-        console.log("You do not have permission to access this page.")
-        // router.push("/login");
-        // window.location.href = "/login";
-    }
-
-    if (!role || role !== "manager") {
-        console.log("You need to be a manager to access this page.")
-        // router.push("./home");
-    }
-
+    useEffect(() => {
+        if (isLoading === false && isAuthenticated === false) {
+            console.log("You do not have permission to access this page.")
+            // redirect(`/auth-callback?origin=manage/${currentUser}`);
+            router.push('/login');
+            // window.location.href = "/login";
+        }
+        else if (isLoading === false && roleData && roleData.permissions && !roleData.permissions.includes("manager")) {
+            console.log("You need to be a manager to access this page.")
+            // redirect("/home")
+            router.push('/home');
+        }
+    }, [isLoading])
 
     return(
     <div className={"flex flex-col w-full items-center"}>

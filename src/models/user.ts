@@ -27,7 +27,7 @@ export interface User {
   };
 
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema<User>({
     email: {type: String, required: true, unique: true}, //from kinde
     username: {type: String, required: true}, //given_name + family_name from kinde
     team: {type: String, required: true}, //from kinde
@@ -39,4 +39,4 @@ const userSchema = new mongoose.Schema({
     answer: {type: String} //will be empty on initialisation
 });
 
-export default mongoose.model<User>("User", userSchema);
+export default mongoose.models.User || mongoose.model<User>("User", UserSchema);

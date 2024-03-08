@@ -52,9 +52,10 @@ const inputBody = {
   console.log(inputBody)
 
   const headers = {
-    'Content-Type':'application/json',
-    'Accept':'application/json',
-    'Authorization': authString,
+    // Content-Type:'application/json',
+    Accept: "application/json",
+    Authorization: authString,
+    audience: "https://kettleon.kinde.com/api"
   };
   
 //   await fetch('https://kettleon.kinde.com/api/v1/user',
