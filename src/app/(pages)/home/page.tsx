@@ -64,10 +64,10 @@ export default async function Home() {
   
   
 
+
   return (
    <><main>
     
-
         <h1 className="ml-10 mt-10 text-4xl font-semibold">Main Page</h1>
         <div className="ml-20">
         <InfiniteMovingCards items={content} className={undefined}/>
