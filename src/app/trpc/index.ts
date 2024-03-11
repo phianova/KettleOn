@@ -145,7 +145,7 @@ export const appRouter = router({
             const foundUser = await userModel.findOne({ email: userEmail });
             if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
             
-            const users =  await userModel.find({ team: foundUser.team });
+            const users =  await userModel.find<TUser>({ team: foundUser.team });
     
             // console.log("backend data: ", users)
             // console.log(typeof users)
@@ -154,11 +154,11 @@ export const appRouter = router({
             //     users: users, status: 200, success: true
             // };
             // console.log(users)
-            return {data: users};
+            return {data: users, status: 200, success: true};
         } catch (err) {
             console.log("there's an error")
             console.log(err)
-            return { status: 500, success: false };
+            return { data: [],status: 500, success: false };
         }
     })
 });

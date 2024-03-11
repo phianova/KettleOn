@@ -44,9 +44,10 @@ export default function managePage() {
     // console.log(roleData, user)
     // console.log ("authenticated: ", isAuthenticated, "user data: ", currentUser, organisation, role)
     // const {data: users} = trpc.getUsers.useQuery() as any; 
-    const {data: users} = trpc.getUsers.useQuery();
+    const {data: userData} = trpc.getUsers.useQuery();
     
-    // let users = userData ? userData?.data() : [];
+    let users = userData ? userData.data : [];
+
     if (users !== undefined) {
     console.log("users", users)
     }
