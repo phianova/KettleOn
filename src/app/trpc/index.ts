@@ -4,17 +4,18 @@ import dbConnect from "../../lib/mongo";
 import { z } from "zod"
 import userModel, { TUser } from "../../models/user";
 import { TRPCError } from "@trpc/server";
+import { NextResponse } from "next/server";
 
 const clientId = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_ID
 const clientSecret = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_SECRET
 
 
 export const appRouter = router({
-    apiTest: publicProcedure.query(async () => {
-        await dbConnect();
-        console.log("db connected");
-        return "apiTest";
-    }),
+    // apiTest: publicProcedure.query(async () => {
+    //     await dbConnect();
+    //     console.log("db connected");
+    //     return "apiTest";
+    // }),
     authCallback: publicProcedure.query(async () => {
         const { getUser, getPermissions } = getKindeServerSession();
         const user = (await getUser()) as any;
@@ -114,7 +115,6 @@ export const appRouter = router({
           });
 
         try {
-            console.log("got to index.ts")
             const { userEmail } = ctx;
             await dbConnect();
             const foundUser = await userModel.findOne({ email: userEmail });
@@ -131,12 +131,36 @@ export const appRouter = router({
                 prompt: "",
                 answer: ""
             })
-            return { user: user, success: true };
+            return { user: user as any, status: 200, success: true };
         } catch (err) {
             console.log(err)
-            return { success: false }
+            return { status: 500, success: false };
         }
     }),
+    getUsers: privateProcedure
+    .query(async ({ ctx }) => {
+        try{
+            const { userEmail } = ctx;
+            await dbConnect();
+            const foundUser = await userModel.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+            
+            const users =  await userModel.find({ team: foundUser.team });
+    
+            // console.log("backend data: ", users)
+            // console.log(typeof users)
+
+            // return {
+            //     users: users, status: 200, success: true
+            // };
+            // console.log(users)
+            return {data: users};
+        } catch (err) {
+            console.log("there's an error")
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    })
 });
 
 
