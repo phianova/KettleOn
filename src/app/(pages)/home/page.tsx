@@ -1,18 +1,13 @@
 "use client"
 // import Image from "next/image";
 // import { serverClient } from "../trpc/server-client";
-import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
-import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+import React from 'react';
+import { InfiniteMovingCards } from "../../../components/ui/infinite-moving-cards";
+import { AnimatedTooltip } from "../../../components/ui/animated-tooltip";
 import {useState, useEffect} from "react";
 
 
 export default async function Home() {
-  // const connected = await serverClient.apiTest();
-  // const test = {
-  //   title: "title",
-  //   quote: "description",
-  //   name: "image"     
-  // }
   
   const [content, setContent] = useState([
     

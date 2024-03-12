@@ -4,18 +4,19 @@ import dbConnect from "../../lib/mongo";
 import { z } from "zod"
 import userModel, { TUser } from "../../models/user";
 import { TRPCError } from "@trpc/server";
+import { NextResponse } from "next/server";
 
 const clientId = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_ID
 const clientSecret = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_SECRET
 
 
 export const appRouter = router({
-    apiTest: publicProcedure.query(async () => {
-        await dbConnect();
-        console.log("db connected");
-        return "apiTest";
-    }),
-    authCallback: publicProcedure.query(async () => {
+    // apiTest: publicProcedure.query(async ({ ctx, input }) => {
+    //     await dbConnect();
+    //     console.log("db connected");
+    //     return {data: "apiTest"};
+    // }),
+    authCallback: publicProcedure.query(async ({ ctx, input }) => {
         const { getUser, getPermissions } = getKindeServerSession();
         const user = (await getUser()) as any;
         const permissions = (await getPermissions()) as any;
@@ -114,7 +115,6 @@ export const appRouter = router({
           });
 
         try {
-            console.log("got to index.ts")
             const { userEmail } = ctx;
             await dbConnect();
             const foundUser = await userModel.findOne({ email: userEmail });
@@ -131,12 +131,46 @@ export const appRouter = router({
                 prompt: "",
                 answer: ""
             })
-            return { user: user, success: true };
+            return { user: user as any, status: 200, success: true };
         } catch (err) {
             console.log(err)
-            return { success: false }
+            return { status: 500, success: false };
         }
     }),
+    getUsers: privateProcedure
+    .query(async ({ ctx, input }) => {
+        try{
+            const { userEmail } = ctx;
+            await dbConnect();
+            const foundUser = await userModel.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+            
+            const users =  await userModel.find<TUser>({ team: foundUser.team });
+    
+            let usersArray = []
+
+            for (let i=0; i<users.length; i++) {
+                const newUser = {
+                    email: users[i].email,
+                    username: users[i].username,
+                    team: users[i].team,
+                    company: users[i].company,
+                    role: users[i].role,
+                    image: users[i].image,
+                    bio: users[i].bio,
+                    prompt: users[i].prompt,
+                    answer: users[i].answer
+                }
+                usersArray.push(newUser)
+            }
+
+            return { data: usersArray, status: 200, success: true};
+        } catch (err) {
+            console.log("there's an error")
+            console.log(err)
+            return { data: [], status: 500, success: false };
+        }
+    })
 });
 
 

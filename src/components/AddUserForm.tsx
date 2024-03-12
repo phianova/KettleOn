@@ -1,6 +1,6 @@
 "use client"
 import React, { FC } from 'react'
-import { trpc } from "@/app/_trpc/client";
+import { trpc } from "../app/_trpc/client";
 
 interface AddUserProps {
   currentUser: string | null | undefined,
