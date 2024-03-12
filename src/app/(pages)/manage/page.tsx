@@ -29,7 +29,6 @@ export default function managePage() {
 
     const router = useRouter()
     const [loading, setLoading] = useState(true)
-    // const [teamUsers, setTeamUsers] = useState([])
 
     const { isAuthenticated, isLoading, user, permissions} = useKindeBrowserClient();
     const currentUserData = user
@@ -41,30 +40,19 @@ export default function managePage() {
     roleArray = roleData?.permissions
     role = roleArray ? roleArray[0] : null
 
-    // console.log(roleData, user)
-    // console.log ("authenticated: ", isAuthenticated, "user data: ", currentUser, organisation, role)
-    // const {data: users} = trpc.getUsers.useQuery() as any; 
     const {data: userData} = trpc.getUsers.useQuery();
     
-    let users = userData?.data;
-
-    if (users !== undefined) {
-    console.log("users", users)
-    }
-    // if (usersError) return <div>Error: {usersError.message}</div>
+    let users = userData?.data || [];
 
     useEffect(() => {
         if (isLoading === false && isAuthenticated === false) {
             console.log("You do not have permission to access this page.")
             setLoading(false)
-            // redirect(`/auth-callback?origin=manage/${currentUser}`);
             router.push('/login');
-            // window.location.href = "/login";
         }
         else if (isLoading === false && roleData && roleData.permissions && !roleData.permissions.includes("manager")) {
             console.log("You need to be a manager to access this page.")
             setLoading(false)
-            // redirect("/home")
             router.push('/home');
         } else if (isLoading === false) {
             setLoading(false)
@@ -79,7 +67,7 @@ export default function managePage() {
         <h1 className={"my-5 font-bold"}>Manage Users</h1>
         <p>You are logged in as {displayName}.</p>
         <p className={"mt-10"}>Your team's current users are:</p>
-        {users && users?.length !== 0 && users.map ((user : any) => (
+        {userData && users?.length !== 0 && users.map ((user : any) => (
             <div className={"flex flex-col items-center"}>
             <div className={"flex flex-row justify-around w-full"}>
                 <p>{user.username}</p>

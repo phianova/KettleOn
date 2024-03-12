@@ -9,8 +9,10 @@ import { absoluteUrl } from '../utils/url';
 
 const Providers = ({children}: PropsWithChildren) => {
     const [queryClient] = useState(() => new QueryClient())
-    const [trpcClient] = useState(() => trpc.createClient({
-        links: [httpBatchLink({
+    const [trpcClient] = useState(() => 
+    trpc.createClient({
+        links: 
+        [httpBatchLink({
             url: `${absoluteUrl("/api/trpc")}`,
         }),]
     }

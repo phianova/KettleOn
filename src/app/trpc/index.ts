@@ -11,12 +11,12 @@ const clientSecret = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_SECRET
 
 
 export const appRouter = router({
-    // apiTest: publicProcedure.query(async () => {
+    // apiTest: publicProcedure.query(async ({ ctx, input }) => {
     //     await dbConnect();
     //     console.log("db connected");
-    //     return "apiTest";
+    //     return {data: "apiTest"};
     // }),
-    authCallback: publicProcedure.query(async () => {
+    authCallback: publicProcedure.query(async ({ ctx, input }) => {
         const { getUser, getPermissions } = getKindeServerSession();
         const user = (await getUser()) as any;
         const permissions = (await getPermissions()) as any;
@@ -138,7 +138,7 @@ export const appRouter = router({
         }
     }),
     getUsers: privateProcedure
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
         try{
             const { userEmail } = ctx;
             await dbConnect();
@@ -147,15 +147,24 @@ export const appRouter = router({
             
             const users =  await userModel.find<TUser>({ team: foundUser.team });
     
-            // console.log("backend data: ", users)
-            // console.log(typeof users)
+            let usersArray = []
 
-            // return {
-            //     users: users, status: 200, success: true
-            // };
-            console.log(users)
+            for (let i=0; i<users.length; i++) {
+                const newUser = {
+                    email: users[i].email,
+                    username: users[i].username,
+                    team: users[i].team,
+                    company: users[i].company,
+                    role: users[i].role,
+                    image: users[i].image,
+                    bio: users[i].bio,
+                    prompt: users[i].prompt,
+                    answer: users[i].answer
+                }
+                usersArray.push(newUser)
+            }
 
-            return { data: users, status: 200, success: true};
+            return { data: usersArray, status: 200, success: true};
         } catch (err) {
             console.log("there's an error")
             console.log(err)

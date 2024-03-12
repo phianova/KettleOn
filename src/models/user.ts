@@ -14,7 +14,7 @@ export interface User {
    
   export interface MongoUser extends User, mongoose.Document {}
    
-  export type TUser = User & {
+  export type TUser = {
     email: String,
     username: String,
     team: String,

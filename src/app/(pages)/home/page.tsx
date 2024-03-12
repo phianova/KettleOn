@@ -8,12 +8,6 @@ import {useState, useEffect} from "react";
 
 
 export default async function Home() {
-  // const connected = await serverClient.apiTest();
-  // const test = {
-  //   title: "title",
-  //   quote: "description",
-  //   name: "image"     
-  // }
   
   const [content, setContent] = useState([
     
