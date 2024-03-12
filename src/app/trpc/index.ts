@@ -5,6 +5,7 @@ import { z } from "zod"
 import userModel, { TUser } from "../../models/user";
 import { TRPCError } from "@trpc/server";
 import { NextResponse } from "next/server";
+import { trpc } from "../_trpc/client";
 
 const clientId = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_ID
 const clientSecret = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_SECRET
@@ -93,6 +94,9 @@ export const appRouter = router({
                         email: input.email
                     }
                 }
+            ],
+            roles: [
+
             ]
         };
         const headers = {
@@ -102,10 +106,26 @@ export const appRouter = router({
             'audience': "https://kettleon.kinde.com/api"
         };
 
+        let userId;
+
           await fetch('https://kettleon.kinde.com/api/v1/user',
           {
             method: 'POST',
             body: JSON.stringify(inputBody),
+            headers: headers
+          })
+          .then(function(res) {
+              return res.json();
+          }).then(function(body) {
+              console.log(body);
+              userId = body.id
+          });
+
+          const removeManagerURL = `https://kettleon.kinde.com/api/v1/organizations/${input.team}/users/${userId}/roles/018e147c-ad06-60cf-1ee5-5bf5e290b9df`;
+          
+          await fetch(removeManagerURL,
+          {
+            method: 'DELETE',
             headers: headers
           })
           .then(function(res) {
@@ -170,7 +190,7 @@ export const appRouter = router({
             console.log(err)
             return { data: [], status: 500, success: false };
         }
-    })
+    }),
 });
 
 

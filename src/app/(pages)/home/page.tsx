@@ -5,7 +5,7 @@ import React from 'react';
 import { InfiniteMovingCards } from "../../../components/ui/infinite-moving-cards";
 import { AnimatedTooltip } from "../../../components/ui/animated-tooltip";
 import {useState, useEffect} from "react";
-
+import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs';
 
 export default async function Home() {
   
@@ -72,7 +72,7 @@ export default async function Home() {
         {/* <AnimatedTooltip icons={users} /> */}
         {/* <p>{connected}</p> */}
         </div>
-        
+        <LogoutLink>Log out</LogoutLink>
     </main> </>
   );
 }

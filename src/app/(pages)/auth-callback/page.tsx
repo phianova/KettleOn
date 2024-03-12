@@ -14,21 +14,17 @@ const Page = () => {
   // if (
   //   origin !== "register" 
   // ) {
-  //   redirect("/login");
-  //   // router.push("/login");
+  //   router.push("/login");
   // }
-
 
   trpc.authCallback.useQuery(undefined, {
     onSuccess: ({ success }) => {
       if (success) {
-        // router.push("/home");
-        redirect("/home");
+        router.push("/home");
       }
     },
     onError: (err) => {
-    // router.push("/login");
-      redirect("/login");
+      router.push("/login");
     },
 
     retry: true,
@@ -36,7 +32,6 @@ const Page = () => {
   });
 
   return (
-    <Suspense>
     <div className="w-full flex justify-center min-h-screen items-center">
       <div className="flex flex-col items-center gap-2">
         {/* <Loader className="w-10 h-10 animate-spin" /> */}
@@ -48,7 +43,6 @@ const Page = () => {
         </p>
       </div>
     </div>
-    </Suspense>
   ); 
 };
 
