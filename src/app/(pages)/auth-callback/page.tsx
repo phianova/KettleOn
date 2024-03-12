@@ -2,6 +2,7 @@
 import React from 'react';
 import { useRouter, useSearchParams, redirect } from "next/navigation";
 import { trpc } from "../../_trpc/client";
+import { Suspense } from 'react';
 // import { Loader } from "lucide-react";
 
 const Page = () => {
@@ -26,7 +27,7 @@ const Page = () => {
       }
     },
     onError: (err) => {
-    //   router.push("/login");
+    // router.push("/login");
       redirect("/login");
     },
 
@@ -35,6 +36,7 @@ const Page = () => {
   });
 
   return (
+    <Suspense>
     <div className="w-full flex justify-center min-h-screen items-center">
       <div className="flex flex-col items-center gap-2">
         {/* <Loader className="w-10 h-10 animate-spin" /> */}
@@ -46,6 +48,7 @@ const Page = () => {
         </p>
       </div>
     </div>
+    </Suspense>
   ); 
 };
 
