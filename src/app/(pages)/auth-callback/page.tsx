@@ -8,15 +8,15 @@ import { Suspense } from 'react';
 const Page = () => {
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-  const origin = searchParams.get("origin");
+  // const searchParams = useSearchParams();
+  // const origin = searchParams.get("origin");
 
-  if (
-    origin !== "register" 
-  ) {
-    redirect("/login");
-    // router.push("/login");
-  }
+  // if (
+  //   origin !== "register" 
+  // ) {
+  //   redirect("/login");
+  //   // router.push("/login");
+  // }
 
 
   trpc.authCallback.useQuery(undefined, {
