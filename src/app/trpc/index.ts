@@ -153,12 +153,13 @@ export const appRouter = router({
             // return {
             //     users: users, status: 200, success: true
             // };
-            // console.log(users)
-            return {data: users, status: 200, success: true};
+            console.log(users)
+
+            return { data: users, status: 200, success: true};
         } catch (err) {
             console.log("there's an error")
             console.log(err)
-            return { data: [],status: 500, success: false };
+            return { data: [], status: 500, success: false };
         }
     })
 });
