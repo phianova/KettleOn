@@ -36,16 +36,24 @@ export default async function Home() {
       id: 1,
       name:"User1" ,
       designation: "Developer",
-      image: "/user.jpg"
+      image: "/user1.jpg"
     },
     {id: 2,
       name:"User2" ,
-      designation: "Developer",
-      image: "/user.jpg"},
+      designation: "Overall Manager",
+      image: "/user2.jpg"},
     {id: 3,
       name:"User3" ,
-      designation: "Developer",
-      image: "/user.jpg"}
+      designation: "Accounts Manager",
+      image: "/user3.jpg"},
+    {id: 4,
+        name:"User4" ,
+        designation: "Designer",
+        image: "/user4.jpg"},
+    {id: 5,
+          name:"User5" ,
+          designation: "Admin Manager",
+          image: "/user5.jpg"},
   ])
   
   
