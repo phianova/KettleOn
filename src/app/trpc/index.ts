@@ -2,7 +2,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { publicProcedure, privateProcedure, router } from "./trpc";
 import dbConnect from "../../lib/mongo";
 import { z } from "zod"
-import userModel, { TUser } from "../../models/user";
+import UserSchema, { TUser } from "../../models/user";
 import { TRPCError } from "@trpc/server";
 import { NextResponse } from "next/server";
 import { trpc } from "../_trpc/client";
@@ -29,14 +29,16 @@ export const appRouter = router({
         }
         await dbConnect();
         // check if user exists in db collection users
-        const foundUser = await userModel.findOne({ email: user.email });
+        const foundUser = await UserSchema.findOne({ email: user.email });
+        console.log("founduser", foundUser)
         if (!foundUser) {
-            await userModel.create({
+            await UserSchema.create({
                 email: user.email,
-                username: user.given_name + user.family_name,
+                username: user.given_name + " " + user.family_name,
                 team: organisation,
-                company: "",
-                role: "",
+                teamname: "Your team name",
+                company: "Your company",
+                role: "Team Leader",
                 image: "",
                 bio: "",
                 prompt: "",
@@ -55,6 +57,7 @@ export const appRouter = router({
             email: z.string(), //from kinde
             username: z.string(), //given_name + family_name from kinde
             team: z.string(), //from kinde
+            teamname: z.string(), //entered by manager
             company: z.string(), //entered by manager
             role: z.string(), //entered by manager
             image: z.string(), //will be empty on initialisation
@@ -137,14 +140,16 @@ export const appRouter = router({
         try {
             const { userEmail } = ctx;
             await dbConnect();
-            const foundUser = await userModel.findOne({ email: userEmail });
+            const foundUser = await UserSchema.findOne({ email: userEmail });
             if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
             //add a user to the users collection in the database using the users model
-            const user: TUser = await userModel.create({
+            const teamName = foundUser.teamname
+            const user: TUser = await UserSchema.create({
                 email: input.email,
                 username: input.username,
                 team: input.team,
-                company: input.company,
+                teamname: teamName,
+                company: "Your company",
                 role: input.role,
                 image: "",
                 bio: "",
@@ -162,10 +167,10 @@ export const appRouter = router({
         try{
             const { userEmail } = ctx;
             await dbConnect();
-            const foundUser = await userModel.findOne({ email: userEmail });
+            const foundUser = await UserSchema.findOne({ email: userEmail });
             if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
             
-            const users =  await userModel.find<TUser>({ team: foundUser.team });
+            const users =  await UserSchema.find<TUser>({ team: foundUser.team });
     
             let usersArray = []
 
@@ -174,6 +179,7 @@ export const appRouter = router({
                     email: users[i].email,
                     username: users[i].username,
                     team: users[i].team,
+                    teamname: users[i].teamname,
                     company: users[i].company,
                     role: users[i].role,
                     image: users[i].image,
@@ -191,6 +197,87 @@ export const appRouter = router({
             return { data: [], status: 500, success: false };
         }
     }),
+    getCurrentUserData: privateProcedure
+    .query(async ({ ctx, input }) => {
+        try{
+            const { userEmail } = ctx;
+            await dbConnect();
+            const foundUser = await UserSchema.findOne<TUser>({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+            console.log(foundUser.teamname)
+                const currentUserData = {
+                    email: foundUser.email,
+                    username: foundUser.username,
+                    team: foundUser.team,
+                    teamname: foundUser.teamname,
+                    company: foundUser.company,
+                    role: foundUser.role,
+                    image: foundUser.image,
+                    bio: foundUser.bio,
+                    prompt: foundUser.prompt,
+                    answer: foundUser.answer
+                }
+            console.log(currentUserData)
+
+            return { data: currentUserData, status: 200, success: true};
+        } catch (err) {
+            console.log("there's an error")
+            console.log(err)
+            const emptyUser = {
+                email: "",
+                username: "",
+                team: "",
+                teamname: "",
+                company: "",
+                role: "",
+                image: "",
+                bio: "",
+                prompt: "",
+                answer: ""
+            }
+            return { data: emptyUser, status: 500, success: false };
+        }
+    }),
+    updateUser: privateProcedure.input(
+        z.object({
+            role: z.string(),
+            // image: z.string(),
+            bio: z.string()
+        })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        try {
+            const { userEmail } = ctx;
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+
+            const user = await UserSchema.findOneAndUpdate({ email: userEmail }, { role: input.role, bio: input.bio }); //image: input.image,
+
+            return { user: user as any, status: 200, success: true };
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
+    updateTeam: privateProcedure.input(
+        z.object({
+            teamname: z.string(),
+            company: z.string()
+        })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        try {
+            const { userEmail } = ctx;
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+            const user = await UserSchema.updateMany({ team: foundUser.team }, { teamname: input.teamname, company: input.company });
+
+            return { user: user as any, status: 200, success: true };
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    })
 });
 
 
