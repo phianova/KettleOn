@@ -150,9 +150,9 @@ const page = () => {
                     <div className='text-center font-semibold mb-6'>Add a new member to your team</div>
                     <AddUserForm currentUser={currentUserEmail} organisation={organisation} role={role}></AddUserForm>
                 </div>}
-                <div className='pt-2 flex flex-wrap '>
+                <div className='pt-2 flex flex-wrap justify-between mx-10'>
                     {!isManagerEditMode && 
-                    <div className="bg-white h-52 w-72 shadow-xl rounded-xl mt-10 ml-10">
+                    <div className="bg-white h-52 w-72 shadow-xl rounded-xl mt-10">
                         <div className="text-center pt-6 text-lg font-extrabold">{currentUserTeamName}</div>
                         <div className="mt-6 text-center ">{currentUserCompany}</div>
                         {/* <div className="mt-6 text-center text-base font-light">Sheffield - UK</div> */}
@@ -160,7 +160,7 @@ const page = () => {
                     </div>}
 
                     {isManagerEditMode && 
-                    <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-white h-52 w-72 shadow-xl rounded-xl mt-10 ml-10">
+                    <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-white h-52 w-72 shadow-xl rounded-xl mt-10">
                         <input name="teamname" className="text-center pt-6" placeholder={currentUserTeamName}></input>
                         <input name="company" className="mt-6 text-center text-lg font-extrabold" placeholder={currentUserCompany}></input>
                         {/* <div name="location" className="mt-6 text-center text-base font-light">Sheffield - UK</div> */}
@@ -168,11 +168,11 @@ const page = () => {
                     </form>
                     }
 
-                    <div className="bg-white shadow-xl h-52 w-72 rounded-xl mt-10 ml-10 pt-6 text-center">Team Members
+                    <div className="bg-white shadow-xl h-52 w-72 rounded-xl mt-10 pt-6 text-center">Team Members
                         <div className='pt-6 text-5xl font-bold'>{users?.length}</div>
                     </div>
 
-                    <div className="bg-white shadow-xl h-52 w-72 rounded-xl mt-10 ml-10">
+                    <div className="bg-white shadow-xl h-52 w-72 rounded-xl mt-10">
                         <div className='text-center pt-6 mb-2'>Current Users</div>
                         {userData && users?.length !== 0 && users.map((user: any) => (
                             <div className={"flex flex-col items-center"}>
@@ -184,7 +184,7 @@ const page = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="bg-white h-52 shadow-xl w-72 rounded-xl mt-10 ml-10">
+                    <div className="bg-white h-52 shadow-xl w-72 rounded-xl mt-10">
                         <div className="text-center pt-6">Weeks High Scorer</div>
                         <div className="mt-6 text-center text-lg font-extrabold">sophia.w@gmail.com</div>
 
