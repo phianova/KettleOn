@@ -6,8 +6,34 @@ import { InfiniteMovingCards } from "../../../components/ui/infinite-moving-card
 import { AnimatedTooltip } from "../../../components/ui/animated-tooltip";
 import {useState, useEffect} from "react";
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs';
+import { useRouter } from "next/navigation";
+import { trpc } from "../../_trpc/client";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
-export default async function Home() {
+export default function Home() {
+
+  let displayName: string | null | undefined
+  let currentUser: string | null | undefined;
+  let organisation: string | null | undefined;
+  let role: string | null | undefined;
+  let roleArray: string[] | undefined;
+
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+
+  const { isAuthenticated, isLoading, user, permissions } = useKindeBrowserClient();
+  const kindeUserData = user
+  const roleData = permissions
+
+  displayName = (kindeUserData?.given_name ? kindeUserData?.given_name : "") + " " + (kindeUserData?.family_name ? kindeUserData?.family_name : "")
+  currentUser = kindeUserData?.email;
+  organisation = roleData.orgCode
+  roleArray = roleData?.permissions
+  role = roleArray ? roleArray[0] : null
+
+  const { data: userData } = trpc.getUsers.useQuery();
+  const { data: currentUserData} = trpc.getCurrentUserData.useQuery();
+
   
   const [content, setContent] = useState([
     
@@ -48,28 +74,49 @@ export default async function Home() {
       image: "/user.jpg"}
   ])
   
-  
+  useEffect(() => {
+    if (userData) {
+      const userArray = userData?.data
+      const usersMapped = userArray?.map((user, index) => 
+        {
+          const imagePlaceholder = (user.image !== "") ? user.image.toString() : "/user.jpg"
+          return {id: index, name: user.username.toString(), designation: user.role.toString(), image: imagePlaceholder}})
+      setUsers(usersMapped || users);
+    }
+  }, [userData])
 
-  // useEffect(() => {
-    
-  //   setContent(test)
-  // }, [])
+  const currentUserProfile = currentUserData?.data;
+  const currentUserEmail = currentUserProfile?.email.toString()  
+  const currentUserCompany = currentUserProfile?.company.toString()
+  const currentUserTeamName = currentUserProfile?.teamname.toString()
+  const currentUserBio = currentUserProfile?.bio.toString()
+  const currentUserRole = currentUserProfile?.role.toString()
 
+  useEffect(() => {
+    console.log(isLoading)
+      if (isLoading === false && isAuthenticated === false) {
+          console.log("You do not have permission to access this page.")
+          setLoading(false)
+          router.push('/login');
+      } else if (isLoading === false) {
+          setLoading(false)
+      }
+  }, [isLoading])
 
-  
-  
-
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   return (
-   <><main>
+   <><main className="bg-[#FAF2F0] py-5 my-5">
     
-        <h1 className="ml-10 mt-10 text-4xl font-semibold">Main Page</h1>
+        <h1 className="ml-10 mt-10 text-4xl font-semibold">{currentUserTeamName}</h1>
         <div className="ml-20">
         <InfiniteMovingCards items={content} className={undefined}/>
         <div className="flex flex-row items-center justify-center mb-10 w-full">
       <AnimatedTooltip icons={users} />
     </div>
-        {/* <AnimatedTooltip icons={users} /> */}
+        {/* <AnimateadTooltip icons={users} /> */}
         {/* <p>{connected}</p> */}
         </div>
         <LogoutLink>Log out</LogoutLink>
