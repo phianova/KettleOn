@@ -204,7 +204,6 @@ export const appRouter = router({
             await dbConnect();
             const foundUser = await UserSchema.findOne<TUser>({ email: userEmail });
             if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
-            console.log(foundUser.teamname)
                 const currentUserData = {
                     email: foundUser.email,
                     username: foundUser.username,
@@ -217,7 +216,6 @@ export const appRouter = router({
                     prompt: foundUser.prompt,
                     answer: foundUser.answer
                 }
-            console.log(currentUserData)
 
             return { data: currentUserData, status: 200, success: true};
         } catch (err) {

@@ -77,8 +77,6 @@ const page = () => {
     const currentUserBio = currentUserProfile?.bio.toString()
     const currentUserRole = currentUserProfile?.role.toString()
 
-    console.log("email", currentUserEmail)
-
     useEffect(() => {
         if (isLoading === false && isAuthenticated === false) {
             console.log("You do not have permission to access this page.")
@@ -95,22 +93,23 @@ const page = () => {
 
     const handleManagerSubmit = async (e: any) => {
         const inputs = {
-            teamname: e.target.teamname.value,
-            company: e.target.company.value
+            teamname: (e.target.teamname.value !== undefined && e.target.teamname.value!==""  && e.target.teamname.value!==null) ? e.target.teamname.value : currentUserTeamName,
+            company: (e.target.company.value !== undefined && e.target.company.value!==""  && e.target.company.value!==null) ? e.target.company.value : currentUserCompany
         }
         updateTeam(inputs)
         setManagerEditMode(false)
-
+        router.refresh()
     }
 
     const handleSubmit = async (e: any) => {
         const inputs = {
-            role: e.target.role.value,
+            role: (e.target.role.value !== undefined && e.target.role.value!==""  && e.target.role.value!==null) ? e.target.role.value : currentUserRole,
             // image: e.target.image.value,
-            bio: e.target.bio.value
+            bio: (e.target.bio.value !== undefined && e.target.role.value!=="") ? e.target.bio.value : currentUserBio
         }
         updateUser(inputs)
         setEditMode(false)
+        router.refresh()
     }
 
     if (loading) return <div>Loading...</div>
@@ -118,18 +117,21 @@ const page = () => {
     return (
         <div className="grid grid-cols-6">
             <div className='bg-slate-100 col-span-6'>
-                <div className='flex ml-10 mt-6 w-full-screen mr-10 shadow-xl rounded-xl  h-1/12 bg-white'>
+                <div className='flex mx-10 mt-6 w-full-screen mr-10 shadow-xl rounded-xl  h-1/12 bg-white'>
                     {!isEditMode &&
-                    <div className='my-auto p-3 flex flex-row w-full'>
+                    <div className='my-auto p-3 flex flex-row w-full justify-between'>
                         <div className="flex flex-col">
                         <div className='text-xs font-semibold pr-2'>{displayName}</div>
                         <div className='text-xs font-light pr-2'>{currentUser}</div>
                         <div className='text-xs font-light pr-2 mt-3'>Role: {currentUserRole}</div>
                         <div className='text-xs font-light pr-2'>Bio: {currentUserBio}</div>
                         </div>
-                        <img className="my-auto rounded-full h-10" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png">
+                        <img className="my-auto rounded-full h-16 w-16" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png">
                         </img>
-                        <button onClick={() => setEditMode(true)} className="my-2 bg-white hover:bg-gray-100 text-slate-600 font-semibold p-2 border border-gray-400 w-2/12 rounded-full text-sm justify-self-end">Edit</button>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <button onClick={() => setEditMode(true)} className="my-4 mx-2 bg-white hover:bg-gray-100 text-slate-600 font-semibold border border-gray-400 w-2/12 rounded-full text-sm justify-self-end">Edit</button>
                     </div>}
                     {isEditMode &&
                     <form className='my-auto p-3 flex flex-col' onSubmit={(e) => handleSubmit(e)}>
@@ -156,13 +158,13 @@ const page = () => {
                         <div className="text-center pt-6 text-lg font-extrabold">{currentUserTeamName}</div>
                         <div className="mt-6 text-center ">{currentUserCompany}</div>
                         {/* <div className="mt-6 text-center text-base font-light">Sheffield - UK</div> */}
-                        <button onClick={() => setManagerEditMode(true)} className="mx-auto my-5 block bg-white hover:bg-gray-100 text-slate-600 font-semibold py-2 px-4 border border-gray-400 w-4/12 rounded-full text-sm">Edit</button>
+                        {isManager &&<button onClick={() => setManagerEditMode(true)} className="mx-auto my-5 block bg-white hover:bg-gray-100 text-slate-600 font-semibold py-2 px-4 border border-gray-400 w-4/12 rounded-full text-sm">Edit</button> }
                     </div>}
 
                     {isManagerEditMode && 
-                    <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-white h-52 w-72 shadow-xl rounded-xl mt-10">
-                        <input name="teamname" className="text-center pt-6" placeholder={currentUserTeamName}></input>
-                        <input name="company" className="mt-6 text-center text-lg font-extrabold" placeholder={currentUserCompany}></input>
+                    <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-white h-52 w-72 shadow-xl rounded-xl mt-10 flex flex-col items-center">
+                        <input name="teamname" className="text-center mt-6 text-lg font-extrabold" placeholder={currentUserTeamName}></input>
+                        <input name="company" className="mt-6 text-center " placeholder={currentUserCompany}></input>
                         {/* <div name="location" className="mt-6 text-center text-base font-light">Sheffield - UK</div> */}
                         <button type="submit" className="mx-auto  my-auto block bg-white hover:bg-gray-100 text-slate-600 font-semibold py-2 px-4 border border-gray-400 w-1/2 rounded-full">Save changes</button>
                     </form>
