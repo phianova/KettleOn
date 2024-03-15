@@ -1,11 +1,15 @@
+import { trpc } from '@/app/_trpc/client'
 import React from 'react'
 
 const page = () => {
+
+  
   return (
     <div className="grid grid-cols-6">
         <div className='grid h-screen bg-slate-400 col-span-1'>KettleOn</div>
         
         
+
         
         <div className='bg-slate-100  col-span-5'>
         <div className='flex ml-10 mt-6 w-full-screen mr-10 shadow-xl rounded-xl  h-16 bg-white'> 

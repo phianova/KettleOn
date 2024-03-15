@@ -6,9 +6,12 @@ import { InfiniteMovingCards } from "../../../components/ui/infinite-moving-card
 import { AnimatedTooltip } from "../../../components/ui/animated-tooltip";
 import {useState, useEffect} from "react";
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs';
+import { trpc } from '@/app/_trpc/client'
 
-export default async function Home() {
+export default function Home() {
   
+  
+
   const [content, setContent] = useState([
     
       {
@@ -56,13 +59,10 @@ export default async function Home() {
   // }, [])
 
 
-  
-  
-
-
   return (
    <><main>
     
+    <button onClick={() => run.refetch()} className='text-6xl'>Test</button>
         <h1 className="ml-10 mt-10 text-4xl font-semibold">Main Page</h1>
         <div className="ml-20">
         <InfiniteMovingCards items={content} className={undefined}/>
