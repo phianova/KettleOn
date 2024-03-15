@@ -1,6 +1,7 @@
 "use client"
 import React, { FC } from 'react'
 import { trpc } from "../app/_trpc/client";
+import { useRouter } from "next/navigation";
 
 interface AddUserProps {
   currentUser: string | null | undefined,
@@ -8,10 +9,11 @@ interface AddUserProps {
   organisation: string | null | undefined
 }
 const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
-
+  const router = useRouter();
   const { mutate: addUser } = trpc.addUser.useMutation(
     {
       onSuccess: () => {
+        router.refresh()
         console.log("success")
       },
       onError: () => {
@@ -30,6 +32,7 @@ const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
       email: e.target.email.value,
       username: e.target.given_name.value + " " + e.target.family_name.value,
       team: props.organisation,
+      teamname: "", 
       company: e.target.company.value,
       role: e.target.role.value,
       image: "",
@@ -42,23 +45,14 @@ const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
 
   return (
     <form onSubmit={(e) => addUserCall(e, props)} className={"flex flex-col justify-center"}>
-      <label>First name:
-        <input name="given_name" type="text" placeholder="Enter first name" className={"p-3"} />
-      </label>
-      <label>Surname:
-        <input name="family_name" type="text" placeholder="Enter surname" className={"p-3"} />
-      </label>
-      <label>Email:
-        <input name="email" type="email" placeholder="Enter email" className={"p-3"} />
-      </label>
-      <label>Company:
-        <input name="company" type="text" placeholder="Enter company name" className={"p-3"} />
-      </label>
-      <label>Role:
-        <input name="role" type="text" placeholder="Enter role" className={"p-3"} />
-      </label>
-      <button type="submit">Add new user</button>
+        <input name="given_name" type="text" placeholder="Enter first name" className="mx-auto my-auto block bg-slate-100 rounded-xl text-sm text-center h-10 w-1/2 mb-2" />
+        <input name="family_name" type="text" placeholder="Enter surname" className="mx-auto my-auto block bg-slate-100 rounded-xl text-sm text-center h-10 w-1/2 mb-2"/>
+        <input name="email" type="email" placeholder="Enter email" className="mx-auto my-auto block bg-slate-100 rounded-xl text-sm text-center h-10 w-1/2 mb-2" />
+        <input name="company" type="text" placeholder="Enter company name" className="mx-auto my-auto block bg-slate-100 rounded-xl text-sm text-center h-10 w-1/2 mb-2" />
+        <input name="role" type="text" placeholder="Enter role" className="mx-auto my-auto block bg-slate-100 rounded-xl text-sm text-center h-10 w-1/2 mb-2" />
+      <button type="submit" className="mx-auto  my-auto block bg-white hover:bg-gray-100 text-slate-600 font-semibold py-2 px-4 border border-gray-400 w-1/2 rounded-full">Add new user</button>
     </form>
+
   )
 }
 
