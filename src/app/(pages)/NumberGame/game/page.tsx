@@ -11,8 +11,8 @@ import numberGame from '../start/page';
 
 export default function NumberGame() {
 const [target, setTarget] = useState(0);
-const [numArr, setNumArr] = useState([]);
-const [subNumArr, setSubNumArr] = useState([]);
+const [numArr, setNumArr] = useState<number[]>([]);
+const [subNumArr, setSubNumArr] = useState<number[]>([]);
 const [invalid, setInvalid] = useState(false);
 const [win, setWin] = useState(false);
 const [completed, setCompleted] = useState(false);
@@ -105,7 +105,7 @@ const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation(
    // generate high number between 25-100
    const generateHighNumber = () => {
     const highNumber = (Math.floor(Math.random() * 75) + 25);
-    setNumArr([...numArr, highNumber]);
+    setNumArr([...numArr,highNumber]);
     console.log(highNumber);
    }
    useEffect(() => {
@@ -141,8 +141,6 @@ const handleMathSymbolClick = (symbol) => {
   if(symbol !== "=") {
     setInputValue((prevValue) => prevValue + symbol);
     setEquation((prevEquation) => prevEquation + symbol);
-  } else {
-    setTriggerEquation(true);
   }
 };
 
