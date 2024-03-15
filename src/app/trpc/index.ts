@@ -50,6 +50,7 @@ export const appRouter = router({
         }
 
     }),
+
     addUser: privateProcedure.input(
         z.object({
             given_name: z.string(),
@@ -197,13 +198,16 @@ export const appRouter = router({
             return { data: [], status: 500, success: false };
         }
     }),
+
     getCurrentUserData: privateProcedure
     .query(async ({ ctx, input }) => {
         try{
             const { userEmail } = ctx;
+
             await dbConnect();
             const foundUser = await UserSchema.findOne<TUser>({ email: userEmail });
             if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+
                 const currentUserData = {
                     email: foundUser.email,
                     username: foundUser.username,
@@ -214,14 +218,18 @@ export const appRouter = router({
                     image: foundUser.image,
                     bio: foundUser.bio,
                     prompt: foundUser.prompt,
-                    answer: foundUser.answer
+
+                    answer: foundUser.answer,
+                    game: foundUser.game
                 }
+            
+                console.log(currentUserData)
 
             return { data: currentUserData, status: 200, success: true};
         } catch (err) {
             console.log("there's an error")
             console.log(err)
-            const emptyUser = {
+           const emptyUser = {
                 email: "",
                 username: "",
                 team: "",
@@ -236,6 +244,53 @@ export const appRouter = router({
             return { data: emptyUser, status: 500, success: false };
         }
     }),
+
+         
+   numberGameData: privateProcedure
+   .query(async ({ ctx, input }) => {
+       try {
+           const { userEmail } = ctx;
+           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+           await dbConnect();
+           const foundUser = await userModel.findOne({ email: userEmail });
+           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+           
+           const gameData = foundUser.game.find(game => game.name === "NumberGame");
+           return { data: gameData, status: 200, success: true };
+       } catch (err) {
+           console.log(err)
+           return { data: [], status: 500, success: false };
+       }
+   }), 
+
+   numberGameUsage: privateProcedure.input(z.object({
+       usage: z.number(),
+   })
+   ).mutation(async ({ ctx, input }) => {
+       try {
+           const { userEmail } = ctx;
+           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+           await dbConnect();
+           const foundUser = await userModel.findOne({ email: userEmail });
+           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+           
+           const gameIndex = foundUser.game.findIndex(game => game.name === "NumberGame");
+            if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+
+        // Update the usage of the found game
+        foundUser.game[gameIndex].usage = input.usage;
+
+          
+            
+            await foundUser.save();
+            return { status: 200, success: true };
+       } catch (err) {
+           console.log(err)
+           return { status: 500, success: false };
+       }
+   })
+
+           
     updateUser: privateProcedure.input(
         z.object({
             role: z.string(),
@@ -276,6 +331,7 @@ export const appRouter = router({
             return { status: 500, success: false };
         }
     })
+
 });
 
 
