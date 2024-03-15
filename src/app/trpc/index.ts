@@ -10,6 +10,11 @@ import { trpc } from "../_trpc/client";
 const clientId = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_ID
 const clientSecret = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_SECRET
 
+export type Game = {
+    name: string,
+    score: number,
+    usage: number,
+}
 
 export const appRouter = router({
     // apiTest: publicProcedure.query(async ({ ctx, input }) => {
@@ -255,7 +260,7 @@ export const appRouter = router({
            const foundUser = await UserSchema.findOne({ email: userEmail });
            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
            
-           const gameData = foundUser.game.find(game => game.name === "NumberGame");
+           const gameData = foundUser.game.find((game : Game) => game.name === "NumberGame");
            return { data: gameData, status: 200, success: true };
        } catch (err) {
            console.log(err)
@@ -274,7 +279,7 @@ export const appRouter = router({
            const foundUser = await UserSchema.findOne({ email: userEmail });
            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
            
-           const gameIndex = foundUser.game.findIndex(game => game.name === "NumberGame");
+           const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "NumberGame");
             if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
 
         // Update the usage of the found game

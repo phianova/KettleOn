@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react'
 import Link from 'next/link';
 import { useState } from 'react';
-import Keypad from '@/components/Keypad';
 import { trpc } from "../../../_trpc/client";
 import {useKindeBrowserClient} from "@kinde-oss/kinde-auth-nextjs";
 import numberGame from '../start/page';
@@ -125,7 +124,7 @@ const [equation, setEquation] = useState("");
 
 
 
-const handleKeyPress = (number) => {
+const handleKeyPress = (number : number) => {
   setInputValue((prevValue) => prevValue + number);
   setEquation((prevEquation) => prevEquation + number);
   console.log(equation);
@@ -137,7 +136,7 @@ const handleClear = () => {
   setEquation("");
 };
 
-const handleMathSymbolClick = (symbol) => {
+const handleMathSymbolClick = (symbol : string) => {
   if(symbol !== "=") {
     setInputValue((prevValue) => prevValue + symbol);
     setEquation((prevEquation) => prevEquation + symbol);
@@ -160,7 +159,7 @@ const handleEquation = () => {
   resultCheck(result);
 }
 
-const resultCheck = (result) => {
+const resultCheck = (result : number) => {
   if (target === result) {
     setWin(true);
     console.log("correct");
