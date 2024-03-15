@@ -125,7 +125,7 @@ const [equation, setEquation] = useState("");
 
 
 
-const handleKeyPress = (number) => {
+const handleKeyPress = (number : number) => {
   setInputValue((prevValue) => prevValue + number);
   setEquation((prevEquation) => prevEquation + number);
   console.log(equation);
@@ -137,7 +137,7 @@ const handleClear = () => {
   setEquation("");
 };
 
-const handleMathSymbolClick = (symbol) => {
+const handleMathSymbolClick = (symbol : string) => {
   if(symbol !== "=") {
     setInputValue((prevValue) => prevValue + symbol);
     setEquation((prevEquation) => prevEquation + symbol);
@@ -160,7 +160,7 @@ const handleEquation = () => {
   resultCheck(result);
 }
 
-const resultCheck = (result) => {
+const resultCheck = (result : number) => {
   if (target === result) {
     setWin(true);
     console.log("correct");
