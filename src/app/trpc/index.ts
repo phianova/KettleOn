@@ -10,7 +10,7 @@ import { trpc } from "../_trpc/client";
 const clientId = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_ID
 const clientSecret = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_SECRET
 
-type Game = {
+export type Game = {
     name: string,
     score: number,
     usage: number,

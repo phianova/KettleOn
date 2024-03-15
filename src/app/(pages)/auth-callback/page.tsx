@@ -24,7 +24,7 @@ const Page = () => {
       }
     },
     onError: (err) => {
-      router.push("/login");
+      router.push("/");
     },
 
     retry: true,

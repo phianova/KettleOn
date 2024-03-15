@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react'
 import Link from 'next/link';
 import { useState } from 'react';
-import Keypad from '@/components/Keypad';
 import { trpc } from "../../../_trpc/client";
 import {useKindeBrowserClient} from "@kinde-oss/kinde-auth-nextjs";
 import numberGame from '../start/page';

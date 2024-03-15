@@ -99,7 +99,7 @@ export default function Home() {
       if (isLoading === false && isAuthenticated === false) {
           console.log("You do not have permission to access this page.")
           setLoading(false)
-          router.push('/login');
+          router.push('/');
       } else if (isLoading === false) {
           setLoading(false)
       }
