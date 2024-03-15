@@ -114,7 +114,7 @@ export default function Home() {
    <><main className="bg-[#FAF2F0] py-5 my-5">
     
 
-<!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> -->
+{/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
         <h1 className="ml-10 mt-10 text-4xl font-semibold">{currentUserTeamName}</h1>
         <div className="ml-20">
         <InfiniteMovingCards items={content} className={undefined}/>

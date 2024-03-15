@@ -252,7 +252,7 @@ export const appRouter = router({
            const { userEmail } = ctx;
            if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
            await dbConnect();
-           const foundUser = await userModel.findOne({ email: userEmail });
+           const foundUser = await UserSchema.findOne({ email: userEmail });
            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
            
            const gameData = foundUser.game.find(game => game.name === "NumberGame");
@@ -271,7 +271,7 @@ export const appRouter = router({
            const { userEmail } = ctx;
            if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
            await dbConnect();
-           const foundUser = await userModel.findOne({ email: userEmail });
+           const foundUser = await UserSchema.findOne({ email: userEmail });
            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
            
            const gameIndex = foundUser.game.findIndex(game => game.name === "NumberGame");
@@ -288,10 +288,8 @@ export const appRouter = router({
            console.log(err)
            return { status: 500, success: false };
        }
-   })
-
-           
-    updateUser: privateProcedure.input(
+   }),
+   updateUser: privateProcedure.input(
         z.object({
             role: z.string(),
             // image: z.string(),
