@@ -10,7 +10,7 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
     NavigationMenuViewport,
-  } from "@/components/ui/navigation-menu"
+  } from "@/components/shadcn/navigation-menu"
   
 
 const page = () => {
