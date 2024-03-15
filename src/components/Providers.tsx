@@ -1,24 +1,20 @@
-"use client"
-
+"use client";
+import React from 'react';
 import { PropsWithChildren, useState } from "react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import { trpc } from "../trpc/client";
+import { trpc } from "../app/_trpc/client";
 import { httpBatchLink } from "@trpc/client";
-import superjson from "superjson";
+import { absoluteUrl } from '../utils/url';
+
 
 const Providers = ({children}: PropsWithChildren) => {
     const [queryClient] = useState(() => new QueryClient())
-    const [trpcClient] = useState(() => trpc.createClient({
-        transformer: superjson,
-        links: [httpBatchLink({
-            url: `${process.env.NEXT_PUBLIC_SERVER_URL}/api/trpc`,
-            fetch(url, options) {
-              return fetch(url, {
-                ...options,
-                credentials: 'include',
-              })
-            },
-          }),]
+    const [trpcClient] = useState(() => 
+    trpc.createClient({
+        links: 
+        [httpBatchLink({
+            url: `${absoluteUrl("/api/trpc")}`,
+        }),]
     }
     ))
 
@@ -31,4 +27,4 @@ const Providers = ({children}: PropsWithChildren) => {
     )
 }
 
-export default Providers
+export default Providers;
