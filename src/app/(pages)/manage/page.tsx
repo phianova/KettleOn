@@ -18,7 +18,7 @@ interface User {
     answer: string
 }
 
-type UserListResponseType = User[]
+// type UserListResponseType = User[]
 
 export default function managePage() {
     let displayName : string | null | undefined
