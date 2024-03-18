@@ -13,7 +13,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/shadcn/drawer"
 
 
 export default function Home() {
@@ -30,7 +30,7 @@ export default function Home() {
     </div>
       </div>
      <video 
-    src={require("../../public/loopHD.mp4")}
+    src="https://backgroundmusic.uk/dailyoperation/video/loopHD2.mp4"
     autoPlay
     muted
     loop

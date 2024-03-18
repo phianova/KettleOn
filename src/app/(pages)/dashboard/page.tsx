@@ -6,20 +6,8 @@ import AddUserForm from '../../../components/AddUserForm';
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { trpc } from "../../_trpc/client";
 
-interface User {
-    email: string,
-    username: string
-    team: string
-    teamname: string
-    company: string
-    role: string
-    image: string
-    bio: string
-    prompt: string
-    answer: string
-}
-
 const page = () => {
+
 
     let displayName: string | null | undefined
     let currentUser: string | null | undefined;
@@ -81,7 +69,7 @@ const page = () => {
         if (isLoading === false && isAuthenticated === false) {
             console.log("You do not have permission to access this page.")
             setLoading(false)
-            router.push('/login');
+            router.push('/');
         }
         else if (isLoading === false && roleData && roleData.permissions && roleData.permissions.includes("manager")) {
             setIsManager(true)
@@ -116,7 +104,7 @@ const page = () => {
 
     return (
         <div className="grid grid-cols-6">
-            <div className='bg-slate-100 col-span-6'>
+            <div className='col-span-6'>
                 <div className='flex mx-10 mt-6 w-full-screen mr-10 shadow-xl rounded-xl  h-1/12 bg-white'>
                     {!isEditMode &&
                     <div className='my-auto p-3 flex flex-row w-full justify-between'>
