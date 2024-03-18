@@ -2,15 +2,101 @@
 import React, { useEffect } from 'react'
 import Link from 'next/link';
 import { useState } from 'react';
-import Keypad from '@/components/Keypad';
+import { trpc } from "../../../_trpc/client";
+import {useKindeBrowserClient} from "@kinde-oss/kinde-auth-nextjs";
+import numberGame from '../start/page';
 
-const NumberGame = () => {
+
+
+export default function NumberGame() {
 const [target, setTarget] = useState(0);
-const [numArr, setNumArr] = useState([]);
-const [subNumArr, setSubNumArr] = useState([]);
+const [numArr, setNumArr] = useState<number[]>([]);
+const [subNumArr, setSubNumArr] = useState<number[]>([]);
 const [invalid, setInvalid] = useState(false);
 const [win, setWin] = useState(false);
-    // random number generator from 100 - 999
+const [completed, setCompleted] = useState(false);
+
+const { data: gameData} = trpc.numberGameData.useQuery();
+const currentGameData = gameData?.data;
+// console.log("from number game data:", currentGameData)
+const currentUsage = currentGameData?.usage;
+// console.log("from number game usage:", currentUsage)
+
+// useEffect(() => {
+//      setNumArr([]);
+//     setSubNumArr([]);
+//     setInvalid(false);
+//     setWin(false);
+
+//     if (currentUsage >= 3) {
+//         setCompleted(true);
+//     }
+// }, []);
+
+useEffect(() => {
+  const fetchData = async () => {
+      try {
+          const { data: gameData } = await trpc.numberGameData.useQuery();
+          const currentGameData = gameData?.data;
+          const currentUsage = currentGameData?.usage;
+
+          // Do your state updates based on fetched data
+          setNumArr([]);
+          setSubNumArr([]);
+          setInvalid(false);
+          setWin(false);
+
+          if (currentUsage >= 3) {
+              setCompleted(true);
+          }
+      } catch (error) {
+          console.error('Error fetching game data:', error);
+      }
+  };
+
+  fetchData();
+}, []);
+
+
+
+
+
+
+const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation(
+    {
+      onSuccess: () => {
+        console.log("success")
+      },
+      onError: () => {
+        console.log("error")
+      }
+    }
+  )
+
+  useEffect(() => {
+    if (currentUsage !== undefined) { // Ensure currentUsage is defined before proceeding
+        console.log("currentUsage", currentUsage);
+        const newUsage = currentUsage + 1;
+        const usageObj = {usage: newUsage}
+        numberGameUsage(usageObj)
+        console.log("Mutation successful. New usage:", newUsage);
+
+        // also check current games usage
+        if (newUsage >= 3) {
+            setCompleted(true);
+        }
+            
+    } else {
+        console.log("currentUsage is undefined"); 
+    }         
+    
+}, [win]); // Include currentUsage in the dependencies array
+
+
+
+    
+
+// random number generator from 100 - 999
     useEffect(() => {
         setTarget(Math.floor(Math.random() * 900) + 100);
     }, []);
@@ -18,7 +104,7 @@ const [win, setWin] = useState(false);
    // generate high number between 25-100
    const generateHighNumber = () => {
     const highNumber = (Math.floor(Math.random() * 75) + 25);
-    setNumArr([...numArr, highNumber]);
+    setNumArr([...numArr,highNumber]);
     console.log(highNumber);
    }
    useEffect(() => {
@@ -38,7 +124,7 @@ const [equation, setEquation] = useState("");
 
 
 
-const handleKeyPress = (number) => {
+const handleKeyPress = (number : number) => {
   setInputValue((prevValue) => prevValue + number);
   setEquation((prevEquation) => prevEquation + number);
   console.log(equation);
@@ -50,12 +136,10 @@ const handleClear = () => {
   setEquation("");
 };
 
-const handleMathSymbolClick = (symbol) => {
+const handleMathSymbolClick = (symbol : string) => {
   if(symbol !== "=") {
     setInputValue((prevValue) => prevValue + symbol);
     setEquation((prevEquation) => prevEquation + symbol);
-  } else {
-    setTriggerEquation(true);
   }
 };
 
@@ -75,7 +159,7 @@ const handleEquation = () => {
   resultCheck(result);
 }
 
-const resultCheck = (result) => {
+const resultCheck = (result : number) => {
   if (target === result) {
     setWin(true);
     console.log("correct");
@@ -124,26 +208,20 @@ const validCheck = () => {
     // const result = eval(equation.toString());
     // console.log(result);
 
-    
-
     // Updating input value with the result
     // setInputValue(result);
   };
-
-  
-
-
-
-//    calculate the new number that is usable after an initial calculation
 
 
  
 
     return (
-        
+<>
+{!completed ? (
         <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-br from-teal-400 via-sky-200 to-emerald-300">
             <h1 className="absolute top-6 text-4xl font-bold text-teal-700">NUMBERS GAME</h1>
-            <button  className="absolute text-4xl font-bold text-teal-600 top-6 right-6 border-2 border-teal-600 px-3 rounded-full">I</button>
+            {/* <button  className="absolute text-4xl font-bold text-teal-600 top-6 right-6 border-2 border-teal-600 px-3 rounded-full">I</button> */}
+            <h1 className="absolute text-4xl font-bold text-teal-600 top-6 right-6 border-2 border-teal-600 px-3 rounded-full">{currentUsage}/3</h1>
             <div className='w-2/3 h-fit p-10 bg-teal-100 rounded opacity-80 border border-teal-400 text-center grid col-span-1 content-evenly'>
                 
                 {/* target number */}
@@ -258,8 +336,17 @@ const validCheck = () => {
 
             </div>
         </div>
-      )
+
+
+        ) : (
+            <div className='w-2/3 h-fit p-10 bg-teal-100 rounded opacity-80 border border-teal-400 text-center grid col-span-1 content-evenly'>
+        <h1>daily limit reached</h1>
+        <Link href="/home"><button className="bg-teal-600 text-white w-1/3 mx-auto font-bold py-2 px-4 rounded hover:bg-teal-700">Back</button></Link>
+        </div>
+        )  }
+</>
+      ) 
 }
 
 
-export default NumberGame
+// export default NumberGame
