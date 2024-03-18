@@ -3,7 +3,13 @@
 import withVideos from "next-videos";
 
 const nextConfig = {
-    /* config options here */
+    images: {
+        remotePatterns: [
+          {
+            hostname: 'res.cloudinary.com',
+          },
+        ],
+      },
 };
 
 export default {
