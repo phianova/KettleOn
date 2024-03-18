@@ -24,11 +24,6 @@ const page = () => {
   let currentUserPrompt: string | null | undefined;
   let currentUserAnswer: string | null | undefined;
 
-  //getQuestion function 
-  // if asked today and answered, don't display drawer
-  // if asked today and not answered, display drawer
-  // if not asked today, display drawer
-
   const { isAuthenticated, isLoading, user, permissions } = useKindeBrowserClient();
   const kindeUserData = user
   const roleData = permissions
