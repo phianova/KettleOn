@@ -9,7 +9,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "../../../components/shadcn/drawer"
 
 const page = () => {
   return (

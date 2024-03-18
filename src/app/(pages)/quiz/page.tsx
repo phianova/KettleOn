@@ -147,7 +147,7 @@ export default function App() {
 
 
 
-    const handleAnswerButtonClick = (isCorrect) => {
+    const handleAnswerButtonClick = (isCorrect : boolean) => {
 
         if(isCorrect===true){
 
@@ -166,11 +166,11 @@ export default function App() {
         
     }
 
-    const handleChangeTopic =(event) => {
+    const handleChangeTopic =(event : any) => {
         setTopic(event.target.value);
       }
 
-    const handleSubmitTopic = (event) => {
+    const handleSubmitTopic = (event :any) => {
         callChatGPT()
         console.log({topic})
         console.log(ChatGPTquestion)
@@ -216,7 +216,7 @@ export default function App() {
 					</div>
                     </div>
                     </div>
-                    <div class="p-12 border m-6 rounded">
+                    <div className="p-12 border m-6 rounded">
                     
                     <div onClick={() => setUseAi(!useAi)} className="text-xs">Turn On AI mode
 
@@ -235,7 +235,7 @@ export default function App() {
                     <form onSubmit={handleSubmitTopic}>
                     <label>
                         {/* Topic: */}
-                        <input placeholder="Topic" className="bg-white border w-full mb-2 border-slate-300 hover:bg-slate-300 text-slate-500s font-base py-2 px-4 rounded-full" type="submit" value="Generate" type="text" value={topic} onChange={handleChangeTopic} />
+                        <input placeholder="Topic" className="bg-white border w-full mb-2 border-slate-300 hover:bg-slate-300 text-slate-500s font-base py-2 px-4 rounded-full" type="text" value={topic} onChange={handleChangeTopic} />
                 </label>
                 <input className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full" type="submit" value="Generate" />
                     </form>
