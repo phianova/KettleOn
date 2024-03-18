@@ -19,6 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "../../../components/shadcn/drawer"
+import Spinner from "../../../components/Spinner"
 
 
 export default function Home() {
@@ -175,7 +176,9 @@ export default function Home() {
   }
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div>
+      <Spinner></Spinner>
+    </div>
   }
 
   return (
@@ -192,7 +195,7 @@ export default function Home() {
       </div>
       <LogoutLink>Log out</LogoutLink>
     </main>
-      <Drawer open={drawerOpen}>
+      <Drawer open={!loading && drawerOpen}>
         {/* <DrawerTrigger>
           Open Drawer
         </DrawerTrigger> */}
