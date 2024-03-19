@@ -271,7 +271,7 @@ export const appRouter = router({
    numberGameUsage: privateProcedure.input(z.object({
        usage: z.number(),
    })
-   ).mutation(async ({ ctx, input }) => {
+   ).mutation<Promise<any>>(async ({ ctx, input }) => {
        try {
            const { userEmail } = ctx;
            if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
@@ -294,6 +294,62 @@ export const appRouter = router({
            return { status: 500, success: false };
        }
    }),
+    
+   numberGameScore: privateProcedure.input(z.object({
+       score: z.number(),
+   })
+   ).mutation<Promise<any>>(async ({ ctx, input }) => {
+    console.log("score", input.score)
+       try {
+           const { userEmail } = ctx;
+           console.log("email", userEmail)
+           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+           await dbConnect();
+           const foundUser = await UserSchema.findOne({ email: userEmail });
+           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+           
+           const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "NumberGame");
+            if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+
+            
+            // add input.score to the current score
+            foundUser.game[gameIndex].score += input.score;
+            // foundUser.game[gameIndex].score = input.score;
+            await foundUser.save();
+            return { status: 200, success: true };
+   } catch (err) {
+    console.log(err)
+    return { status: 500, success: false };
+}
+   }),
+   aiQuizScore: privateProcedure.input(z.object({
+    score: z.number(),
+})
+).mutation<Promise<any>>(async ({ ctx, input }) => {
+ console.log("score", input.score)
+    try {
+        const { userEmail } = ctx;
+        console.log("email", userEmail)
+        if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+        await dbConnect();
+        const foundUser = await UserSchema.findOne({ email: userEmail });
+        if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+        
+        const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "aiQuiz");
+         if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+
+         
+         // add input.score to the current score
+         foundUser.game[gameIndex].score += input.score;
+         // foundUser.game[gameIndex].score = input.score;
+         await foundUser.save();
+         return { status: 200, success: true };
+} catch (err) {
+ console.log(err)
+ return { status: 500, success: false };
+}
+}),
+
    updateUser: privateProcedure.input(
         z.object({
             role: z.string(),

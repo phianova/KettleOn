@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { trpc } from "../../../_trpc/client";
 
 export default function App() {
     const questions = [
@@ -105,10 +106,21 @@ export default function App() {
     const [questionState, setQuestionState] = useState(questions);
     const [useAi, setUseAi] = useState(false);
 
-
     const apiKey=process.env.NEXT_PUBLIC_CHATGPT_API_KEY;
    
     const url = 'https://api.openai.com/v1/chat/completions';
+
+    const { mutate: aiQuiz } = trpc.aiQuiz.useMutation({
+        
+    })
+
+    
+    
+    useEffect(() => {
+        if(currentScore > 0){
+
+        aiQuiz(currentScore)}
+    }, [showScore])
 
     const callChatGPT = async () => {
         try {
