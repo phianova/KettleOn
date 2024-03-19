@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from 'react'
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { trpc } from "../../../_trpc/client";
 import {useKindeBrowserClient} from "@kinde-oss/kinde-auth-nextjs";
 import numberGame from '../start/page';
@@ -12,26 +12,41 @@ export default function NumberGame() {
 const [target, setTarget] = useState(0);
 const [numArr, setNumArr] = useState<number[]>([]);
 const [subNumArr, setSubNumArr] = useState<number[]>([]);
+const [subArrFull, setSubArrFull] = useState(false);
 const [invalid, setInvalid] = useState(false);
 const [win, setWin] = useState(false);
 const [completed, setCompleted] = useState(false);
+const [score, setScore] = useState(0);
+
+const [seconds, setSeconds] = useState(0);
+
+    useEffect(() => {
+      console.log("numArr", numArr)
+      if(numArr.length >= 6 && !win){
+        const interval = timer();
+        return () => clearInterval(interval);
+      } else if (win) {
+        setScore(seconds);
+      }
+    }, [numArr, win]);
+
+const timer = () => {
+  console.log("timer reached")
+        
+    const interval = setInterval(() => {
+      setSeconds(prevSeconds => prevSeconds + 1);
+       console.log(seconds);
+  }, 1000);
+
+  return interval;
+}
+
 
 const { data: gameData} = trpc.numberGameData.useQuery();
 const currentGameData = gameData?.data;
 // console.log("from number game data:", currentGameData)
 const currentUsage = currentGameData?.usage;
-// console.log("from number game usage:", currentUsage)
 
-// useEffect(() => {
-//      setNumArr([]);
-//     setSubNumArr([]);
-//     setInvalid(false);
-//     setWin(false);
-
-//     if (currentUsage >= 3) {
-//         setCompleted(true);
-//     }
-// }, []);
 
 useEffect(() => {
   const fetchData = async () => {
@@ -45,7 +60,9 @@ useEffect(() => {
           setSubNumArr([]);
           setInvalid(false);
           setWin(false);
-
+          setScore(0);
+          
+          
           if (currentUsage >= 3) {
               setCompleted(true);
           }
@@ -57,22 +74,33 @@ useEffect(() => {
   fetchData();
 }, []);
 
-
-
-
-
-
 const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation(
-    {
-      onSuccess: () => {
-        console.log("success")
-      },
-      onError: () => {
-        console.log("error")
-      }
+  {
+    onSuccess: () => {
+      console.log("success")
+    },
+    onError: () => {
+      console.log("error")
     }
+  }
+)
+const { mutate: numberGameScore } = trpc.numberGameScore.useMutation(
+  
   )
+useEffect(() => {
+  console.log("score", score)
+  console.log("win", win)
+  if(win && score > 0) {
+    const scoreObj = {score: score}
+    console.log(scoreObj)
+    numberGameScore(scoreObj)
+  }
+}, [win, score]);
 
+
+
+
+// update this - setCompleted(true) needs to be in t
   useEffect(() => {
     if (currentUsage !== undefined) { // Ensure currentUsage is defined before proceeding
         console.log("currentUsage", currentUsage);
@@ -81,19 +109,16 @@ const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation(
         numberGameUsage(usageObj)
         console.log("Mutation successful. New usage:", newUsage);
 
-        // also check current games usage
-        if (newUsage >= 3) {
-            setCompleted(true);
-        }
+        // // also check current games usage
+        // if (newUsage >= 3) {
+        //     setCompleted(true);
+        // }
             
     } else {
         console.log("currentUsage is undefined"); 
     }         
     
 }, [win]); // Include currentUsage in the dependencies array
-
-
-
     
 
 // random number generator from 100 - 999
@@ -117,12 +142,12 @@ const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation(
     console.log(lowNumber);
    }
 
-// keypad logic 
+
+
+   // keypad logic 
 
 const [inputValue, setInputValue] = useState("");
 const [equation, setEquation] = useState("");
-
-
 
 const handleKeyPress = (number : number) => {
   setInputValue((prevValue) => prevValue + number);
@@ -154,6 +179,7 @@ const handleEquation = () => {
     setInputValue("");
   }, 1500)
   setSubNumArr([...subNumArr, result]);
+  
   setEquation("");
   validCheck();
   resultCheck(result);
@@ -168,7 +194,17 @@ const resultCheck = (result : number) => {
 }
 
 const handlePlayAgain = () => {
-  window.location.reload();
+  if(currentUsage >= 3) {
+    setCompleted(true);
+  } else {
+    setNumArr([]);
+    setSubNumArr([]);
+    setInvalid(false);
+    setWin(false);
+    setScore(0);
+    setSeconds(0);
+  }
+
 }
 
 const validCheck = () => {
@@ -220,15 +256,25 @@ const validCheck = () => {
 {!completed ? (
         <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-br from-teal-400 via-sky-200 to-emerald-300">
             <h1 className="absolute top-6 text-4xl font-bold text-teal-700">NUMBERS GAME</h1>
+            
             {/* <button  className="absolute text-4xl font-bold text-teal-600 top-6 right-6 border-2 border-teal-600 px-3 rounded-full">I</button> */}
             <h1 className="absolute text-4xl font-bold text-teal-600 top-6 right-6 border-2 border-teal-600 px-3 rounded-full">{currentUsage}/3</h1>
             <div className='w-2/3 h-fit p-10 bg-teal-100 rounded opacity-80 border border-teal-400 text-center grid col-span-1 content-evenly'>
                 
                 {/* target number */}
-                {numArr.length >= 6 ? <div className='h-1/3 w-fit bg-yellow-500 opacity-80 mx-auto'>
+                {numArr.length >= 6 ? 
+                <div className='relative'>
+                <div className='h-1/3 w-fit bg-yellow-500 opacity-80 mx-auto'>
                 <h1 className=" text-4xl font-bold text-teal-700 pb-2">TARGET</h1>
                     <h1 className="text-6xl font-bold text-teal-600 border border-teal-800 px-10 py-2">{target}</h1>
-                </div> : null}
+                </div>
+                <div className='flex flex-col'>
+                <h2 className="text-5xl font-bold text-teal-600 absolute top-0 left-0 border border-teal-800 px-2 py-2 rounded-full">{seconds}</h2>
+                
+                </div>
+                </div>
+                
+                : null}
                 
                 {/* grid of boxes */}
                 <div className=''>
@@ -321,6 +367,7 @@ const validCheck = () => {
                 {win ? (
                     <div className="flex flex-col gap-4 justify-center items-center">
                         <h1 className="text-4xl font-bold text-teal-600 animate-pulse">YOU WIN</h1>
+                        <h1>Score: {score}</h1>
                         <button onClick={handlePlayAgain} className="h-full bg-teal-600 text-white w-fit mx-auto font-bold py-2 px-4 rounded text-md hover:bg-teal-700">Play Again</button>
                     </div> 
                 ): (                
@@ -339,8 +386,10 @@ const validCheck = () => {
 
 
         ) : (
-            <div className='w-2/3 h-fit p-10 bg-teal-100 rounded opacity-80 border border-teal-400 text-center grid col-span-1 content-evenly'>
+            <div className='w-screen h-screen'>
+              <div className="p-10 bg-teal-100 rounded opacity-80 border border-teal-400 text-center flex  align-middle">
         <h1>daily limit reached</h1>
+        </div>
         <Link href="/home"><button className="bg-teal-600 text-white w-1/3 mx-auto font-bold py-2 px-4 rounded hover:bg-teal-700">Back</button></Link>
         </div>
         )  }
