@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { trpc } from "../../_trpc/client";
 
+
 export default function App() {
     const questions = [
         {
@@ -115,7 +116,7 @@ export default function App() {
     const { mutate: aiQuizScore } = trpc.aiQuizScore.useMutation()
     const { mutate: aiQuizUsage } = trpc.aiQuizUsage.useMutation()
 
-    const quizUsage = aiQuizData?.data.usage
+    const quizUsage = aiQuizData?.data?.usage
 
 
     useEffect(() => {
@@ -235,10 +236,19 @@ export default function App() {
 	return (
 		<div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app rounded-xl'>
 			
+
+            {limitGameplay ? (
+                <div className="mx-auto text-center">
+                <div className='w-72 h-72 p-4 font-sm'>You have reached the daily limit of attempts for today. Please come back tomorrow to play agin. Or play another game.</div>
+                </div>
+            ):<>
+
+
+
 			{showScore ? (
-				<div className='w-72 h-72 p-4 score-section'>You scored {currentScore} out of {questions.length}
+				<div className='mx-auto text-center w-72 h-72 p-4 score-section'><p className='mt-4 mb-8'>Congratulations!</p> You scored {currentScore} out of {questions.length}
                 
-                <button onClick={() => handleReset()}>
+                <button className="mx-auto mt-20 bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2" onClick={() => handleReset()}>
                     Reset
                 </button>
                 </div>
@@ -289,6 +299,8 @@ export default function App() {
             ) : null }
 				</>
 			)}
+
+            </>}
 		</div>
 	);
     
