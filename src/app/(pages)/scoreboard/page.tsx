@@ -73,6 +73,17 @@ const page = () => {
     numberGameScores.sort((a, b) => a[0] - b[0]);
     aiQuizScores.sort((a, b) => b[0] - a[0]);
 
+    // Calculate average rank for each user
+let usersWithRank = userScores.map((userScore) => {
+    const numberGameRank = numberGameScores.findIndex((score) => score.username === userScore.username) + 1;
+    const aiQuizRank = aiQuizScores.findIndex((score) => score.username === userScore.username) + 1;
+    const averageRank = (numberGameRank + aiQuizRank) / 2;
+    return { ...userScore, averageRank };
+});
+
+// Sort users based on average rank
+usersWithRank.sort((a, b) => a.averageRank - b.averageRank);
+    
 
 
 
@@ -86,8 +97,18 @@ const page = () => {
     // }
 
   return (
-    <div className='flex flex-col gap-12'>
-        <div><h1>Number Game</h1>
+    <div className='grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 m-12'>
+        <div className="h-fit rounded-lg bg-gray-200 text-center flex flex-col">
+            <h1 className='text-3xl'>Leaderboard</h1>
+            {usersWithRank.map((user, index) => (
+                <div key={index} className='flex flex-row gap-12 text-center'>
+                    <p>{index + 1}</p>
+                    <p>{user.username}</p>
+                    {/* <p>{user.averageRank}</p> */}
+                </div>
+            ))}
+        </div>
+        <div className="h-fit rounded-lg bg-gray-200"><h1>Number Game</h1>
         {numberGameScores.map((score, index) => {
             return (
                 <div key={index} className='flex flex-row gap-12'>
@@ -98,7 +119,7 @@ const page = () => {
             )
         })}
         </div>
-        <div><h1>Quiz</h1>
+        <div className="h-fit rounded-lg bg-gray-200"><h1>Quiz</h1>
         {aiQuizScores.map((score, index) => {
             return (
                 <div key={index} className='flex flex-row gap-12'>
@@ -109,6 +130,7 @@ const page = () => {
             )
         })}
         </div>
+        
 
     </div>
   )
