@@ -10,8 +10,8 @@ export interface User {
     image: String,
     bio: String,
     prompts: [
-      question: String,
-      answer: String,
+      {question: String,
+      answer: String}
     ],
     game: [
       {usage: Number, score: Number, name: String}
@@ -31,8 +31,8 @@ export interface User {
     image: String,
     bio: String,
     prompts: [
-      question: String,
-    answer: String,
+      {question: String,
+    answer: String}
     ],
     game: [
       {usage: Number, score: Number, name: String}

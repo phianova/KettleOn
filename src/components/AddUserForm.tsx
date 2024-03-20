@@ -10,17 +10,7 @@ interface AddUserProps {
 }
 const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
   const router = useRouter();
-  const { mutate: addUser } = trpc.addUser.useMutation(
-    {
-      onSuccess: () => {
-        router.refresh()
-        console.log("success")
-      },
-      onError: () => {
-        console.log("error")
-      }
-    }
-  )
+  const { mutate: addUser } = trpc.addUser.useMutation()
 
 
   const addUserCall = async (e: any, props: any) => {

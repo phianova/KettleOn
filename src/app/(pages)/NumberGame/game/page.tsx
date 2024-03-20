@@ -62,16 +62,7 @@ useEffect(() => {
 
 
 
-const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation(
-    {
-      onSuccess: () => {
-        console.log("success")
-      },
-      onError: () => {
-        console.log("error")
-      }
-    }
-  )
+const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation()
 
   useEffect(() => {
     if (currentUsage !== undefined) { // Ensure currentUsage is defined before proceeding

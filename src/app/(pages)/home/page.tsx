@@ -140,9 +140,7 @@ export default function Home() {
   }
 
   const [drawerOpen, setDrawerOpen] = useState(false)
-  console.log("where's my question?")
   const { data: questionData } = trpc.askQuestion.useQuery()
-  console.log("questionData", questionData)
   const question = questionData?.data.askQuestion;
   const asked = questionData?.data.alreadyAsked;
 
@@ -154,16 +152,7 @@ export default function Home() {
     }
   }, [asked])
 
-  const { mutate: submitAnswer } = trpc.submitAnswer.useMutation(
-    {
-      onSuccess: () => {
-        console.log("success")
-      },
-      onError: () => {
-        console.log("error")
-      }
-    }
-  )
+  const { mutate: submitAnswer } = trpc.submitAnswer.useMutation()
 
   const submitAnswerCall = (e: any) => {
     e.preventDefault();

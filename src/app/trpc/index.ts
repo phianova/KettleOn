@@ -422,6 +422,19 @@ export const appRouter = router({
             console.log(err)
             return { status: 500, success: false };
         }
+    }),
+    getLastFiveQuestions: privateProcedure.query(async ({ ctx }) => {
+        try {
+            const { userEmail } = ctx;
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+            const questions = await QuestionSchema.find().sort({ asked: -1 }).limit(5);
+            return { questions: questions, status: 200, success: true };
+        } catch (err) {
+            console.log(err)
+            return { questions: [],status: 500, success: false };
+        }
     })
 
 });

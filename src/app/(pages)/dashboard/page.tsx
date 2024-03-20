@@ -34,41 +34,11 @@ const page = () => {
 
     const { data: userData } = trpc.getUsers.useQuery();
     const { data: currentUserData } = trpc.getCurrentUserData.useQuery();
-    const { mutate: updateTeam } = trpc.updateTeam.useMutation(
-        {
-            onSuccess: () => {
-                router.refresh()
-                console.log("success")
-            },
-            onError: () => {
-                console.log("error")
-            }
-        }
-    )
+    const { mutate: updateTeam } = trpc.updateTeam.useMutation()
 
-    const { mutate: updateUser } = trpc.updateUser.useMutation(
-        {
-            onSuccess: () => {
-                router.refresh()
-                console.log("success")
-            },
-            onError: () => {
-                console.log("error")
-            }
-        }
-    )
+    const { mutate: updateUser } = trpc.updateUser.useMutation()
 
-    const { mutate: updateImage } = trpc.updateImage.useMutation(
-        {
-            onSuccess: () => {
-                router.refresh()
-                console.log("success")
-            },
-            onError: () => {
-                console.log("error")
-            }
-        }
-    )
+    const { mutate: updateImage } = trpc.updateImage.useMutation()
 
     const users = userData?.data || [];
     const currentUserProfile = currentUserData?.data;

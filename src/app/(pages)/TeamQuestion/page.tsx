@@ -60,16 +60,7 @@ const page = () => {
   }}, [asked])
 
   //submitAnswer function
-  const { mutate: submitAnswer } = trpc.submitAnswer.useMutation(
-    {
-        onSuccess: () => {
-            console.log("success")
-        },
-        onError: () => {
-            console.log("error")
-        }
-    }
-)
+  const { mutate: submitAnswer } = trpc.submitAnswer.useMutation()
 
   const submitAnswerCall = (e: any) => {
     e.preventDefault();
