@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { trpc } from "../../../_trpc/client";
+import { trpc } from "../../_trpc/client";
 
 export default function App() {
     const questions = [
@@ -105,21 +105,34 @@ export default function App() {
     const [currentScore, setCurrentScore] = useState(0);
     const [questionState, setQuestionState] = useState(questions);
     const [useAi, setUseAi] = useState(false);
+    const [limitGameplay, setLimitGameplay] = useState(false);
 
     const apiKey=process.env.NEXT_PUBLIC_CHATGPT_API_KEY;
    
     const url = 'https://api.openai.com/v1/chat/completions';
 
-    const { mutate: aiQuiz } = trpc.aiQuiz.useMutation({
-        
-    })
+    const { data: aiQuizData } = trpc.aiQuizData.useQuery()
+    const { mutate: aiQuizScore } = trpc.aiQuizScore.useMutation()
+    const { mutate: aiQuizUsage } = trpc.aiQuizUsage.useMutation()
 
-    
-    
+    const quizUsage = aiQuizData?.data.usage
+
+
+    useEffect(() => {
+        
+        if(quizUsage >= 3){
+            console.log(quizUsage)
+         setLimitGameplay(true)   
+            
+        }
+       
+    }, [])
+
     useEffect(() => {
         if(currentScore > 0){
-
-        aiQuiz(currentScore)}
+        const scoreObj = {score: currentScore}
+        aiQuizScore(scoreObj)
+    }
     }, [showScore])
 
     const callChatGPT = async () => {
@@ -189,6 +202,24 @@ export default function App() {
         event.preventDefault();
       }
 
+    const handleReset = () => {
+        console.log("reset reached")
+        // setCurrentQuestion(0);
+        // setCurrentScore(0);
+        // setShowScore(false);
+        window.location.reload();
+        
+        if(quizUsage >= 3){
+            console.log("more than or equal to 3", quizUsage)
+         setLimitGameplay(true)   
+            
+        }
+        console.log(quizUsage)
+        const newUsage = quizUsage + 1;
+        const usageObj = {usage: newUsage}
+            aiQuizUsage(usageObj)
+
+    }
 
     
     const questionsString = JSON.stringify(questions);
@@ -206,12 +237,15 @@ export default function App() {
 			
 			{showScore ? (
 				<div className='w-72 h-72 p-4 score-section'>You scored {currentScore} out of {questions.length}
-                <button>Submit Your Score</button>
                 
+                <button onClick={() => handleReset()}>
+                    Reset
+                </button>
                 </div>
                 // 
 			) : (
 				<>
+                
 					<div className=' question-section'>
 						<div className='ml-4 font-bold mb-6 pt-4 question-count'>
 							<span>Break Room Question {currentQuestion + 1}</span>/{questionState.length}
