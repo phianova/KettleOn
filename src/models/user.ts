@@ -54,7 +54,11 @@ const UserSchema = new mongoose.Schema<User>({
       {question: {type: String}, answer: {type: String}}, //will be empty on initialisation
     ],
     game: [
-      {usage: Number, score: Number, name: String}
+      {
+        usage: { type: Number, default: 0 },
+        score: { type: Number, default: 0 },
+        name: { type: String, required: true }
+      }
       ]
 });
 
