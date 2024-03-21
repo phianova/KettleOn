@@ -74,16 +74,8 @@ useEffect(() => {
   fetchData();
 }, []);
 
-const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation(
-  {
-    onSuccess: () => {
-      console.log("success")
-    },
-    onError: () => {
-      console.log("error")
-    }
-  }
-)
+const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation()
+
 const { mutate: numberGameScore } = trpc.numberGameScore.useMutation(
   
   )
