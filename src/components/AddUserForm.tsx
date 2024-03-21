@@ -28,7 +28,18 @@ const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
       image: "",
       bio: "",
       prompts: [],
-      game: []
+      game: [
+        {
+            name: "NumberGame",
+            score: 0,
+            usage: 0
+        },
+        {
+            name: "aiQuiz",
+            score: 0,
+            usage: 0
+        },
+    ]
     };
     addUser(inputs);
     window.location.reload();
