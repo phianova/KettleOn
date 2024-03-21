@@ -254,18 +254,19 @@ const validCheck = () => {
     return (
 <>
 {!completed ? (
-        <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-br from-teal-400 via-sky-200 to-emerald-300">
+  <div className="w-screen h-screen flex justify-center items-center">
+        <div className="h-10/12 w-10/12 flex justify-center items-center bg-gradient-to-br from-[#08605F] via- to-[#74AA8D] rounded-xl">
             <h1 className="absolute top-6 text-4xl font-bold text-teal-700">NUMBERS GAME</h1>
             
             {/* <button  className="absolute text-4xl font-bold text-teal-600 top-6 right-6 border-2 border-teal-600 px-3 rounded-full">I</button> */}
             <h1 className="absolute text-4xl font-bold text-teal-600 top-6 right-6 border-2 border-teal-600 px-3 rounded-full">{currentUsage}/3</h1>
-            <div className='w-2/3 h-fit p-10 bg-teal-100 rounded opacity-80 border border-teal-400 text-center grid col-span-1 content-evenly'>
+            <div className='w-2/3 h-fit p-10 bg-[#FAF2F0] rounded opacity-80 shadow-xl text-center grid col-span-1 content-evenly'>
                 
                 {/* target number */}
                 {numArr.length >= 6 ? 
                 <div className='relative'>
-                <div className='h-1/3 w-fit bg-yellow-500 opacity-80 mx-auto'>
-                <h1 className=" text-4xl font-bold text-teal-700 pb-2">TARGET</h1>
+                <div className='h-1/3 w-fit bg-[#E29D65] opacity-80 mx-auto'>
+                <h1 className=" text-4xl font-bold text-[#292929] pb-2">TARGET</h1>
                     <h1 className="text-6xl font-bold text-teal-600 border border-teal-800 px-10 py-2">{target}</h1>
                 </div>
                 <div className='flex flex-col'>
@@ -278,11 +279,11 @@ const validCheck = () => {
                 
                 {/* grid of boxes */}
                 <div className=''>
-                <h2 className='mt-6 mb-2 text-2xl font-bold'>Select your numbers:</h2>
+                <h2 className='mt-6 mb-2 text-2xl font-bold text-[#292929]'>Select your numbers:</h2>
                 <div className='w-full grid grid-rows-2 place-content-evenly'>
                     <div className=' grid grid-cols-2 gap-10 content-evenly'>
-                        <section onClick={generateHighNumber} className="bg-teal-600 text-xl text-white font-bold py-2 px-4 rounded hover:bg-teal-700"><p>Higher</p></section>
-                        <section onClick={generateLowNumber} className="bg-teal-600 text-xl text-white font-bold py-2 px-4 rounded hover:bg-teal-700"><p>Lower</p></section>
+                        <section onClick={generateHighNumber} className="bg-[#74AA8D] text-xl text-white font-bold py-2 px-4 rounded hover:bg-[#587A68]"><p>Higher</p></section>
+                        <section onClick={generateLowNumber} className=" text-xl text-white font-bold py-2 px-4 rounded bg-[#74AA8D] hover:bg-[#587A68]"><p>Lower</p></section>
                     </div>
                     <div className='grid grid-cols-6 mt-4 mb-2 gap-2 md:gap-4'>
                     {numArr.slice(0, 6).map((num, index) => (
@@ -314,7 +315,7 @@ const validCheck = () => {
               <button
                 key={number}
                 onClick={() => handleKeyPress(number)}
-                className="bg-[#6fe7b9] text-teal-800 text-xl p-2 rounded"
+                className="bg-[#08605F] text-[#FAF2F0] text-bold text-xl p-2 rounded active:scale-125 transition duration-300 ease-in-out"
               >
                 {number}
               </button>
@@ -341,7 +342,7 @@ const validCheck = () => {
               <button
                 key={symbol}
                 onClick={() => handleMathSymbolClick(symbol)}
-                className="bg-[#6fe7b9] text-teal-800 text-xl p-2 rounded"
+                className="bg-[#08605F] text-[#FAF2F0] text-xl p-2 rounded"
               >
                 {symbol}
               </button>
@@ -359,7 +360,7 @@ const validCheck = () => {
     </div>
                 
 </div> ) : (
-    <div className="flex flex-col p-4 mb-4 w-fit mx-auto justify-center items-center bg-yellow-500 rounded">
+    <div className="flex flex-col p-4 mb-4 w-fit mx-auto justify-center items-center bg-[#E29D65] rounded">
     <h2 className='text-3xl font-bold animate-pulse pb-2'>Select 6 Numbers To Start The Game</h2>
     <h3 className='text-xl'>Higher (25 - 99) or Lower (1 - 9)</h3>
     </div>
@@ -372,7 +373,7 @@ const validCheck = () => {
                     </div> 
                 ): (                
                     <div className="flex flex-col gap-4 justify-center items-center">
-                    <button onClick={handlePlayAgain} className="h-full bg-teal-600 text-white w-fit mx-auto font-bold py-2 px-4 rounded text-md hover:bg-teal-700">Play Again</button>
+                    <button onClick={handlePlayAgain} className="h-full text-white w-fit mx-auto font-bold py-2 px-4 rounded text-md bg-[#74AA8D] hover:bg-[#587A68]">Play Again</button>
                     </div> 
                 )}
 
@@ -382,6 +383,8 @@ const validCheck = () => {
 
 
             </div>
+        </div>
+
         </div>
 
 

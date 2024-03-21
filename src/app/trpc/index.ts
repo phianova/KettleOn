@@ -69,7 +69,14 @@ export const appRouter = router({
             image: z.string(), //will be empty on initialisation
             bio: z.string(), //will be empty on initialisation
             prompt: z.string(), //will be empty on initialisation
-            answer: z.string() //will be empty on initialisation
+            answer: z.string(), //will be empty on initialisation
+            game: z.array(
+                z.object({
+                    usage: z.number(),
+                    score: z.number(),
+                    name: z.string(),
+                })
+            )
         })
     ).mutation<Promise<any>>(async ({ ctx, input }) => {
         const url = 'https://kettleon.kinde.com/oauth2/token';

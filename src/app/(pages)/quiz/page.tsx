@@ -115,7 +115,7 @@ export default function App() {
     const { mutate: aiQuizScore } = trpc.aiQuizScore.useMutation()
     const { mutate: aiQuizUsage } = trpc.aiQuizUsage.useMutation()
 
-    const quizUsage = aiQuizData?.data.usage
+    const quizUsage = aiQuizData?.data?.usage
 
 
     useEffect(() => {
