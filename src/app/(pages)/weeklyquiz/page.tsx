@@ -24,7 +24,35 @@ const page = () => {
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [showScore, setShowScore] = useState(false);
     const [currentScore, setCurrentScore] = useState(0);
+    const [limitReached, setLimitReached] = useState(false)
 
+
+    const { data: weeklyQuizData } = trpc.weeklyQuizData.useQuery()
+    const { mutate: weeklyQuizScore } = trpc.weeklyQuizScore.useMutation()
+    const { mutate: weeklyQuizUsage } = trpc.weeklyQuizUsage.useMutation()
+    const currentUsage = weeklyQuizData?.data?.usage
+    useEffect(() => {
+
+
+        if (currentUsage >= 3) {
+            setLimitReached(true)
+
+        }
+    }, [])
+
+    useEffect(() => {
+        if (currentUsage !== undefined) { // Ensure currentUsage is defined before proceeding
+
+            const newUsage = currentUsage + 1;
+            const usageObj = { usage: newUsage }
+            weeklyQuizUsage(usageObj)
+            weeklyQuizScore({ score: currentScore })
+
+
+        } else {
+            console.log("currentUsage is undefined");
+        }
+    }, [showScore])
 
     const { isAuthenticated, isLoading, user, permissions } = useKindeBrowserClient();
     const kindeUserData = user
@@ -98,12 +126,13 @@ const page = () => {
                 questionScore++;
                 //toast(correct)
             }
-        } 
+        }
         setCurrentScore(currentScore + questionScore);
         if (currentQuestion < quizArray.length - 1) {
             setCurrentQuestion(currentQuestion + 1)
         } else {
             setShowScore(true);
+            
             //push score to database
         }
         console.log(currentScore)
