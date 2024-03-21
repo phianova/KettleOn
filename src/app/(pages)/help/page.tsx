@@ -8,7 +8,7 @@ import {
   } from "@/components/shadcn/accordion"
 
 const page = () => {
-  return (
+  return (<>
     <div className="mt-10 p-6 mx-auto rounded-xl bg-white w-1/2">
         <h1 className="font-bold text-xl">Help</h1>
 
@@ -58,7 +58,41 @@ const page = () => {
   </AccordionItem>
 </Accordion>
 
+
+
+
     </div>
+
+
+    <div className="mt-10 p-6 mx-auto rounded-xl bg-white w-1/2">
+        <h1 className="font-bold text-xl">Meet The Team</h1>
+      
+        <Accordion type="single" collapsible>
+        <AccordionItem value="item-1">
+    <AccordionTrigger className="font-semibold">Sophia</AccordionTrigger>
+    <AccordionContent>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. In autem quas corporis ducimus ipsa sint laborum amet blanditiis quibusdam maxime nemo nihil officia fugit dolores aliquid, cum labore nisi laudantium.
+    </AccordionContent>
+  </AccordionItem>
+
+  <AccordionItem value="item-2">
+    <AccordionTrigger className="font-semibold">Phillip</AccordionTrigger>
+    <AccordionContent>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. In autem quas corporis ducimus ipsa sint laborum amet blanditiis quibusdam maxime nemo nihil officia fugit dolores aliquid, cum labore nisi laudantium.
+    </AccordionContent>
+  </AccordionItem>
+
+  <AccordionItem value="item-3">
+    <AccordionTrigger className="font-semibold">Andy</AccordionTrigger>
+    <AccordionContent>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. In autem quas corporis ducimus ipsa sint laborum amet blanditiis quibusdam maxime nemo nihil officia fugit dolores aliquid, cum labore nisi laudantium.
+    </AccordionContent>
+  </AccordionItem>
+        </Accordion>  
+
+  
+</div>
+    </>
   )
 }
 
