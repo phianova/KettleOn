@@ -28,13 +28,13 @@ const page = () => {
     let allUsers = getUsers?.data;
     console.log(allUsers)
     // type of userscore
-    let userScores: UserScore[] = [];
+    let userScores: any[] = [];
 
 
     // arr of just score (and index)
-    let numberGameScores: number[][] = []
-    let aiQuizScores: (string | number)[][] = []
-    let weeklyQuizScores: (string | number)[][] = []
+    let numberGameScores: any[][] = []
+    let aiQuizScores: any[][] = []
+    let weeklyQuizScores: any[][] = []
 
 
     if (allUsers) {
@@ -42,10 +42,10 @@ const page = () => {
             if (user.game) {
                 user.game.forEach((game) => {
 
-                    const gameData = {
-                        name: game.name,
-                        score: game.score,
-                        username: user.username
+                    const gameData: { name: string, score: number, username: string } = {
+                        name: game.name.toString(),
+                        score: Number(game.score),
+                        username: user.username.toString()
                     }
                     userScores.push(gameData)
                     console.log(typeof gameData.name)
@@ -62,7 +62,7 @@ const page = () => {
                 if (game?.score <= 0) {
                     return
                 }
-                let numberGameArr = [game?.score, index, game?.username];
+                let numberGameArr: any[] = [game?.score, index, game?.username];
                 numberGameScores.push(numberGameArr);
                 console.log(game)
             } else if (game?.name === "aiQuiz") {
@@ -85,9 +85,9 @@ const page = () => {
 
     // Calculate average rank for each user
     let usersWithRank = userScores.map((userScore) => {
-        const numberGameRank = numberGameScores.findIndex((score) => score.username === userScore.username) + 1;
-        const aiQuizRank = aiQuizScores.findIndex((score) => score.username === userScore.username) + 1;
-        const weeklyQuizRank = weeklyQuizScores.findIndex((score) => score.username === userScore.username) + 1;
+        const numberGameRank = numberGameScores.findIndex((score) => score[2] === userScore.username) + 1;
+        const aiQuizRank = aiQuizScores.findIndex((score) => score[2] === userScore.username) + 1;
+        const weeklyQuizRank = weeklyQuizScores.findIndex((score) => score[2] === userScore.username) + 1;
         const averageRank = (numberGameRank + aiQuizRank) / 2;
         return { ...userScore, averageRank };
     });
@@ -117,7 +117,7 @@ const page = () => {
                 {uniqueUsernamesArray.map((user, index) => (
                     <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
                         <p className='text-3xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>{index + 1}</p>
-                        <p className="text-3xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-2">{user.toUpperCase()}</p>
+                        <p className="text-3xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-2">{user.toString().toUpperCase()}</p>
                         {/* <p>{user.averageRank}</p> */}
                     </div>
                 ))}
