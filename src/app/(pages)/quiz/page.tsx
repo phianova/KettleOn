@@ -107,6 +107,7 @@ export default function App() {
     const [questionState, setQuestionState] = useState(questions);
     const [useAi, setUseAi] = useState(false);
     const [limitGameplay, setLimitGameplay] = useState(false);
+    const [isLoading, setIsLoading] = useState(true)
 
     const apiKey=process.env.NEXT_PUBLIC_CHATGPT_API_KEY;
    
@@ -117,17 +118,35 @@ export default function App() {
     const { mutate: aiQuizUsage } = trpc.aiQuizUsage.useMutation()
 
     const quizUsage = aiQuizData?.data?.usage
+    console.log(quizUsage)
 
+
+//     useEffect(() => {
+//         if(currentUsage !== undefined) {
+//           setIsLoading(false)
+//         }
+        
+        
+//         if (currentUsage >= 3) {
+//           setCompleted(true);
+//         } else {
+//           setCompleted(false);
+//         }   
+    
+//   }, [currentUsage]);
 
     useEffect(() => {
-        
+        if(quizUsage !== undefined) {
+            setIsLoading(false)
+        }
+     console.log(quizUsage)
         if(quizUsage >= 3){
             console.log(quizUsage)
          setLimitGameplay(true)   
             
         }
        
-    }, [])
+    }, [quizUsage])
 
     useEffect(() => {
         if(currentScore > 0){
@@ -234,6 +253,8 @@ export default function App() {
     
 
 	return (
+        <>
+    {!isLoading ? (    
 		<div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app rounded-xl'>
 			
 
@@ -302,6 +323,8 @@ export default function App() {
 
             </>}
 		</div>
+        ) : (<h1>loading</h1>)}
+        </>
 	);
     
 }
