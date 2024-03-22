@@ -1,6 +1,7 @@
 "use client"
 // import Image from "next/image";
 // import { serverClient } from "../trpc/server-client";
+import Navbar from '@/components/navbar';
 import React from 'react';
 import { InfiniteMovingCards } from "../../../components/ui/infinite-moving-cards";
 import { AnimatedTooltip } from "../../../components/ui/animated-tooltip";
@@ -171,18 +172,24 @@ export default function Home() {
   }
 
   return (
-    <><main className="bg-[#FAF2F0] py-5 my-5">
+    <div className="h-full w-full">
+    
+    
+    <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-10">
+    
+    <Navbar />
       {/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
-      <h1 className="ml-10 mt-10 text-4xl font-semibold">{currentUserTeamName}</h1>
-      <div className="ml-20">
+      <h1 className="teamTitle text-center mx-auto mb-10 text-6xl ">{currentUserTeamName}</h1>
+      
+      <div className="flex flex-col items-center">
         <InfiniteMovingCards items={content} className={undefined} />
-        <div className="flex flex-row items-center justify-center mb-10 w-full">
+        <div className="flex flex-row items-center justify-center my-10 w-full">
           <AnimatedTooltip icons={users} />
         </div>
         {/* <AnimateadTooltip icons={users} /> */}
         {/* <p>{connected}</p> */}
       </div>
-      <LogoutLink>Log out</LogoutLink>
+      
     </main>
       <Drawer open={!loading && drawerOpen}>
         {/* <DrawerTrigger>
@@ -213,6 +220,6 @@ export default function Home() {
           </div>
         </DrawerContent>
       </Drawer>
-    </>
+    </div>
   );
 }
