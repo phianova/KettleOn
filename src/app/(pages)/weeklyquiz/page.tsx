@@ -25,20 +25,14 @@ const page = () => {
     const [showScore, setShowScore] = useState(false);
     const [currentScore, setCurrentScore] = useState(0);
     const [limitReached, setLimitReached] = useState(false)
+    // const [currentUsage, setCurrentUsage] = useState(0);
+    const [quizStarted, setQuizStarted] = useState(false);
 
 
     const { data: weeklyQuizData } = trpc.weeklyQuizData.useQuery()
     const { mutate: weeklyQuizScore } = trpc.weeklyQuizScore.useMutation()
     const { mutate: weeklyQuizUsage } = trpc.weeklyQuizUsage.useMutation()
     const currentUsage = weeklyQuizData?.data?.usage
-    useEffect(() => {
-
-
-        if (currentUsage >= 3) {
-            setLimitReached(true)
-
-        }
-    }, [])
 
     useEffect(() => {
         if (currentUsage !== undefined) { // Ensure currentUsage is defined before proceeding
@@ -48,7 +42,7 @@ const page = () => {
             weeklyQuizUsage(usageObj)
             weeklyQuizScore({ score: currentScore })
 
-
+            router.refresh()
         } else {
             console.log("currentUsage is undefined");
         }
@@ -108,6 +102,7 @@ const page = () => {
 
     useEffect(() => {
         setQuizArray(getQuizQuestions())
+        // setCurrentUsage(weeklyQuizData?.data?.usage);
         setLoading(false)
     }, [questions])
 
@@ -131,27 +126,35 @@ const page = () => {
         if (currentQuestion < quizArray.length - 1) {
             setCurrentQuestion(currentQuestion + 1)
         } else {
+            // setCurrentUsage(currentUsage + 1);
             setShowScore(true);
-            
+
             //push score to database
         }
         console.log(currentScore)
         e.target.reset();
     }
 
-
+    useEffect(() => {
+        if (currentUsage >= 3) {
+            setLimitReached(true)
+        }
+    }, [currentUsage])
 
     return (
         <div className="my-5 pb-10 mx-auto w-10/12 h-full bg-[#FAF2F0] text-[#292929] rounded-3xl flex flex-col items-center drop-shadow-lg">
-            <h1 className="mt-5 text-3xl font-bold p-5">Big Fat Quiz of the Week</h1>
-            <p className="mb-5 p-3 text-xl text-center">Match your teammates with their answers to this week's questions!</p>
-            {!loading && quizArray.length > 0 && !showScore &&
-                <div>
-                    <p className="p-3 font-bold">Question {currentQuestion + 1}: {quizArray[currentQuestion].question}</p>
+            <h1 className="mt-5 text-3xl md:text-5xl font-bold p-5">Big Fat Quiz of the Week</h1>
+            <p className="my-5 p-3 text-xl text-center">Match your teammates with their answers to this week's questions!</p>
+            {!quizStarted && <button className="bg-[#08605F] text-[#FAF2F0] text-3xl w-1/3 mx-auto mt-5 font-bold py-5 px-4 rounded-full hover:bg-[#74AA8D] hover:text-[#292929]" onClick={() => setQuizStarted(true)}>Start Quiz</button>}
+            {!loading && quizArray.length > 0 && !showScore && !limitReached && quizStarted &&
+                <div className="flex flex-col items-center">
+                    <p className="font-bold bg-[#08605F]/60 p-5 rounded-lg">Score: {currentScore}</p>
+                    <p className="p-3 font-bold text-3xl bg-[#E29D65]/40 rounded-full drop-shadow-md mt-5">Question {currentQuestion + 1}:</p>
+                    <p className="p-3 m-2 font-bold text-2xl italic">"{quizArray[currentQuestion].question}"</p>
                     <form onSubmit={handleAnswer} className="flex flex-col items-center">
                         {quizArray[currentQuestion].answers.map((answer: answer, index: number) => (
-                            <div key={index} className="mb-10">
-                                <p className="">Who do you think answered:</p>
+                            <div key={index} className="mb-10 flex flex-col items-center w-full">
+                                {/* <p className="">Who do you think answered:</p> */}
                                 <p className="my-3 italic bg-[#E29D65]/40 p-5 rounded-full text-center">"{answer.answer}"</p>
                                 {usernamesArray.map((username: any, usernameIndex: number) => (
                                     <div className="flex flex-row justify-start w-full py-2" key={usernameIndex}>
@@ -168,11 +171,27 @@ const page = () => {
                     </form>
                 </div>
             }
-            {showScore &&
-                <p>You scored {currentScore} points!</p>
+            {limitReached && quizStarted &&
+                <div className="flex flex-col items-center">
+                    <p className="font-bold bg-[#E29D65]/40 p-5 rounded-lg">Plays: {currentUsage}/3</p>
+                    <p className="bg-[#E29D65] p-5 rounded-lg mt-10">You have already played this week's quiz three times today.</p>
+                    <button onClick={() => router.push('/home')} className="font-bold text-xl text-center mx-auto hover:text-[#E29D65] p-5 rounded-lg">Back to homepage</button>
+                </div>}
+            {showScore && !limitReached && quizStarted &&
+                <div>
+                    <p>You scored {currentScore} points!</p>
+                    <p className="font-bold bg-[#E29D65]/40 p-5 rounded-lg">Plays: {currentUsage}/3</p>
+                    <button onClick={() => {
+                        setCurrentScore(0)
+                        setCurrentQuestion(0)
+                        setShowScore(false)
+                        setQuizStarted(false)
+                        window.location.reload();
+                    }}>Play again</button>
+                </div>
             }
-        </div>
+                </div>
     )
 }
 
-export default page
+            export default page
