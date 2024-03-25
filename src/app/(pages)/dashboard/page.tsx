@@ -6,6 +6,9 @@ import AddUserForm from '../../../components/AddUserForm';
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { trpc } from "../../_trpc/client";
 import { CldUploadWidget } from 'next-cloudinary';
+import { useToast } from "../../../components/shadcn/use-toast";
+import Spinner from '../../../components/Spinner';
+
 
 const page = () => {
 
@@ -17,10 +20,12 @@ const page = () => {
     let roleArray: string[] | undefined;
 
     const router = useRouter()
+    const { toast } = useToast();
     const [loading, setLoading] = useState(true)
     const [isManager, setIsManager] = useState(false)
     const [isEditMode, setEditMode] = useState(false)
     const [isManagerEditMode, setManagerEditMode] = useState(false)
+    const delay = (ms : number) => new Promise(res => setTimeout(res, ms));
 
     const { isAuthenticated, isLoading, user, permissions } = useKindeBrowserClient();
     const kindeUserData = user
@@ -33,12 +38,117 @@ const page = () => {
     role = roleArray ? roleArray[0] : null
 
     const { data: userData } = trpc.getUsers.useQuery();
+    if (userData?.success === false) {
+        toast({
+            title: "Error!",
+            description: "Could not obtain user data.",
+            variant: "destructive",
+        })
+    }
+
     const { data: currentUserData } = trpc.getCurrentUserData.useQuery();
-    const { mutate: updateTeam } = trpc.updateTeam.useMutation()
+    if (currentUserData?.success === false) {
+        toast({
+            title: "Error!",
+            description: "Could not obtain user data.",
+            variant: "destructive",
+        })
+    }
 
-    const { mutate: updateUser } = trpc.updateUser.useMutation()
+    const { mutate: updateTeam } = trpc.updateTeam.useMutation({
+        onSuccess: async (success) => {
+            if (success) {
+                toast({
+                    title: "Success!",
+                    description: "Team updated successfully.",
+                    duration: 2000
+                })
+                setLoading(true)
+                await delay(2000);
+                window.location.reload();
+                setLoading(false)
 
-    const { mutate: updateImage } = trpc.updateImage.useMutation()
+            }
+        },
+        onError: async (error) => {
+            if (error) {
+                toast({
+                    title: "Error!",
+                    description: "Could not update team.",
+                    variant: "destructive",
+                    duration: 2000
+                })
+                setLoading(true)
+                await delay(2000);
+                window.location.reload();
+                setLoading(false)
+
+            }
+        }
+    })
+
+
+    const { mutate: updateUser } = trpc.updateUser.useMutation({
+        onSuccess: async (success) => {
+            if (success) {
+                toast({
+                    title: "Success!",
+                    description: "User updated successfully.",
+                    duration: 2000
+                }
+                )
+                setLoading(true)
+                await delay(2000);
+                window.location.reload();
+                setLoading(false)
+            }
+        },
+        onError: async (error) => {
+            if (error) {
+                toast({
+                    title: "Error!",
+                    description: "Could not update user.",
+                    variant: "destructive",
+                    duration: 2000
+                })
+                setLoading(true)
+                await delay(2000);
+                window.location.reload();
+                setLoading(false)
+
+            }
+        }
+    })
+
+    const { mutate: updateImage } = trpc.updateImage.useMutation({
+        onSuccess: async (success) => {
+            if (success) {
+                toast({
+                    title: "Success!",
+                    description: "Profile picture updated successfully.",
+                    duration: 2000
+                })
+                setLoading(true)
+                await delay(2000);
+                window.location.reload();
+                setLoading(false)
+            }
+        },
+        onError: async (error) => {
+            if (error) {
+                toast({
+                    title: "Error!",
+                    description: "Could not update profile picture.",
+                    variant: "destructive",
+                    duration: 2000
+                })
+                setLoading(true)
+                await delay(2000);
+                window.location.reload();
+                setLoading(false)
+            }
+        }
+    })
 
     const users = userData?.data || [];
     const currentUserProfile = currentUserData?.data;
@@ -48,11 +158,14 @@ const page = () => {
     const currentUserBio = currentUserProfile?.bio.toString()
     const currentUserRole = currentUserProfile?.role.toString()
     const currentUserImage = currentUserProfile?.image.toString()
-    console.log(currentUserImage)
 
     useEffect(() => {
         if (isLoading === false && isAuthenticated === false) {
-            console.log("You do not have permission to access this page.")
+            toast({
+                title: "Error!",
+                description: "You are not authenticated. Please log in to access this page.",
+                variant: "destructive",
+        })
             setLoading(false)
             router.push('/');
         }
@@ -65,75 +178,76 @@ const page = () => {
     }, [isLoading])
 
     const handleManagerSubmit = async (e: any) => {
+        e.preventDefault()
         const inputs = {
             teamname: (e.target.teamname.value !== undefined && e.target.teamname.value !== "" && e.target.teamname.value !== null) ? e.target.teamname.value : currentUserTeamName,
             company: (e.target.company.value !== undefined && e.target.company.value !== "" && e.target.company.value !== null) ? e.target.company.value : currentUserCompany
         }
         updateTeam(inputs)
         setManagerEditMode(false)
-        window.location.reload();
     }
 
     const handleSubmit = async (e: any) => {
+        e.preventDefault()
         const inputs = {
             role: (e.target.role.value !== undefined && e.target.role.value !== "" && e.target.role.value !== null) ? e.target.role.value : currentUserRole,
-            // image: e.target.image.value,
             bio: (e.target.bio.value !== undefined && e.target.role.value !== "") ? e.target.bio.value : currentUserBio
         }
         updateUser(inputs)
         setEditMode(false)
-        window.location.reload();
     }
 
-    if (loading) return <div>Loading...</div>
+    if (loading) return <Spinner></Spinner>
 
     return (
         <div className="grid grid-cols-6 text-[#292929]">
             <div className='col-span-6'>
-                <div className='flex mx-10 mt-6 w-full-screen mr-10 shadow-xl rounded-xl  h-1/12 bg-[#FAF2F0] text-[#292929]'>
+                <div className='flex mx-10 mt-6 w-auto shadow-xl rounded-xl  h-1/12 bg-[#FAF2F0] text-[#292929]'>
                     {!isEditMode &&
-                        <div className='my-auto p-3 flex flex-row w-full justify-between'>
-                            <div className="flex flex-col">
-                                <div className='text-xs font-semibold pr-2'>{displayName}</div>
-                                <div className='text-xs font-light pr-2'>{currentUser}</div>
-                                <div className='text-xs font-light pr-2 mt-3'>Role: {currentUserRole}</div>
-                                <div className='text-xs font-light pr-2'>Bio: {currentUserBio}</div>
+                        <div className='my-auto p-3 flex flex-col sm:flex-row w-full justify-between items-center'>
+                            <div className="flex flex-col mb-3">
+                                <div className='text-lg'>{displayName}</div>
+                                <div className='text-base lg:text-lg'>{currentUser}</div>
+                                <div className='text-lg font-light pr-2 mt-3 flex flex-row items-baseline'>Role: <p className="text-base lg:text-lg px-2">{currentUserRole}</p></div>
+                                <div className='text-lg font-light pr-2 flex flex-row items-baseline'>Bio: <p className="text-base lg:text-lg px-2">{currentUserBio}</p></div>
                             </div>
-                            <img className="my-auto rounded-full h-16 w-16" src={currentUserImage}>
+                            <img className="my-auto rounded-full h-16 w-16 lg:h-24 lg:w-24" src={currentUserImage}>
                             </img>
                             <span></span>
                             <span></span>
                             <span></span>
-                            <button onClick={() => setEditMode(true)} className="my-4 mx-2 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] font-semibold border border-[#292929] border-opacity-60 w-2/12 rounded-full text-sm justify-self-end">Edit</button>
+                            <button onClick={() => setEditMode(true)} className="my-4 mx-2 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] p-2 border border-[#292929] border-opacity-60 w-2/12 rounded-full text-lg lg:text-xl justify-self-end">Edit</button>
                         </div>}
                     {isEditMode &&
-                        <div className="flex flex-row w-full justify-between">
-                            <form className='my-auto p-3 flex flex-row w-full justify-between' onSubmit={(e) => handleSubmit(e)}>
+                        <div className="flex flex-col sm:flex-row w-full justify-between items-center">
+                            <form className='my-auto p-3 flex flex-col sm:flex-row w-full justify-between items-center' onSubmit={(e) => handleSubmit(e)}>
                                 <div className="flex flex-col">
-                                <div className='text-xs font-semibold pr-2'>{displayName}</div>
-                                <div className='text-xs font-light pr-2'>{currentUser}</div>
-                                <input name="role" className='text-xs font-light p-1 my-1 rounded-xl text-[#292929] placeholder-[#E29D65] placeholder-opacity-60' placeholder="Enter role"></input>
-                                <input name="bio" className='text-xs font-light p-1 rounded-xl text-[#292929] placeholder-[#E29D65] placeholder-opacity-60' placeholder="Enter bio"></input>
+                                    <div className='text-lg'>{displayName}</div>
+                                    <div className='text-base lg:text-lg'>{currentUser}</div>
+                                    <input name="role" className='text-lg font-light p-1 my-1 rounded-xl text-[#292929] placeholder-[#E29D65] placeholder-opacity-60' placeholder="Enter role"></input>
+                                    <input name="bio" className='text-lg font-light p-1 rounded-xl text-[#292929] placeholder-[#E29D65] placeholder-opacity-60' placeholder="Enter bio"></input>
                                 </div>
-                                <span></span>
-                                <img className="my-auto rounded-full h-16 w-16 ml-10" src={currentUserImage}>
+                                <img className="my-5 sm:my-auto rounded-full h-16 w-16 lg:h-24 lg:w-24 sm:ml-10" src={currentUserImage}>
                                 </img>
                                 <span></span>
-                                <button type="submit" className="mx-10 my-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] font-semibold p-2 border border-[#292929] border-opacity-60 w-1/2 rounded-full text-sm">Save</button>
+                                <button type="submit" className="mx-10 my-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-3/12 rounded-full text-lg lg:text-xl">Save</button>
                             </form>
                             <CldUploadWidget uploadPreset="kettleon"
                                 onSuccess={async (results: any, error) => {
                                     if (error) {
                                         console.log(error);
+                                        toast({
+                                            title: "Error!",
+                                            description: "Could not update profile picture.",
+                                            variant: "destructive",
+                                        })
                                     }
                                     const url = results?.info?.url.toString()
-                                    console.log(url)
-                                    updateImage({image: url})
-                                    window.location.reload();
+                                    updateImage({ image: url })
                                 }}>
                                 {({ open }) => {
                                     return (
-                                        <button className="mx-10 my-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] font-semibold p-2 border border-[#292929] border-opacity-60 w-1/2 rounded-full text-sm" onClick={() => open()}>
+                                        <button className="mx-10 mb-6 sm:my-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-3/12 rounded-full text-lg lg:text-xl" onClick={() => open()}>
                                             Change profile picture
                                         </button>
                                     );
@@ -146,46 +260,44 @@ const page = () => {
 
                 {isManager &&
                     <div className='ml-10 mt-6 shadow-xl rounded-xl w-full-screen mr-10 px-4 py-10 bg-[#FAF2F0] text-[#292929]'>
-                        <div className='text-center font-semibold mb-6'>Add a new member to your team</div>
+                        <div className='text-center text-xl lg:text-2xl mb-6'>Add a new member to your team</div>
                         <AddUserForm currentUser={currentUserEmail} organisation={organisation} role={role}></AddUserForm>
                     </div>}
-                <div className='pt-2 flex flex-wrap justify-between mx-10'>
+                <div className='pt-2 flex flex-wrap justify-center sm:justify-between mx-10'>
                     {!isManagerEditMode &&
-                        <div className="bg-[#FAF2F0] h-52 w-72 shadow-xl rounded-xl mt-10 text-[#292929]">
-                            <div className="text-center pt-6 text-lg font-extrabold text-[#292929]">{currentUserTeamName}</div>
-                            <div className="mt-6 text-center ">{currentUserCompany}</div>
-                            {/* <div className="mt-6 text-center text-base font-light">Sheffield - UK</div> */}
-                            {isManager && <button onClick={() => setManagerEditMode(true)} className="mx-auto my-5 block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] font-semibold py-2 px-4 border border-[#292929] border-opacity-60 w-4/12 rounded-full text-sm">Edit</button>}
+                        <div className="bg-[#FAF2F0] h-auto w-72 shadow-xl rounded-xl my-10 text-[#292929] flex flex-col justify-center">
+                            <div className="text-center pt-6 text-2xl  text-[#292929]">{currentUserTeamName}</div>
+                            <div className="mt-6 text-center text-lg">{currentUserCompany}</div>
+                            {/* <div className="mt-6 text-center text-xl lg:text-2xl font-light">Sheffield - UK</div> */}
+                            {isManager && <button onClick={() => setManagerEditMode(true)} className="mx-auto my-5 block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  py-2 px-4 border border-[#292929] border-opacity-60 w-4/12 rounded-full text-lg lg:text-xl">Edit</button>}
                         </div>}
 
                     {isManagerEditMode &&
-                        <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-[#FAF2F0] h-52 w-72 shadow-xl rounded-xl mt-10 flex flex-col items-center text-[#292929]">
-                            <input name="teamname" className="text-center mt-6 text-lg font-extrabold rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserTeamName}></input>
+                        <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-[#FAF2F0] h-auto w-72 shadow-xl rounded-xl mt-10 flex flex-col justify-center items-center text-[#292929] py-6 ">
+                            <input name="teamname" className="text-center mt-6 text-xl lg:text-2xl rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserTeamName}></input>
                             <input name="company" className="mt-6 text-center rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserCompany}></input>
-                            {/* <div name="location" className="mt-6 text-center text-base font-light">Sheffield - UK</div> */}
-                            <button type="submit" className="mx-auto  my-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] font-semibold py-2 px-4 border border-[#292929] border-opacity-60 w-1/2 rounded-full">Save changes</button>
+                            <button type="submit" className="mx-auto my-5 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] px-4 border border-[#292929] border-opacity-60 w-1/2 rounded-full">Save changes</button>
                         </form>
                     }
 
-                    <div className="bg-[#FAF2F0] shadow-xl h-52 w-72 rounded-xl mt-10 pt-6 text-center text-[#292929]">Team Members
-                        <div className='pt-6 text-5xl font-bold'>{users?.length}</div>
+                    <div className="bg-[#FAF2F0] shadow-xl h-auto w-72 rounded-xl my-10 py-6 text-center text-[#292929] text-2xl flex flex-col justify-center">
+                        <p>Team Members</p>
+                        <div className='pt-6 text-5xl'>{users?.length}</div>
                     </div>
 
-                    <div className="bg-[#FAF2F0] shadow-xl h-52 w-72 rounded-xl mt-10 overflow-y-scroll text-[#292929]">
-                        <div className='text-center pt-6 mb-2'>Current Users</div>
-                        {userData && users?.length !== 0 && users.map((user: any) => (
-                            <div className={"flex flex-col items-center"}>
+                    <div className="bg-[#FAF2F0] shadow-xl h-auto w-72 rounded-xl my-10 overflow-y-scroll py-6 text-[#292929] flex flex-col justify-center">
+                        <div className='text-center pb-6 mb-2 text-2xl'>Current Users</div>
+                        {userData && users?.length !== 0 && users.map((user: any, index) => (
+                            <div key={index} className={"flex flex-col items-center"}>
                                 {/* <div className={"flex flex-row justify-around w-full"}> */}
-                                <p className="text-center text-sm font-semibold">{user.username}</p>
-                                <span></span>
-                                <p className="text-center text-sm">{user.email}</p>
+                                <p className="text-center text-lg lg:text-xl">{user.username}</p>
                                 {/* </div> */}
                             </div>
                         ))}
                     </div>
-                    <div className="bg-[#FAF2F0] h-52 shadow-xl w-72 rounded-xl my-10">
-                        <div className="text-center pt-6">Weeks High Scorer</div>
-                        <div className="mt-6 text-center text-lg font-extrabold text-[#292929]">sophia.w@gmail.com</div>
+                    <div className="bg-[#FAF2F0] h-auto shadow-xl w-72 rounded-xl my-10 py-6 flex flex-col justify-center">
+                        <div className="text-center pb-6 text-2xl">Weeks High Scorer</div>
+                        <div className="mt-6 text-center text-2xl  text-[#292929]">sophia.w@gmail.com</div>
 
                     </div>
 
