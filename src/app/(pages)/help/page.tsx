@@ -1,5 +1,10 @@
+"use client"
+
+
 import React from 'react'
 
+
+import YouTube from "react-youtube"; 
 import {
     Accordion,
     AccordionContent,
@@ -16,10 +21,21 @@ const page = () => {
   <AccordionItem value="item-1">
     <AccordionTrigger className="font-semibold">What Is Kettle On?</AccordionTrigger>
     <AccordionContent>
+    <div> 
+        
+        <YouTube videoId="BGz2rfQrp_U" 
+        opts={{height: '300', width: '400'}} /> 
+      </div> ;
       Lorem ipsum dolor sit amet consectetur adipisicing elit. In autem quas corporis ducimus ipsa sint laborum amet blanditiis quibusdam maxime nemo nihil officia fugit dolores aliquid, cum labore nisi laudantium.
     </AccordionContent>
   </AccordionItem>
 
+  <AccordionItem value="item-10">
+    <AccordionTrigger className="font-semibold">Do I need Cookies?</AccordionTrigger>
+    <AccordionContent>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. In autem quas corporis ducimus ipsa sint laborum amet blanditiis quibusdam maxime nemo nihil officia fugit dolores aliquid, cum labore nisi laudantium.
+    </AccordionContent>
+  </AccordionItem>
 
   <AccordionItem value="item-2">
     <AccordionTrigger className="font-semibold">Logging In</AccordionTrigger>
