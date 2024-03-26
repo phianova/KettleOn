@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { trpc } from "../../_trpc/client";
 import { useToast } from "../../../components/shadcn/use-toast";
+import Spinner from "../../../components/Spinner";
 
 
 export default function App() {
@@ -363,7 +364,7 @@ export default function App() {
 
         </>}
 		</div >
-        ) : (<h1>loading</h1>)}
+        ) : (<Spinner></Spinner>)}
         </>
 	);
     

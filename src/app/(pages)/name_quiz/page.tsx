@@ -2,13 +2,13 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
+import { trpc } from "../../_trpc/client";
+import Link from 'next/link';
+
 // import classNames from 'classnames';
 
 export default function App() {
     const names = ["andy","john", "jane", "bob", "sarah"];
-
-    
-
     
 
     const[question, setQuestion] = useState("Answer a question about a name in your team");
@@ -19,12 +19,21 @@ export default function App() {
     const [isAnswered, setIsAnswered] = useState(false);
     const [nameSentToChatGPT, setNameSentToChatGPT] = useState(0);
 
+    const [isloading, setIsLoading] = useState(true)
+    const [limitGameplay, setLimitGameplay] = useState()
+
     const randomNumber = Math.floor(Math.random() * teamNames.length);
 
     
 
     const iaAnswerCorrect = false;
 
+    const { data: nameQuizData} = trpc.nameQuizData.useQuery()
+    const { mutate: nameQuizScore } = trpc.nameQuizScore.useMutation() 
+    const  { mutate: nameQuizUsage } = trpc.nameQuizUsage.useMutation()
+ 
+    const quizUsage = nameQuizData?.data?.usage
+    
 
     // PICK RANDOM NAME FROM ARRAY
 
@@ -32,6 +41,19 @@ export default function App() {
     // setUserName(teamNames[randomNumber+1])
     
     //     }, []);
+
+    useEffect(() => {
+        if (quizUsage !== undefined) {
+            setIsLoading(false)
+            setNumberOfPlays(quizUsage)
+        }
+        console.log(quizUsage)
+        if (quizUsage >= 3) {
+            setLimitGameplay(true)
+
+        }
+
+    }, [quizUsage])
 
         
     // console.log("randomname is "+ teamNames[randomNumber+1])
@@ -92,8 +114,13 @@ export default function App() {
         if(index===nameSentToChatGPT){
 
             setIsCorrect("Yes, that is correct!")
-            setNumberOfPlays(numberOfPlays+1)
+            const usageObj = {usage: numberOfPlays + 1}
+            nameQuizUsage(usageObj)
+
             setScore(score+5)
+            const scoreObj = {score: score}
+            nameQuizScore(scoreObj)
+            
             // console.log("correct")
         
     } else{
@@ -127,7 +154,7 @@ export default function App() {
 				
                 <div>
                     <p className="text-xl text-center font-bold pt-10">{isCorrect}</p>
-                <button className="w-full mt-10 mb-6 bg-transparent border border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full" >Back To Home Page</button>
+                <Link href="/home"><button className="w-full mt-10 mb-6 bg-transparent border border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full" >Back To Home Page</button></Link>
                 </div>
                 
                 // 
