@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "restart-typescript-server": "tsc -w"
   },
   "dependencies": {
     "@kinde-oss/kinde-auth-nextjs": "^2.1.15",
@@ -35,6 +36,7 @@
     "next-cloudinary": "^6.3.0",
     "next-video": "^0.16.0",
     "next-videos": "^1.4.1",
+    "node-schedule": "^2.1.1",
     "postcss": "^8.4.35",
     "react": "^18",
     "react-dom": "^18",
@@ -50,6 +52,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/node-schedule": "^2.1.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",

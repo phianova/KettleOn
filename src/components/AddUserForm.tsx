@@ -78,7 +78,8 @@ const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
           score: 0,
           usage: 0
         }
-      ]
+     ],
+    rank: 0,
     };
     addUser(inputs);
   }

@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { trpc } from "../../_trpc/client";
 import Link from 'next/link';
 
@@ -20,6 +20,11 @@ type numberGameScores = {
 }
 const page = () => {
 
+
+    const { mutate: userRank } = trpc.userRank.useMutation();
+    const { data: getCurrentUserData } = trpc.getCurrentUserData.useQuery();
+    const currentUser: any = getCurrentUserData?.data;
+console.log(currentUser)
     // fetch score data from all users in the team - total score of each game for each user
 
     const { data: getUsers } = trpc.getUsers.useQuery()
@@ -66,9 +71,15 @@ const page = () => {
                 numberGameScores.push(numberGameArr);
                 console.log(game)
             } else if (game?.name === "aiQuiz") {
+                if (game?.score <= 0) {
+                    return
+                }
                 let aiQuizArr = [game?.score, index, game?.username];
                 aiQuizScores.push(aiQuizArr);
             } else if (game?.name === "weeklyQuiz") {
+                if (game?.score <= 0) {
+                    return
+                }
                 let weeklyQuizArr = [game?.score, index, game?.username];
                 weeklyQuizScores.push(weeklyQuizArr);
             }
@@ -78,18 +89,26 @@ const page = () => {
         });
     }
     // sort scores low to high
+    console.log(numberGameScores)
     numberGameScores.sort((a, b) => a[0] - b[0]);
+    console.log(numberGameScores)
     aiQuizScores.sort((a, b) => b[0] - a[0]);
+    console.log(aiQuizScores)
     // sort scores high to low
     weeklyQuizScores.sort((a, b) => b[0] - a[0]);
+    console.log(weeklyQuizScores)
 
     // Calculate average rank for each user
     let usersWithRank = userScores.map((userScore) => {
+        if (userScore.score > 0) {
         const numberGameRank = numberGameScores.findIndex((score) => score[2] === userScore.username) + 1;
         const aiQuizRank = aiQuizScores.findIndex((score) => score[2] === userScore.username) + 1;
         const weeklyQuizRank = weeklyQuizScores.findIndex((score) => score[2] === userScore.username) + 1;
         const averageRank = (numberGameRank + aiQuizRank) / 2;
         return { ...userScore, averageRank };
+        } else {
+            return { ...userScore, averageRank: 0 };
+        }
     });
 
     // Sort users based on average rank
@@ -97,13 +116,49 @@ const page = () => {
     console.log("Final ranking:", usersWithRank)
 
     // Remove duplicate usernames
+
     let uniqueUsernamesArray: (number | string)[] = [];
+
+    
+
     for (let i = 0; i < usersWithRank.length; i++) {
         const username = usersWithRank[i].username;
         if (!uniqueUsernamesArray.includes(username)) {
             uniqueUsernamesArray.push(username);
-        }
+        } 
+        
     }
+   
+
+    
+
+    
+    // userRank causing infinite loop - fix 
+
+    let rank: number = 0;
+    useEffect(() => {
+        if(currentUser){
+            rank = uniqueUsernamesArray.indexOf(currentUser?.username) + 1;
+            console.log(rank)
+       }
+   
+           if(rank > 0) {
+               const rankObj: {rank: number} = {
+                   rank: rank
+               }
+               console.log("rankObj", rankObj)
+               userRank(rankObj)
+               }
+          
+    }, [currentUser])
+
+    
+        
+        
+    
+        // console.log(rank)
+  
+
 
     console.log("Final Final Ranking:", uniqueUsernamesArray)
 
@@ -167,5 +222,6 @@ const page = () => {
         </div>
     )
 }
+
 
 export default page

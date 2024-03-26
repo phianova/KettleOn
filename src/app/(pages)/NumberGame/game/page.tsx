@@ -9,6 +9,7 @@ import Spinner from '@/components/Spinner';
 import { useToast } from '../../../../components/shadcn/use-toast';
 
 
+
 export default function NumberGame() {
   const { toast } = useToast();
   const [target, setTarget] = useState(0);

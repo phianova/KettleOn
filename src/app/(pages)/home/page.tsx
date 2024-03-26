@@ -21,6 +21,7 @@ import {
   DrawerTrigger,
 } from "../../../components/shadcn/drawer"
 import Spinner from "../../../components/Spinner"
+import schedule from 'node-schedule';
 import { useToast } from "../../../components/shadcn/use-toast";
 
 
@@ -105,6 +106,25 @@ export default function Home() {
       image: "/user5.jpg"
     },
   ])
+
+  const { mutate: teamUsageReset } = trpc.teamUsageReset.useMutation();
+  const { mutate: teamScoreReset } = trpc.teamScoreReset.useMutation();
+  
+  
+
+
+  useEffect(() => {
+    console.log("inside useeffect")
+     // node-scheduler that runs at midnight
+  schedule.scheduleJob('0 0 * * *', function() {
+    console.log('24 hrs passed');
+    teamUsageReset()
+});
+  schedule.scheduleJob('0 0 * * 1', function() {
+    console.log('1 week passed');
+    teamScoreReset();
+  })
+  }, [])
 
   useEffect(() => {
     if (userData) {
