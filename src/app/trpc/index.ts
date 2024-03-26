@@ -642,9 +642,9 @@ teamUsageReset: privateProcedure
                 users.forEach((user) => {
                     user.game.forEach((game) => {
                         game.usage = 0
-                    })
-                })
-                await users[i].save();
+                    });
+                });
+                (users[i] as any).save();
                 
             }
             return { status: 200, success: true };
@@ -666,9 +666,9 @@ teamScoreReset: privateProcedure
                 users.forEach((user) => {
                     user.game.forEach((game) => {
                         game.score = 0
-                    })
-                })
-                await users[i].save();
+                    });
+                });
+                (users[i] as any).save();
                 
             }
             return { status: 200, success: true };
