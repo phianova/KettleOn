@@ -21,7 +21,7 @@ import {
   DrawerTrigger,
 } from "../../../components/shadcn/drawer"
 import Spinner from "../../../components/Spinner"
-const schedule = require('node-schedule');
+import schedule from 'node-schedule';
 
 
 export default function Home() {
