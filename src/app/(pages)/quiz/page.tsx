@@ -8,6 +8,7 @@ import { useToast } from "../../../components/shadcn/use-toast";
 import Navbar from '../../../components/navbar';
 import Spinner from '../../../components/Spinner';
 
+
 export default function App() {
     const { toast } = useToast();
     const questions = [
@@ -350,26 +351,26 @@ export default function App() {
                                         </div>
                                     </div>
 
-                                    {useAi ? (
-                                        <div className=" p-4">
-                                            <p className=" text-sm mb-2">Use AI to create bespoke questions</p>
-                                            <form onSubmit={handleSubmitTopic}>
-                                                <label>
-                                                    {/* Topic: */}
-                                                    <input placeholder="Topic" className="bg-white border w-full mb-2 border-slate-300 hover:bg-slate-300 text-slate-500s font-base py-2 px-4 rounded-full" type="text" value={topic} onChange={handleChangeTopic} />
-                                                </label>
-                                                <input className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full" type="submit" value="Generate" />
-                                            </form>
-                                        </div>
-                                    ) : null}
-                                </>
-                            )}
+                                </div>
+                            
+                    {useAi ? (
+                        <div className=" p-4">
+                            <p className=" text-sm mb-2">Use AI to create bespoke questions</p>
+                            <form onSubmit={handleSubmitTopic}>
+                                <label>
+                                    {/* Topic: */}
+                                    <input placeholder="Topic" className="bg-white border w-full mb-2 border-slate-300 hover:bg-slate-300 text-slate-500s font-base py-2 px-4 rounded-full" type="text" value={topic} onChange={handleChangeTopic} />
+                                </label>
+                                <input className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full" type="submit" value="Generate" />
+                            </form>
+                        </div>
+                    ) : null}
+                </>
+            )}
 
-                        </>}
-                    </div >
-                </div>
-
-            ) : (<Spinner></Spinner>)}
+        </>}
+		</div >
+        ) : (<Spinner></Spinner>)}
         </>
     );
 
