@@ -3,6 +3,7 @@ import React, { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from "next/navigation";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { trpc } from "../../_trpc/client";
+import { useToast } from "../../../components/shadcn/use-toast";
 
 const page = () => {
 
@@ -19,6 +20,7 @@ const page = () => {
     let roleArray: string[] | undefined;
 
     const router = useRouter()
+    const {toast} = useToast()
     const [loading, setLoading] = useState(true)
     const [quizArray, setQuizArray] = useState<any>([{}])
     const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -30,8 +32,26 @@ const page = () => {
 
 
     const { data: weeklyQuizData } = trpc.weeklyQuizData.useQuery()
-    const { mutate: weeklyQuizScore } = trpc.weeklyQuizScore.useMutation()
-    const { mutate: weeklyQuizUsage } = trpc.weeklyQuizUsage.useMutation()
+    const { mutate: weeklyQuizScore } = trpc.weeklyQuizScore.useMutation({
+        onError: (error) => {
+            if (error) {
+                toast({
+                    title: "Error!",
+                    description: "Could not update score.",
+                })
+            }
+        }
+    })
+    const { mutate: weeklyQuizUsage } = trpc.weeklyQuizUsage.useMutation({
+        onError: (error) => {
+            if (error) {
+                toast({
+                    title: "Error!",
+                    description: "Could not update usage.",
+                })
+            }
+        }
+    })
     const currentUsage = weeklyQuizData?.data?.usage
 
     useEffect(() => {
@@ -44,6 +64,10 @@ const page = () => {
 
             router.refresh()
         } else {
+            toast({
+                title: "Error!",
+                description: "Could not update usage - data is undefined.",
+            })
             console.log("currentUsage is undefined");
         }
     }, [showScore])
@@ -63,7 +87,6 @@ const page = () => {
     const usernamesArray = users.map(user => user.username)
 
     const { data: questions } = trpc.getLastFiveQuestions.useQuery();
-    //questions as an array of strings
 
     const getQuizQuestions = () => {
         let questionsOnly = questions?.questions || []
@@ -72,9 +95,7 @@ const page = () => {
             let answersArray = []
             for (let j = 0; j < users.length; j++) {
                 let questionAnswered = users[j].prompts.find(prompt => prompt.question === questionsOnly[i].question)
-                if (questionAnswered?.answer === undefined) {
-                    // answersArray.push({ answer: `Not answered ${[j]}`, name: users[j].username.toString() })
-                } else {
+                if (questionAnswered?.answer !== undefined) {
                     let answer = questionAnswered?.answer.toString()
                     answersArray.push({ answer: answer, name: users[j].username.toString() })
                 }
@@ -92,6 +113,11 @@ const page = () => {
     useEffect(() => {
         console.log(isLoading)
         if (isLoading === false && isAuthenticated === false) {
+            toast({
+                title: "Error!",
+                description: "You do not have permission to access this page.",
+                variant: "destructive"
+            })
             console.log("You do not have permission to access this page.")
             setLoading(false)
             router.push('/');
@@ -102,7 +128,6 @@ const page = () => {
 
     useEffect(() => {
         setQuizArray(getQuizQuestions())
-        // setCurrentUsage(weeklyQuizData?.data?.usage);
         setLoading(false)
     }, [questions])
 
@@ -119,17 +144,17 @@ const page = () => {
             console.log("correct", correct)
             if (correct) {
                 questionScore++;
-                //toast(correct)
             }
         }
+        toast({
+            title: "Answers submitted!",
+            description: `You got ${questionScore} out of ${inputNames.length}!`,
+        })
         setCurrentScore(currentScore + questionScore);
         if (currentQuestion < quizArray.length - 1) {
             setCurrentQuestion(currentQuestion + 1)
         } else {
-            // setCurrentUsage(currentUsage + 1);
             setShowScore(true);
-
-            //push score to database
         }
         console.log(currentScore)
         e.target.reset();
@@ -154,7 +179,6 @@ const page = () => {
                     <form onSubmit={handleAnswer} className="flex flex-col items-center">
                         {quizArray[currentQuestion].answers.map((answer: answer, index: number) => (
                             <div key={index} className="mb-10 flex flex-col items-center w-full">
-                                {/* <p className="">Who do you think answered:</p> */}
                                 <p className="my-3 italic bg-[#E29D65]/40 p-5 rounded-full text-center">"{answer.answer}"</p>
                                 {usernamesArray.map((username: any, usernameIndex: number) => (
                                     <div className="flex flex-row justify-start w-full py-2" key={usernameIndex}>

@@ -6,10 +6,11 @@ import { trpc } from "../../../_trpc/client";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import numberGame from '../start/page';
 import Spinner from '@/components/Spinner';
-
+import { useToast } from '../../../../components/shadcn/use-toast';
 
 
 export default function NumberGame() {
+  const { toast } = useToast();
   const [target, setTarget] = useState(0);
   const [numArr, setNumArr] = useState<number[]>([]);
   const [subNumArr, setSubNumArr] = useState<number[]>([]);
@@ -65,8 +66,29 @@ export default function NumberGame() {
 
   }, [currentUsage]);
   // initialising trpc backend functions to fetch and mutate dat
-  const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation()
-  const { mutate: numberGameScore } = trpc.numberGameScore.useMutation()
+  const { mutate: numberGameUsage } = trpc.numberGameUsage.useMutation({
+    onError: (error) => {
+      if (error) {
+        toast({
+          title: "Error!",
+          description: "Could not update usage.",
+          variant: "destructive",
+        })
+      }
+    }
+  })
+  const { mutate: numberGameScore } = trpc.numberGameScore.useMutation({
+    onError: (error) => {
+      if (error) {
+        toast({
+          title: "Error!",
+          description: "Could not update score.",
+          variant: "destructive",
+        })
+      }
+    }
+  })
+
   // calling trpc function to set new score on
   useEffect(() => {
     console.log("score", score)
@@ -262,9 +284,9 @@ export default function NumberGame() {
                         <section className="border border-teal-800 bg-teal-800 text-xl text-yellow-500 font-bold flex justify-center items-center py-2 px-4 rounded"><p>{num}</p></section>
                       ))}
                     </div>
+
                     <div className='grid grid-cols-6 grid-rows-2 mt-4 mb-4 gap-2'>
                       {subNumArr.slice(0, 12).map((num, index) => (
-
                         <section className="border border-yellow-500 bg-yellow-500 text-teal-800 text-xl font-bold flex justify-center items-center py-2 px-4 rounded"><p>{num}</p></section>
                       ))}
                     </div>
@@ -320,8 +342,6 @@ export default function NumberGame() {
                             ))}
                             <button
                               onClick={() => validCheck()}
-
-
                               className="bg-[#D85E65] text-white text-2xl p-2 rounded"
                             >
                               =

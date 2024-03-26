@@ -21,6 +21,7 @@ import {
   DrawerTrigger,
 } from "../../../components/shadcn/drawer"
 import Spinner from "../../../components/Spinner"
+import { useToast } from "../../../components/shadcn/use-toast";
 
 
 export default function Home() {
@@ -34,6 +35,7 @@ export default function Home() {
   let currentUserAnswer: string | null | undefined;
 
   const router = useRouter()
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true)
 
   const { isAuthenticated, isLoading, user, permissions } = useKindeBrowserClient();
@@ -123,8 +125,12 @@ export default function Home() {
   const currentUserRole = currentUserProfile?.role.toString()
 
   useEffect(() => {
-    console.log(isLoading)
     if (isLoading === false && isAuthenticated === false) {
+      toast({
+        title: "Error!",
+        description: "You do not have permission to access this page.",
+        variant: "destructive",
+      })
       console.log("You do not have permission to access this page.")
       setLoading(false)
       router.push('/');
@@ -148,12 +154,30 @@ export default function Home() {
   useEffect(() => {
     if (asked === true) {
       setDrawerOpen(false)
-    } else {
+    } else if (!isLoading && asked === false) {
       setDrawerOpen(true)
     }
-  }, [asked])
+  }, [questionData])
 
-  const { mutate: submitAnswer } = trpc.submitAnswer.useMutation()
+  const { mutate: submitAnswer } = trpc.submitAnswer.useMutation({
+    onSuccess: (success) => {
+      if (success) {
+        toast({
+          title: "Success!",
+          description: "Answer submitted successfully."
+        })
+      }
+    },
+    onError: (error) => {
+      if (error) {
+        toast({
+          title: "Error!",
+          description: "Could not submit answer.",
+          variant: "destructive",
+        })
+      }
+    }
+  })
 
   const submitAnswerCall = (e: any) => {
     e.preventDefault();
@@ -173,24 +197,24 @@ export default function Home() {
 
   return (
     <div className="h-full w-full">
-    
-    
-    <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-10">
-    
-    <Navbar />
-      {/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
-      <h1 className="teamTitle text-center mx-auto mb-10 text-6xl ">{currentUserTeamName}</h1>
-      
-      <div className="flex flex-col items-center">
-        <InfiniteMovingCards items={content} className={undefined} />
-        <div className="flex flex-row items-center justify-center my-10 w-full">
-          <AnimatedTooltip icons={users} />
+
+
+      <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-10">
+
+        <Navbar />
+        {/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
+        <h1 className="teamTitle text-center mx-auto mb-10 text-6xl ">{currentUserTeamName}</h1>
+
+        <div className="flex flex-col items-center">
+          <InfiniteMovingCards items={content} className={undefined} />
+          <div className="flex flex-row items-center justify-center my-10 w-full">
+            <AnimatedTooltip icons={users} />
+          </div>
+          {/* <AnimateadTooltip icons={users} /> */}
+          {/* <p>{connected}</p> */}
         </div>
-        {/* <AnimateadTooltip icons={users} /> */}
-        {/* <p>{connected}</p> */}
-      </div>
-      
-    </main>
+
+      </main>
       <Drawer open={!loading && drawerOpen}>
         {/* <DrawerTrigger>
           Open Drawer

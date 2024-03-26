@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import { Lilita_One } from "next/font/google";
 import "./globals.css";
 import Providers from "../components/Providers";
+import { Toaster } from "../components/shadcn/toaster"
+
 
 const inter = Inter({ subsets: ["latin"] });
 const lilita = Lilita_One({ weight: ["400"], subsets: ["latin"] });
@@ -41,6 +43,7 @@ export default function RootLayout({
       <Providers>
       <body className={`${lilita.className} pagebg`}>
         {children}
+        <Toaster/>
       </body>
       </Providers>
     </html>
