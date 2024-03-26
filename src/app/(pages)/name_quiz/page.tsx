@@ -55,7 +55,7 @@ export default function App() {
         let namesArray = []
         let length = Number(userData?.data?.length)
         for (let i=0; i<length; i++) {
-            let userNameSplit = userData?.data[i].username.toString().split(" ")
+            let userNameSplit = userData?.data[i].username.toString().split(" ") || ["",""]
             let userFirstName = userNameSplit[0]
             namesArray.push(userFirstName)
         }
