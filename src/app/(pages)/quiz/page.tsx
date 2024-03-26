@@ -143,32 +143,32 @@ export default function App() {
     console.log(quizUsage)
 
 
-//     useEffect(() => {
-//         if(currentUsage !== undefined) {
-//           setIsLoading(false)
-//         }
-        
-        
-//         if (currentUsage >= 3) {
-//           setCompleted(true);
-//         } else {
-//           setCompleted(false);
-//         }   
-    
-//   }, [currentUsage]);
+    //     useEffect(() => {
+    //         if(currentUsage !== undefined) {
+    //           setIsLoading(false)
+    //         }
+
+
+    //         if (currentUsage >= 3) {
+    //           setCompleted(true);
+    //         } else {
+    //           setCompleted(false);
+    //         }   
+
+    //   }, [currentUsage]);
 
     useEffect(() => {
-        if(quizUsage !== undefined) {
+        if (quizUsage !== undefined) {
             setIsLoading(false)
         }
-     console.log(quizUsage)
-        if(quizUsage >= 3){
+        console.log(quizUsage)
+        if (quizUsage >= 3) {
 
             console.log(quizUsage)
             setLimitGameplay(true)
 
         }
-       
+
     }, [quizUsage])
 
     useEffect(() => {
@@ -285,87 +285,84 @@ export default function App() {
 
     const questionsString = JSON.stringify(questions);
     const ChatGPTquestion = "write 10 easy questions about " + topic + " in the format of " + questionsString;
-    
-    
-//     useEffect(() => {
-//         window.location.reload();
-//    }, [questionState])
 
-    
 
-	return (
+    //     useEffect(() => {
+    //         window.location.reload();
+    //    }, [questionState])
+
+
+
+    return (
         <>
-    {!isLoading ? (    
-		<div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app rounded-xl'>
-			
-
-            {limitGameplay ? (
-                <div className="mx-auto text-center">
-                <div className='w-72 h-72 p-4 font-sm'>You have reached the daily limit of attempts for today. Please come back tomorrow to play agin. Or play another game.</div>
-                </div>
-            ):<>
+            {!isLoading ? (
+                <div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app rounded-xl'>
 
 
-
-			{showScore ? (
-				<div className='mx-auto text-center w-72 h-72 p-4 score-section'><p className='mt-4 mb-8'>Congratulations!</p> You scored {currentScore} out of {questions.length}
-                
-                <button className="mx-auto mt-20 bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2" onClick={() => handleReset()}>
-                    Reset
-                </button>
-                </div>
-                // 
-            ) : (
-                <>
-
-                    <div className=' question-section'>
-                        <div className='ml-4 font-bold mb-6 pt-4 question-count'>
-                            <span>Break Room Question {currentQuestion + 1}</span>/{questionState.length}
+                    {limitGameplay ? (
+                        <div className="mx-auto text-center">
+                            <div className='w-72 h-72 p-4 font-sm'>You have reached the daily limit of attempts for today. Please come back tomorrow to play agin. Or play another game.</div>
                         </div>
+                    ) : <>
 
-                        <div className="flex">
-                            <div className='mx-4 w-3/5 text-base question-text'>{questionState[currentQuestion].questionText}</div>
 
-                            <div className='pr-2 answer-section'>
-                                {questionState[currentQuestion].answerOptions.map(answerOption =>
-                                    <button key={answerOption.answerText} onClick={() => handleAnswerButtonClick(answerOption.isCorrect)} className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2">
-                                        {answerOption.answerText}
-                                    </button>)}
+
+                        {showScore ? (
+                            <div className='mx-auto text-center w-72 h-72 p-4 score-section'><p className='mt-4 mb-8'>Congratulations!</p> You scored {currentScore} out of {questions.length}
+
+                                <button className="mx-auto mt-20 bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2" onClick={() => handleReset()}>
+                                    Reset
+                                </button>
                             </div>
+                            // 
+                        ) : (
+                            <>
+
+                                <div className=' question-section'>
+                                    <div className='ml-4 font-bold mb-6 pt-4 question-count'>
+                                        <span>Break Room Question {currentQuestion + 1}</span>/{questionState.length}
+                                    </div>
+
+                                    <div className="flex">
+                                        <div className='mx-4 w-3/5 text-base question-text'>{questionState[currentQuestion].questionText}</div>
+
+                                        <div className='pr-2 answer-section'>
+                                            {questionState[currentQuestion].answerOptions.map(answerOption =>
+                                                <button key={answerOption.answerText} onClick={() => handleAnswerButtonClick(answerOption.isCorrect)} className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2">
+                                                    {answerOption.answerText}
+                                                </button>)}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-12 border m-6 rounded">
+
+                                    <div onClick={() => setUseAi(!useAi)} className="text-xs">Turn On AI mode
+
+                                        <div className={classNames("flex w-8 rounded-full h-4", { "bg-green-600": useAi, })}>
+
+                                            <div className={classNames("h-4 w-4 bg-white rounded-full", { "ml-4": useAi, })}></div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                    {useAi ? (
+                        <div className=" p-4">
+                            <p className=" text-sm mb-2">Use AI to create bespoke questions</p>
+                            <form onSubmit={handleSubmitTopic}>
+                                <label>
+                                    {/* Topic: */}
+                                    <input placeholder="Topic" className="bg-white border w-full mb-2 border-slate-300 hover:bg-slate-300 text-slate-500s font-base py-2 px-4 rounded-full" type="text" value={topic} onChange={handleChangeTopic} />
+                                </label>
+                                <input className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full" type="submit" value="Generate" />
+                            </form>
                         </div>
-                    </div>
-                    <div className="p-12 border m-6 rounded">
+                    ) : null}
+                </>
+            )}
 
-                        <div onClick={() => setUseAi(!useAi)} className="text-xs">Turn On AI mode
-
-                            <div className={classNames("flex w-8 rounded-full h-4", { "bg-green-600": useAi, })}>
-
-                                <div className={classNames("h-4 w-4 bg-white rounded-full", { "ml-4": useAi, })}></div>
-
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-</div>
-            {useAi ? (
-              
-            
-                    <div className=" p-4">
-                    <p className=" text-sm mb-2">Use AI to create bespoke questions</p>
-                    <form onSubmit={handleSubmitTopic}>
-                    <label>
-                        {/* Topic: */}
-                        <input placeholder="Topic" className="bg-white border w-full mb-2 border-slate-300 hover:bg-slate-300 text-slate-500s font-base py-2 px-4 rounded-full" type="text" value={topic} onChange={handleChangeTopic} />
-                </label>
-                <input className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full" type="submit" value="Generate" />
-                    </form>
-                    </div>
-            ) : null }
-				</>
-			)}
-
-            </>}
-		</div>
+        </>}
+		</div >
         ) : (<h1>loading</h1>)}
         </>
 	);
