@@ -8,6 +8,7 @@ import { trpc } from "../../_trpc/client";
 import { CldUploadWidget } from 'next-cloudinary';
 import { useToast } from "../../../components/shadcn/use-toast";
 import Spinner from '../../../components/Spinner';
+import Navbar from '../../../components/navbar';
 
 
 const page = () => {
@@ -25,7 +26,7 @@ const page = () => {
     const [isManager, setIsManager] = useState(false)
     const [isEditMode, setEditMode] = useState(false)
     const [isManagerEditMode, setManagerEditMode] = useState(false)
-    const delay = (ms : number) => new Promise(res => setTimeout(res, ms));
+    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
     const { isAuthenticated, isLoading, user, permissions } = useKindeBrowserClient();
     const kindeUserData = user
@@ -165,7 +166,7 @@ const page = () => {
                 title: "Error!",
                 description: "You are not authenticated. Please log in to access this page.",
                 variant: "destructive",
-        })
+            })
             setLoading(false)
             router.push('/');
         }
@@ -202,60 +203,62 @@ const page = () => {
     return (
         <div className="grid grid-cols-6 text-[#292929]">
             <div className='col-span-6'>
-                <div className='flex mx-10 mt-6 w-auto shadow-xl rounded-xl  h-1/12 bg-[#FAF2F0] text-[#292929]'>
-                    {!isEditMode &&
-                        <div className='my-auto p-3 flex flex-col sm:flex-row w-full justify-between items-center'>
-                            <div className="flex flex-col mb-3">
-                                <div className='text-lg'>{displayName}</div>
-                                <div className='text-base lg:text-lg'>{currentUser}</div>
-                                <div className='text-lg font-light pr-2 mt-3 flex flex-row items-baseline'>Role: <p className="text-base lg:text-lg px-2">{currentUserRole}</p></div>
-                                <div className='text-lg font-light pr-2 flex flex-row items-baseline'>Bio: <p className="text-base lg:text-lg px-2">{currentUserBio}</p></div>
-                            </div>
-                            <img className="my-auto rounded-full h-16 w-16 lg:h-24 lg:w-24" src={currentUserImage}>
-                            </img>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <button onClick={() => setEditMode(true)} className="my-4 mx-2 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] p-2 border border-[#292929] border-opacity-60 w-2/12 rounded-full text-lg lg:text-xl justify-self-end">Edit</button>
-                        </div>}
-                    {isEditMode &&
-                        <div className="flex flex-col sm:flex-row w-full justify-between items-center">
-                            <form className='my-auto p-3 flex flex-col sm:flex-row w-full justify-between items-center' onSubmit={(e) => handleSubmit(e)}>
-                                <div className="flex flex-col">
-                                    <div className='text-lg'>{displayName}</div>
-                                    <div className='text-base lg:text-lg'>{currentUser}</div>
-                                    <input name="role" className='text-lg font-light p-1 my-1 rounded-xl text-[#292929] placeholder-[#E29D65] placeholder-opacity-60' placeholder="Enter role"></input>
-                                    <input name="bio" className='text-lg font-light p-1 rounded-xl text-[#292929] placeholder-[#E29D65] placeholder-opacity-60' placeholder="Enter bio"></input>
+                <div className='mx-10 mt-6 pt-6 w-auto shadow-xl rounded-xl bg-[#FAF2F0] text-[#292929]'>
+                    <Navbar></Navbar>
+                    <div className='text-xl sm:text-3xl text-center w-full mb-2'>{displayName}'s dashboard</div>
+                    <div className='flex mx-auto w-8/12'>
+
+                        {!isEditMode &&
+                            <div className='my-auto p-3 flex flex-col sm:flex-row w-full justify-between items-center'>
+                                <div className="flex flex-col mb-3">
+                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Email: <p className="text-base lg:text-lg px-2">{currentUser}</p></div>
+                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Role: <p className="text-base lg:text-lg px-2">{currentUserRole}</p></div>
+                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Bio: <p className="text-base lg:text-lg px-2">{currentUserBio}</p></div>
                                 </div>
-                                <img className="my-5 sm:my-auto rounded-full h-16 w-16 lg:h-24 lg:w-24 sm:ml-10" src={currentUserImage}>
+                                <img className="my-auto rounded-full h-16 w-16 lg:h-24 lg:w-24" src={currentUserImage}>
                                 </img>
                                 <span></span>
-                                <button type="submit" className="mx-10 my-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-3/12 rounded-full text-lg lg:text-xl">Save</button>
-                            </form>
-                            <CldUploadWidget uploadPreset="kettleon"
-                                onSuccess={async (results: any, error) => {
-                                    if (error) {
-                                        console.log(error);
-                                        toast({
-                                            title: "Error!",
-                                            description: "Could not update profile picture.",
-                                            variant: "destructive",
-                                        })
-                                    }
-                                    const url = results?.info?.url.toString()
-                                    updateImage({ image: url })
-                                }}>
-                                {({ open }) => {
-                                    return (
-                                        <button className="mx-10 mb-6 sm:my-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-3/12 rounded-full text-lg lg:text-xl" onClick={() => open()}>
-                                            Change profile picture
-                                        </button>
-                                    );
-                                }}
-                            </CldUploadWidget>
-                        </div>
-                    }
-
+                                <span></span>
+                                <span></span>
+                                <button onClick={() => setEditMode(true)} className="my-4 mx-3 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-2/12 rounded-full text-lg lg:text-xl justify-self-end">Edit</button>
+                            </div>}
+                        {isEditMode &&
+                            <div className="flex flex-col sm:flex-row w-full items-center">
+                                <form className='my-auto p-3 flex flex-col sm:flex-row w-full justify-between items-center' onSubmit={(e) => handleSubmit(e)}>
+                                    <div className="flex flex-col">
+                                        <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Email: <p className="text-base lg:text-lg px-2">{currentUser}</p></div>
+                                        <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Role: <input name="role" className='text-lg font-light p-1 my-1 ml-2 rounded-xl text-[#292929] placeholder-[#E29D65] placeholder-opacity-60 w-full' placeholder="Enter role"></input></div>
+                                        <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Bio: <input name="bio" className='text-lg font-light p-1 ml-2 rounded-xl text-[#292929] placeholder-[#E29D65] placeholder-opacity-60 w-full' placeholder="Enter bio"></input></div>
+                                    </div>
+                                    <img className="my-5 sm:my-auto rounded-full h-16 w-16 lg:h-24 lg:w-24 sm:ml-10" src={currentUserImage}>
+                                    </img>
+                                    <span></span>
+                                    <button type="submit" className="mx-10 my-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-3/12 rounded-full text-lg lg:text-xl">Save</button>
+                                </form>
+                                <CldUploadWidget uploadPreset="kettleon"
+                                    onSuccess={async (results: any, error) => {
+                                        if (error) {
+                                            console.log(error);
+                                            toast({
+                                                title: "Error!",
+                                                description: "Could not update profile picture.",
+                                                variant: "destructive",
+                                            })
+                                        }
+                                        const url = results?.info?.url.toString()
+                                        updateImage({ image: url })
+                                    }}>
+                                    {({ open }) => {
+                                        return (
+                                            <button className="mx-auto mb-6 sm:my-auto bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-3/12 rounded-full text-lg lg:text-xl" onClick={() => open()}>
+                                                Change profile picture
+                                            </button>
+                                        );
+                                    }}
+                                </CldUploadWidget>
+                            </div>
+                        }
+                    </div>
                 </div>
 
                 {isManager &&

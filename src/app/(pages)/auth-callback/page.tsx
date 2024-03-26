@@ -43,7 +43,6 @@ const Page = () => {
   return (
     <div className="w-full flex justify-center min-h-screen items-center">
       <div className="flex flex-col items-center gap-2">
-        {/* <Loader className="w-10 h-10 animate-spin" /> */}
         <h3 className="text-2xl text-[#292929]">
           Checking user data...
         </h3>

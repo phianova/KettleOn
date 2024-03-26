@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { trpc } from "../../_trpc/client";
 import { useToast } from "../../../components/shadcn/use-toast";
+import Navbar from "../../../components/navbar";
+import Spinner from "../../../components/Spinner";
 
 const page = () => {
 
@@ -165,9 +167,13 @@ const page = () => {
             setLimitReached(true)
         }
     }, [currentUsage])
+    
+    if (loading) return <Spinner></Spinner>
 
     return (
-        <div className="my-5 pb-10 mx-auto w-10/12 h-full bg-[#FAF2F0] text-[#292929] rounded-3xl flex flex-col items-center drop-shadow-lg">
+        <div className="my-5 pb-10 pt-6 mx-auto w-10/12 h-full bg-[#FAF2F0] text-[#292929] rounded-3xl drop-shadow-lg">
+            <Navbar></Navbar>
+        <div className="flex flex-col items-center">
             <h1 className="mt-5 text-3xl md:text-5xl font-bold p-5">Big Fat Quiz of the Week</h1>
             <p className="my-5 p-3 text-xl text-center">Match your teammates with their answers to this week's questions!</p>
             {!quizStarted && <button className="bg-[#08605F] text-[#FAF2F0] text-3xl w-1/3 mx-auto mt-5 font-bold py-5 px-4 rounded-full hover:bg-[#74AA8D] hover:text-[#292929]" onClick={() => setQuizStarted(true)}>Start Quiz</button>}
@@ -214,6 +220,7 @@ const page = () => {
                     }}>Play again</button>
                 </div>
             }
+                </div>
                 </div>
     )
 }
