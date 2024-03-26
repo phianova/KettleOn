@@ -1,10 +1,12 @@
 import React from 'react';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Lilita_One } from "next/font/google";
 import "./globals.css";
 import Providers from "../components/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
+const lilita = Lilita_One({ weight: ["400"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Kettle On",
@@ -20,6 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <head> 
       <link rel="icon" href="/favicon.ico" sizes="any" />
+      
       <link
   rel="icon"
   href="/icon?<generated>"
@@ -32,10 +35,11 @@ export default function RootLayout({
   type="image/<generated>"
   sizes="<generated>"
 />
+    
       </head>
       
       <Providers>
-      <body className={`${inter.className} pagebg`}>
+      <body className={`${lilita.className} pagebg`}>
         {children}
       </body>
       </Providers>
