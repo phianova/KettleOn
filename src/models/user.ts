@@ -9,11 +9,14 @@ export interface User {
     role: String,
     image: String,
     bio: String,
-    prompt: String,
-    answer: String,
+    prompts: [
+      {question: String,
+      answer: String}
+    ],
     game: [
       {usage: Number, score: Number, name: String}
     ],
+    rank: Number,
   
   }
    
@@ -28,11 +31,14 @@ export interface User {
     role: String,
     image: String,
     bio: String,
-    prompt: String,
-    answer: String,
+    prompts: [
+      {question: String,
+    answer: String}
+    ],
     game: [
       {usage: Number, score: Number, name: String}
     ],
+    rank: Number,
   };
 
 
@@ -42,16 +48,21 @@ const UserSchema = new mongoose.Schema<User>({
     team: {type: String, required: true}, //from kinde
 
     teamname: {type: String}, //entered by manager
-
     company: {type: String}, //entered by manager
     role: {type: String}, //entered by manager
     image: {type: String}, //will be empty on initialisation
     bio: {type: String}, //will be empty on initialisation
-    prompt: {type: String}, //will be empty on initialisation
-    answer: {type: String}, //will be empty on initialisation
+    prompts: [
+      {question: {type: String}, answer: {type: String}}, //will be empty on initialisation
+    ],
     game: [
-      {usage: Number, score: Number, name: String}
-      ]
+      {
+        usage: { type: Number, default: 0 },
+        score: { type: Number, default: 0 },
+        name: { type: String, required: true }
+      }
+      ],
+    rank: {type: Number, default: 0},
 });
 
 export default mongoose.models.User || mongoose.model<User>("User", UserSchema);
