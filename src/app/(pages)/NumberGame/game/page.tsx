@@ -9,6 +9,7 @@ import Spinner from '@/components/Spinner';
 
 
 
+
 export default function NumberGame() {
   const [target, setTarget] = useState(0);
   const [numArr, setNumArr] = useState<number[]>([]);

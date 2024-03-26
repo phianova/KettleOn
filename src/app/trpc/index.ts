@@ -49,6 +49,7 @@ export const appRouter = router({
                 bio: "",
                 prompts: [{}],
                 game: [{}],
+                rank: 0
             })
         }
         return {
@@ -82,7 +83,8 @@ export const appRouter = router({
                     score: z.number(),
                     name: z.string(),
                 })
-            )
+            ), 
+            rank: z.number(),
 
         })
     ).mutation<Promise<any>>(async ({ ctx, input }) => {
@@ -187,7 +189,8 @@ export const appRouter = router({
                         score: 0,
                         usage: 0
                     },
-                ]
+                ],
+                rank: 0,
             })
             return { user: user as any, status: 200, success: true };
         } catch (err) {
@@ -218,7 +221,8 @@ export const appRouter = router({
                         image: users[i].image,
                         bio: users[i].bio,
                         prompts: users[i].prompts,
-                        game: users[i].game
+                        game: users[i].game,
+                        rank: users[i].rank
                     }
                     usersArray.push(newUser)
                 }
@@ -249,7 +253,8 @@ export const appRouter = router({
                     image: foundUser.image,
                     bio: foundUser.bio,
                     prompts: foundUser.prompts,
-                    game: foundUser.game
+                    game: foundUser.game,
+                    rank: foundUser.rank
                 }
 
                 console.log(currentUserData)
@@ -268,7 +273,8 @@ export const appRouter = router({
                     image: "",
                     bio: "",
                     prompts: [{}],
-                    game: [{}]
+                    game: [{}],
+                    rank: 0
                 }
                 return { data: emptyUser, status: 500, success: false };
             }
@@ -622,8 +628,81 @@ weeklyQuizUsage: privateProcedure.input(z.object({
         return { status: 500, success: false };
     }
 }),
+teamUsageReset: privateProcedure
+.mutation<Promise<any>>(async ({ ctx }) => {
+     try {
+            const { userEmail } = ctx;
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
 
-});
+            const users = await UserSchema.find<TUser>({ team: foundUser.team });
+
+            for(let i = 0; i < users.length; i++) {
+                users.forEach((user) => {
+                    user.game.forEach((game) => {
+                        game.usage = 0
+                    })
+                })
+                await users[i].save();
+                
+            }
+            return { status: 200, success: true };
+    } catch (err) {
+        return { status: 500, success: false };
+    }
+}),
+teamScoreReset: privateProcedure
+.mutation<Promise<any>>(async ({ ctx }) => {
+     try {
+            const { userEmail } = ctx;
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+
+            const users = await UserSchema.find<TUser>({ team: foundUser.team });
+
+            for(let i = 0; i < users.length; i++) {
+                users.forEach((user) => {
+                    user.game.forEach((game) => {
+                        game.score = 0
+                    })
+                })
+                await users[i].save();
+                
+            }
+            return { status: 200, success: true };
+    } catch (err) {
+        return { status: 500, success: false };
+    }
+}),
+userRank: privateProcedure.input(z.object({
+    rank: z.number(),
+})
+).mutation<Promise<any>>(async ({ ctx, input }) => {
+ 
+    try {
+        const { userEmail } = ctx;
+        console.log("email", userEmail)
+        if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+        await dbConnect();
+        const foundUser = await UserSchema.findOne({ email: userEmail });
+        if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+        
+        foundUser.rank = input.rank;
+         
+        
+         await foundUser.save();
+         return { status: 200, success: true };
+} catch (err) {
+ console.log(err)
+ return { status: 500, success: false };
+}
+
+
+})
+
+})
 
 
 export type AppRouter = typeof appRouter;

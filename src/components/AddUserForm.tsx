@@ -38,8 +38,9 @@ const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
             name: "aiQuiz",
             score: 0,
             usage: 0
-        },
-    ]
+        },    
+    ],
+    rank: 0,
     };
     addUser(inputs);
     window.location.reload();
