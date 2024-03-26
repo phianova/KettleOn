@@ -4,14 +4,15 @@
 import React, { useEffect, useState } from 'react';
 import { trpc } from "../../_trpc/client";
 import Link from 'next/link';
+import { useToast } from '../../../components/shadcn/use-toast';
 
 // import classNames from 'classnames';
 
 export default function App() {
     const names = ["andy","john", "jane", "bob", "sarah"];
-    
+    const { toast } = useToast()
 
-    const[question, setQuestion] = useState("Answer a question about a name in your team");
+    const [question, setQuestion] = useState("Answer a question about a name in your team");
     const [teamNames, setTeamNames] = useState(names);
     const [score, setScore] = useState(0);
     const [isCorrect, setIsCorrect] = useState("Sorry, that is incorrect");
@@ -20,13 +21,13 @@ export default function App() {
     const [nameSentToChatGPT, setNameSentToChatGPT] = useState(0);
 
     const [isloading, setIsLoading] = useState(true)
-    const [limitGameplay, setLimitGameplay] = useState()
+    const [limitGameplay, setLimitGameplay] = useState(false)
 
     const randomNumber = Math.floor(Math.random() * teamNames.length);
 
     
 
-    const iaAnswerCorrect = false;
+    const isAnswerCorrect = false;
 
     const { data: nameQuizData} = trpc.nameQuizData.useQuery()
     const { mutate: nameQuizScore } = trpc.nameQuizScore.useMutation() 
@@ -34,6 +35,14 @@ export default function App() {
  
     const quizUsage = nameQuizData?.data?.usage
     
+    const { data: userData } = trpc.getUsers.useQuery();
+    if (userData?.success === false) {
+        toast({
+            title: "Error!",
+            description: "Could not obtain user data.",
+            variant: "destructive",
+        })
+    }
 
     // PICK RANDOM NAME FROM ARRAY
 
@@ -41,6 +50,16 @@ export default function App() {
     // setUserName(teamNames[randomNumber+1])
     
     //     }, []);
+
+    useEffect(() => {
+        let namesArray = []
+        for (let i=0; i<userData?.data?.length; i++) {
+            let userNameSplit = userData?.data[i].username.toString().split(" ")
+            let userFirstName = userNameSplit[0]
+            namesArray.push(userFirstName)
+        }
+        setTeamNames(namesArray)
+    }, [userData])
 
     useEffect(() => {
         if (quizUsage !== undefined) {
@@ -57,7 +76,7 @@ export default function App() {
 
         
     // console.log("randomname is "+ teamNames[randomNumber+1])
-    const ChatGPTquestion = "write an interesting fact about the name " + teamNames[randomNumber] + " for  a quiz, do not include the name in the question";
+    const ChatGPTquestion = "write an interesting question about the name " + teamNames[randomNumber] + " for  a quiz, do not include the name in the question";
     console.log(ChatGPTquestion)
 
 
@@ -149,7 +168,19 @@ export default function App() {
 			{/* <div>number of plays is {numberOfPlays}</div>
             <div>score is {score}</div> */}
             
+            {limitGameplay ? (<div className='w-screen h-screen flex flex-col justify-center items-center text-[#FAF2F0]'>
+            <div className="p-10 bg-[#08605F] w-2/3 h-fit rounded opacity-80 border-4 border-[#74AA8D] text-center ">
+              <h1 className='text-3xl font-bold mb-4 '>Play limit reached for the day</h1>
+              <h2 className='text-2xl '>Test your skills with another activity or come back tomorrow!</h2>
+            </div>
+            <div className="flex flex-row gap-4 mt-2 ">
+              <Link href="/home"><button className="bg-[#E29D65] text-white md:text-xl mx-auto font-bold py-2 px-4 rounded hover:bg-[#08605F] transition duration-300">Home</button></Link>
+              <Link href="/scoreboard"><button className="bg-[#E29D65] text-white md:text-xl mx-auto font-bold py-2 px-4 rounded hover:bg-[#08605F] transition duration-300">Leaderboard</button></Link>
 
+            </div>
+          </div>) : (
+                
+            <>
 			{isAnswered ? (
 				
                 <div>
@@ -184,6 +215,9 @@ export default function App() {
             
 				</>
 			)}
+            </>
+
+            )}
 		</div>
 	);
     

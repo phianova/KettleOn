@@ -77,6 +77,11 @@ const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
           name: "weeklyQuiz",
           score: 0,
           usage: 0
+        }, 
+        {
+          name: "nameQuiz",
+          score: 0, 
+          usage: 0
         }
      ],
     rank: 0,
