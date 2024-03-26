@@ -117,8 +117,10 @@ export default function App() {
 
 	return (
 		<div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app items-center rounded-xl'>
-			<div>number of plays is {numberOfPlays}</div>
-            <div>score is {score}</div>
+            
+            <div className="pt-4 text-2xl text-center font-bold">The Name Quiz</div>
+			{/* <div>number of plays is {numberOfPlays}</div>
+            <div>score is {score}</div> */}
             
 
 			{isAnswered ? (
