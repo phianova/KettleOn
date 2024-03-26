@@ -15,7 +15,7 @@ export default function NumberGame() {
   const [numArr, setNumArr] = useState<number[]>([]);
   const [subNumArr, setSubNumArr] = useState<number[]>([]);
   const [subArrFull, setSubArrFull] = useState(false);
-  const [invalid, setInvalid] = useState(false);
+  const [invalid, setInvalid] = useState(true);
   const [win, setWin] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [score, setScore] = useState(0);
@@ -47,7 +47,7 @@ export default function NumberGame() {
   // initialising trpc backend functions to fetch and mutate data
   const { data: gameData } = trpc.numberGameData.useQuery();
   const currentGameData = gameData?.data;
-  // console.log("from number game data:", currentGameData)
+
   const currentUsage = currentGameData?.usage;
 
 
@@ -88,6 +88,7 @@ export default function NumberGame() {
       }
     }
   })
+
   // calling trpc function to set new score on
   useEffect(() => {
     console.log("score", score)
@@ -113,7 +114,7 @@ export default function NumberGame() {
       console.log("currentUsage is undefined");
     }
 
-  }, [win]); // Include currentUsage in the dependencies array
+  }, [win]);
 
 
   // random number generator from 100 - 999
@@ -145,9 +146,11 @@ export default function NumberGame() {
   const [equation, setEquation] = useState("");
 
   const handleKeyPress = (number: number) => {
+
     setInputValue((prevValue) => prevValue + number);
     setEquation((prevEquation) => prevEquation + number);
     console.log(equation);
+
   };
 
 
@@ -163,8 +166,10 @@ export default function NumberGame() {
     }
   };
 
-  // onclick of = will take the current line (equation) and evaluate it
+  // validcheck gets called onclick of = which calls this if the strings (numbers) are valid
   const handleEquation = () => {
+    console.log("got to handleEquation");
+
 
 
     const result = eval(equation.toString());
@@ -174,10 +179,11 @@ export default function NumberGame() {
       setInputValue("");
     }, 1500)
     setSubNumArr([...subNumArr, result]);
+    console.log(subNumArr);
 
     setEquation("");
-    validCheck();
     resultCheck(result);
+
   }
 
   const resultCheck = (result: number) => {
@@ -188,16 +194,18 @@ export default function NumberGame() {
     }
   }
 
-  const handlePlayAgain = () => {
-    if (currentUsage >= 3) {
-      setCompleted(true);
+  const handlePlayAgain = async () => {
+    if (currentUsage !== undefined) { // Ensure currentUsage is defined before proceeding
+      console.log("currentUsage", currentUsage);
+      const newUsage = currentUsage + 1;
+      const usageObj = { usage: newUsage }
+      numberGameUsage(usageObj)
+      console.log("Mutation successful. New usage:", newUsage);
+      window.location.reload();
+
     } else {
-      setNumArr([]);
-      setSubNumArr([]);
-      setInvalid(false);
-      setWin(false);
-      setScore(0);
-      setSeconds(0);
+      console.log("currentUsage is undefined");
+      window.location.reload();
     }
 
   }
@@ -206,7 +214,6 @@ export default function NumberGame() {
     // Extracting numbers and operator from the equation
     console.log("equation", equation);
     const expression = equation.split(/([\+\-\*\/])/);
-    let isValid = true;
     console.log("expression", expression);
 
     // Checking if all numbers used in the calculation exist in numArr
@@ -215,33 +222,20 @@ export default function NumberGame() {
         continue;
       }
       if (expression[i] === "" || !numArr.includes(parseInt(expression[i])) && !subNumArr.includes(parseInt(expression[i]))) {
-        isValid = false;
+        setInvalid(true);
+        setInputValue("Invalid expression");
+        setTimeout(() => {
+          setInputValue("");
+          setEquation("");
+        }, 2000);
         break;
+      } else {
+        setInvalid(false);
+        handleEquation();
+
+        return;
       }
     }
-
-    if (!isValid) {
-      //   setInputValue("Invalid expression");
-      console.log("Invalid expression");
-      setInvalid(true);
-      // set timeout on invalid expression, and turn into empty toString
-
-      setInputValue("Invalid expression");
-      setTimeout(() => {
-        setInputValue("");
-      }, 2000);
-      return;
-    }
-    isValid = true;
-    console.log("equation", equation);
-    console.log(typeof equation);
-
-    // Calculating the result
-    // const result = eval(equation.toString());
-    // console.log(result);
-
-    // Updating input value with the result
-    // setInputValue(result);
   };
 
 
@@ -290,9 +284,9 @@ export default function NumberGame() {
                         <section className="border border-teal-800 bg-teal-800 text-xl text-yellow-500 font-bold flex justify-center items-center py-2 px-4 rounded"><p>{num}</p></section>
                       ))}
                     </div>
-                    <div className='grid grid-cols-6 mt-4 mb-4 gap-2'>
-                      {subNumArr.slice(0, 6).map((num, index) => (
 
+                    <div className='grid grid-cols-6 grid-rows-2 mt-4 mb-4 gap-2'>
+                      {subNumArr.slice(0, 12).map((num, index) => (
                         <section className="border border-yellow-500 bg-yellow-500 text-teal-800 text-xl font-bold flex justify-center items-center py-2 px-4 rounded"><p>{num}</p></section>
                       ))}
                     </div>
@@ -337,7 +331,7 @@ export default function NumberGame() {
                         {/* Math Symbols Keypad */}
                         <div className="col-span-1">
                           <div className="grid grid-cols-2 gap-2">
-                            {["+", "-", "x", "÷"].map((symbol) => (
+                            {["+", "-", "*", "÷"].map((symbol) => (
                               <button
                                 key={symbol}
                                 onClick={() => handleMathSymbolClick(symbol)}
@@ -347,8 +341,7 @@ export default function NumberGame() {
                               </button>
                             ))}
                             <button
-
-                              onClick={() => handleEquation()}
+                              onClick={() => validCheck()}
                               className="bg-[#D85E65] text-white text-2xl p-2 rounded"
                             >
                               =
@@ -366,7 +359,7 @@ export default function NumberGame() {
                 )}
                 {win ? (
                   <div className="flex flex-col gap-4 justify-center items-center">
-                    <h1 className="text-4xl font-bold text-teal-600 animate-pulse">YOU WIN</h1>
+                    <h1 className="text-4xl md:text-7xl font-bold text-teal-600 animate-pulse">YOU WIN</h1>
                     <h1>Score: {score}</h1>
                     <button onClick={handlePlayAgain} className="h-full bg-teal-600 text-white w-fit mx-auto font-bold py-2 px-4 rounded text-md hover:bg-teal-700 transition duration-200">Play Again</button>
                   </div>
@@ -375,10 +368,6 @@ export default function NumberGame() {
                     <button onClick={handlePlayAgain} className="h-full text-white w-fit mx-auto font-bold py-2 px-4 rounded text-md bg-[#74AA8D] hover:bg-[#587A68] transition duration-200">Play Again</button>
                   </div>
                 )}
-
-
-
-                {/* <Link href="/NumberGame/start"><button className="h-full bg-teal-600 text-white w-fit mx-auto font-bold py-2 px-4 rounded text-md hover:bg-teal-700">Submit</button></Link> */}
 
 
               </div>
@@ -405,4 +394,3 @@ export default function NumberGame() {
 }
 
 
-// export default NumberGame

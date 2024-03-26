@@ -1,8 +1,10 @@
+// "use client"
+
 import { RegisterLink, CreateOrgLink, LoginLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import React from 'react';
-import Image from "next/image";
+// import Image from "next/image";
 import styles from "./page.module.css";
-import { GoogleAnalytics } from '@next/third-parties/google'
+// import { GoogleAnalytics } from '@next/third-parties/google'
 import { FaPowerOff } from "react-icons/fa";
 import {
   Drawer,
@@ -14,12 +16,14 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/shadcn/drawer"
+import CookiePolicy from "@/components/CookieConsent";
 
 
 export default function Home() {
   return (
     <main className={styles.main}>
-      <GoogleAnalytics gaId="G-R0Y4M12C9B" />
+      
+      {/* <GoogleAnalytics gaId="G-R0Y4M12C9B" /> */}
       
       <div >
         {/* <div>KettleOn</div> */}
@@ -37,20 +41,20 @@ export default function Home() {
     className={styles.video}/> 
 
 <Drawer >
-  <DrawerTrigger className="ml-20 sm:ml-60"><FaPowerOff style={{ color: "gray", fontSize: "50px" }}/>Start</DrawerTrigger>
-  <DrawerContent className="justify-end ml-4 bg-slate-100 xs:w-72 md:w-1/5">
+  <DrawerTrigger className="ml-20 text-center text-xl text-[#292929] sm:ml-60"><FaPowerOff style={{ color: "#E29D65", fontSize: "75px" }}/><p className="mt-2">Get Started</p></DrawerTrigger>
+  <DrawerContent className="justify-end ml-4 bg-gray-300 xs:w-72 md:w-1/5">
     <DrawerHeader>
       <DrawerTitle>
         <img className="mb-4" src="logo.png" alt="Logo"></img>
       </DrawerTitle>
       <div className="flex flex-col">
         <div className="mx-auto mb-6">
-          <LoginLink className="bg-transparent hover:bg-gray-900 text-slate-900 font-semibold hover:text-white py-2 px-4 border border-black hover:border-transparent rounded-xl">
+          <LoginLink className="bg-[#E29D65] hover:bg-orange-300 text-white text-xl py-2 px-4 rounded-lg">
             Sign In
           </LoginLink>
         </div>
         <div className="mx-auto">
-          <RegisterLink authUrlParams={{"is_create_org":"true"}} className="bg-transparent rounded-xl hover:bg-black text-black font-semibold hover:text-white py-2 px-4 border border-black hover:border-transparent">
+          <RegisterLink authUrlParams={{"is_create_org":"true"}} className="bg-[#E29D65] rounded-lg hover:bg-orange-300 text-white text-xl hover:text-white py-2 px-4 ">
             Register your team
           </RegisterLink>
         </div>
@@ -65,6 +69,7 @@ export default function Home() {
     </DrawerFooter>
   </DrawerContent>
 </Drawer>
+<CookiePolicy />
     </main>
   );
 }
