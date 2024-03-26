@@ -9,6 +9,7 @@ import { CldUploadWidget } from 'next-cloudinary';
 import { useToast } from "../../../components/shadcn/use-toast";
 import Spinner from '../../../components/Spinner';
 import Navbar from '../../../components/navbar';
+import Link from 'next/link';
 
 
 const page = () => {
@@ -152,6 +153,8 @@ const page = () => {
     })
 
     const users = userData?.data || [];
+    const firstPlaceUser = users.find(user => user.rank === 1)
+    const firstPlaceName = firstPlaceUser?.username.toString()
     const currentUserProfile = currentUserData?.data;
     const currentUserEmail = currentUserProfile?.email.toString()
     const currentUserCompany = currentUserProfile?.company.toString()
@@ -159,6 +162,7 @@ const page = () => {
     const currentUserBio = currentUserProfile?.bio.toString()
     const currentUserRole = currentUserProfile?.role.toString()
     const currentUserImage = currentUserProfile?.image.toString()
+
 
     useEffect(() => {
         if (isLoading === false && isAuthenticated === false) {
@@ -300,7 +304,9 @@ const page = () => {
                     </div>
                     <div className="bg-[#FAF2F0] h-auto shadow-xl w-72 rounded-xl my-10 py-6 flex flex-col justify-center">
                         <div className="text-center pb-6 text-2xl">Weeks High Scorer</div>
-                        <div className="mt-6 text-center text-2xl  text-[#292929]">sophia.w@gmail.com</div>
+                        <div className="mt-6 text-center text-2xl  text-[#292929]">{firstPlaceName ? firstPlaceName : (
+                            <Link href="/scoreboard"><button className='mx-auto w-fit block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  py-2 px-4 border border-[#292929] border-opacity-60 w-4/12 rounded-full text-lg lg:text-xl'>View Scoreboard</button></Link>
+                        )}</div>
 
                     </div>
 
