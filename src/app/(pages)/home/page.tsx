@@ -23,6 +23,10 @@ import {
 import Spinner from "../../../components/Spinner"
 import schedule from 'node-schedule';
 import { useToast } from "../../../components/shadcn/use-toast";
+import { GoogleAnalytics } from '@next/third-parties/google'
+
+
+
 
 
 export default function Home() {
@@ -55,22 +59,28 @@ export default function Home() {
   const [content, setContent] = useState([
 
     {
-      title: "Quiz",
+      title: "General Knowledge Quiz",
       image: "/quiz.jpg",
-      description: "A quiz to test your teams knowledge",
+      description: "Test your knowledge of different topics. Try our AI topic generator!",
       link: "/quiz"
     },
     {
-      title: "Team Building Question",
+      title: "Big Fat Quiz of the Week",
       image: "/team.jpg",
-      description: "Find out new facts about your team.",
-      link: "/TeamQuestion"
+      description: "Find out new facts about your teammates based on their answers to the daily questions!",
+      link: "/weeklyquiz"
     },
     {
-      title: "Games",
+      title: "Number Game",
       image: "/games.jpg",
-      description: "Play games and compare your score to other team members.",
-      link: "/game"
+      description: "Test your mathematical skills in this countdown-inspired game!",
+      link: "/NumberGame/start"
+    },
+    {
+      title: "Name Game",
+      image: "/games.jpg",
+      description: "A quiz about your teammates' names! Find out fun facts and test your general knowledge.",
+      link: "/name_quiz"
     }
   ])
 
@@ -217,6 +227,7 @@ export default function Home() {
 
   return (
     <div className="h-full w-full">
+    <GoogleAnalytics gaId="G-R0Y4M12C9B" />
 
 
       <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-10">
@@ -242,7 +253,7 @@ export default function Home() {
         <DrawerContent>
           <div className="mx-auto w-full max-w-sm">
             <DrawerHeader>
-              <DrawerTitle>Before you start, please answer our team question of the week</DrawerTitle>
+              <DrawerTitle>Before you start, please answer today's icebreaker question:</DrawerTitle>
               <DrawerDescription className='mt-2'>{question}
 
               </DrawerDescription>

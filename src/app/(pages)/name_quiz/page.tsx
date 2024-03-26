@@ -2,6 +2,8 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
+import Navbar from '../../../components/navbar';
+import Spinner from '../../../components/Spinner';
 // import classNames from 'classnames';
 
 export default function App() {
@@ -116,7 +118,9 @@ export default function App() {
     
 
 	return (
-		<div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app items-center rounded-xl'>
+        <div className="bg-[#FAF2F0] mx-10 my-6 pt-6 pb-16 rounded-xl shadow-xl">
+            <Navbar></Navbar>
+		<div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app items-center rounded-xl shadow-xl'>
             
             <div className="pt-4 text-2xl text-center font-bold">The Name Quiz</div>
 			{/* <div>number of plays is {numberOfPlays}</div>
@@ -158,6 +162,7 @@ export default function App() {
 				</>
 			)}
 		</div>
+        </div>
 	);
     
                         }

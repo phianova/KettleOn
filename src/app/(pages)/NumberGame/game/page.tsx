@@ -7,7 +7,7 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import numberGame from '../start/page';
 import Spinner from '@/components/Spinner';
 import { useToast } from '../../../../components/shadcn/use-toast';
-
+import Navbar from '../../../../components/navbar';
 
 
 export default function NumberGame() {
@@ -244,11 +244,12 @@ export default function NumberGame() {
 
   return (
     <>
-
+        <Navbar></Navbar>
       {!isLoading ? (
         !completed ? (
+          
           <div className="w-screen h-screen flex justify-center items-center">
-
+            
             <div className="h-10/12 w-10/12 flex justify-center items-center bg-gradient-to-br from-[#08605F] via- to-[#74AA8D] rounded-xl">
               <h1 className="absolute top-6 text-4xl font-bold text-teal-700">NUMBERS GAME</h1>
 
@@ -376,7 +377,6 @@ export default function NumberGame() {
 
           </div>
 
-
         ) : (
           <div className='w-screen h-screen flex flex-col justify-center items-center text-[#FAF2F0]'>
             <div className="p-10 bg-[#08605F] w-2/3 h-fit rounded opacity-80 border-4 border-[#74AA8D] text-center ">
@@ -389,6 +389,7 @@ export default function NumberGame() {
 
             </div>
           </div>
+          
         )) : (<Spinner></Spinner>)}
     </>
   )

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { trpc } from "../../_trpc/client";
 import Link from 'next/link';
+import Navbar from '../../../components/navbar';
 
 type UserScore = {
     name: string
@@ -166,7 +167,7 @@ console.log(currentUser)
     return (
 
         <div className='m-20'>
-            
+            <Navbar></Navbar>
             <div className="h-fit w-fill ring-4 ring-[#E29D65] m-12 rounded-lg bg-gradient-to-br from-[#08605F] via-[#74AA8D] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl">
                 <h1 className='text-3xl p-4 text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65] rounded-xl'>LEADERBOARD</h1>
                 {uniqueUsernamesArray.map((user, index) => (
