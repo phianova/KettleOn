@@ -308,7 +308,7 @@ export default function App() {
                             <div className="mx-auto text-center">
                                 <div className='w-72 h-72 p-4 font-sm'>You have reached the daily limit of attempts for today. Please come back tomorrow to play again, or play another game.</div>
                             </div>
-                        ) : <>
+                        ) : (<>
 
 
 
@@ -351,7 +351,6 @@ export default function App() {
                                         </div>
                                     </div>
 
-                                </div>
                             
                     {useAi ? (
                         <div className=" p-4">
@@ -365,10 +364,13 @@ export default function App() {
                             </form>
                         </div>
                     ) : null}
+
                 </>
             )}
 
-        </>}
+        </>)
+        }
+        </div>
 		</div >
         ) : (<Spinner></Spinner>)}
         </>
