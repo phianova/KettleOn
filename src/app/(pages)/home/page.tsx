@@ -154,10 +154,10 @@ export default function Home() {
   useEffect(() => {
     if (asked === true) {
       setDrawerOpen(false)
-    } else {
+    } else if (!isLoading && asked === false) {
       setDrawerOpen(true)
     }
-  }, [asked])
+  }, [questionData])
 
   const { mutate: submitAnswer } = trpc.submitAnswer.useMutation({
     onSuccess: (success) => {

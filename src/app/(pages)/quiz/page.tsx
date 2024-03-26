@@ -296,7 +296,7 @@ export default function App() {
 
                             <div className='pr-2 answer-section'>
                                 {questionState[currentQuestion].answerOptions.map(answerOption =>
-                                    <button onClick={() => handleAnswerButtonClick(answerOption.isCorrect)} className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2">
+                                    <button key={answerOption.answerText} onClick={() => handleAnswerButtonClick(answerOption.isCorrect)} className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2">
                                         {answerOption.answerText}
                                     </button>)}
                             </div>
