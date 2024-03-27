@@ -37,10 +37,10 @@ console.log(currentUser)
     let userScores: any[] = [];
 
 
-    // arr of just score (and index)
     let numberGameScores: any[][] = []
     let aiQuizScores: any[][] = []
     let weeklyQuizScores: any[][] = []
+    let nameQuizScores: any [][] = []
 
 
     if (allUsers) {
@@ -83,8 +83,13 @@ console.log(currentUser)
                 }
                 let weeklyQuizArr = [game?.score, index, game?.username];
                 weeklyQuizScores.push(weeklyQuizArr);
+            } else if(game?.name === "nameQuiz") {
+                if (game?.score <= 0) {
+                    return
+                }
+                let nameQuizArr = [game?.score, index, game?.username];
+                nameQuizScores.push(nameQuizArr);
             }
-
             console.log(numberGameScores)
 
         });
@@ -98,6 +103,7 @@ console.log(currentUser)
     // sort scores high to low
     weeklyQuizScores.sort((a, b) => b[0] - a[0]);
     console.log(weeklyQuizScores)
+    nameQuizScores.sort((a, b) => b[0] - a[0]);
 
     // Calculate average rank for each user
     let usersWithRank = userScores.map((userScore) => {
@@ -105,37 +111,36 @@ console.log(currentUser)
         const numberGameRank = numberGameScores.findIndex((score) => score[2] === userScore.username) + 1;
         const aiQuizRank = aiQuizScores.findIndex((score) => score[2] === userScore.username) + 1;
         const weeklyQuizRank = weeklyQuizScores.findIndex((score) => score[2] === userScore.username) + 1;
-        const averageRank = (numberGameRank + aiQuizRank) / 2;
+        const nameQuizRank = nameQuizScores.findIndex((score) => score[2] === userScore.username) + 1;
+
+        const totalRanks = [numberGameRank, aiQuizRank, weeklyQuizRank, nameQuizRank].filter(rank => rank > 0);
+        const averageRank = totalRanks.length > 0 ? totalRanks.reduce((acc, val) => acc + val, 0) / totalRanks.length : 0;
+
         return { ...userScore, averageRank };
         } else {
-            return { ...userScore, averageRank: 0 };
+            return
         }
     });
-
+    console.log(usersWithRank)
     // Sort users based on average rank
-    usersWithRank.sort((a, b) => a.averageRank - b.averageRank);
+    usersWithRank.sort((a, b) => a.averageRank + b.averageRank);
     console.log("Final ranking:", usersWithRank)
 
     // Remove duplicate usernames
 
-    let uniqueUsernamesArray: (number | string)[] = [];
-
-    
+    let uniqueUsernamesArray: any[] = [];
 
     for (let i = 0; i < usersWithRank.length; i++) {
-        const username = usersWithRank[i].username;
-        if (!uniqueUsernamesArray.includes(username)) {
+        const username = usersWithRank[i]?.username;
+        if(usersWithRank[i] == undefined) {
+            continue
+        }
+        if (!uniqueUsernamesArray.includes(username) ) {
             uniqueUsernamesArray.push(username);
         } 
         
     }
    
-
-    
-
-    
-    // userRank causing infinite loop - fix 
-
     let rank: number = 0;
     useEffect(() => {
         if(currentUser){
@@ -151,14 +156,7 @@ console.log(currentUser)
                userRank(rankObj)
                }
           
-    }, [currentUser])
-
-    
-        
-        
-    
-        // console.log(rank)
-  
+    }, [currentUser])  
 
 
     console.log("Final Final Ranking:", uniqueUsernamesArray)
@@ -174,7 +172,7 @@ console.log(currentUser)
                     {uniqueUsernamesArray.map((user, index) => (
                         <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
                             <p className='text-3xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>{index + 1}</p>
-                            <p className="text-3xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-2">{user.toString().toUpperCase()}</p>
+                            <p className="text-3xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-2">{user}</p>
                             {/* <p>{user.averageRank}</p> */}
                         </div>
                     ))}
@@ -207,8 +205,20 @@ console.log(currentUser)
                     })}
                     <Link href="/Quiz"><button className='text-xl bg-[#292929] text-[#FAF2F0] rounded-lg mt-6 py-1 px-3'>PLAY NOW</button></Link>
                 </div>
-                <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl"><h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>TEAM QUIZ</h1>
+                <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl"><h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>BIG FAT QUIZ OF THE WEEK</h1>
                     {weeklyQuizScores.map((score, index) => {
+                        return (
+                            <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
+
+                                <p className='text-2xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>SCORE: {score[0]}</p>
+                                <p className='text-2xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-3'>{score[2].toUpperCase()}</p>
+                            </div>
+                        );
+                    })}
+                    <Link href="/weeklyquiz"><button className='text-xl bg-[#292929] text-[#FAF2F0] rounded-lg mt-6 py-1 px-3'>PLAY NOW</button></Link>
+                </div>
+                <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl"><h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>NAME QUIZ</h1>
+                    {nameQuizScores.map((score, index) => {
                         return (
                             <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
 
