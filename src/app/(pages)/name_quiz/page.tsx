@@ -25,6 +25,7 @@ export default function App() {
     const [isloading, setIsLoading] = useState(true);
     const [limitGameplay, setLimitGameplay] = useState(false);
 
+
     const randomNumber = Math.floor(Math.random() * teamNames.length);
 
     
@@ -146,7 +147,7 @@ export default function App() {
             // console.log("correct")
         
     } else{
-        setIsCorrect("Sorry that is incorrect")
+        setIsCorrect("Sorry, that is incorrect!")
         // 
     }
 }
@@ -171,24 +172,23 @@ useEffect(() => {
 	return (
         <div className="bg-[#FAF2F0] mx-10 my-6 pt-6 pb-16 rounded-xl shadow-xl">
             <Navbar></Navbar>
-		<div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app items-center rounded-xl shadow-xl'>
+		<div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 sm:w-6/12 app items-center rounded-xl shadow-xl'>
             
             <div className="pt-4 text-2xl text-center font-bold">The Name Quiz</div>
 			{/* <div>number of plays is {numberOfPlays}</div>
             <div>score is {score}</div> */}
             
-            {limitGameplay ? (<div className='w-screen h-screen flex flex-col justify-center items-center text-[#FAF2F0]'>
-            <div className="p-10 bg-[#08605F] w-2/3 h-fit rounded opacity-80 border-4 border-[#74AA8D] text-center ">
+            {limitGameplay ? (<div className='flex flex-col justify-center items-center text-[#FAF2F0]'>
+            <div className="p-10 bg-[#08605F] w-2/3 h-fit rounded opacity-80 border-4 border-[#74AA8D] my-2 text-center ">
               <h1 className='text-3xl font-bold mb-4 '>Play limit reached for the day</h1>
               <h2 className='text-2xl '>Test your skills with another activity or come back tomorrow!</h2>
             </div>
-            <div className="flex flex-row gap-4 mt-2 ">
+            <div className="flex flex-row gap-4 my-4 ">
               <Link href="/home"><button className="bg-[#E29D65] text-white md:text-xl mx-auto font-bold py-2 px-4 rounded hover:bg-[#08605F] transition duration-300">Home</button></Link>
               <Link href="/scoreboard"><button className="bg-[#E29D65] text-white md:text-xl mx-auto font-bold py-2 px-4 rounded hover:bg-[#08605F] transition duration-300">Leaderboard</button></Link>
 
             </div>
-          </div>) : (
-                
+          </div>) : (                
             <>
 			{isAnswered ? (
 				

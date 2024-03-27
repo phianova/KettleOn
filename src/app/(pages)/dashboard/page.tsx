@@ -272,7 +272,7 @@ const page = () => {
                     </div>}
                 <div className='pt-2 flex flex-wrap justify-center sm:justify-between mx-10'>
                     {!isManagerEditMode &&
-                        <div className="bg-[#FAF2F0] h-auto w-72 shadow-xl rounded-xl my-10 text-[#292929] flex flex-col justify-center">
+                        <div className="bg-[#FAF2F0] h-auto w-72 shadow-xl rounded-xl my-5 text-[#292929] flex flex-col justify-center">
                             <div className="text-center pt-6 text-2xl  text-[#292929]">{currentUserTeamName}</div>
                             <div className="mt-6 text-center text-lg">{currentUserCompany}</div>
                             {/* <div className="mt-6 text-center text-xl lg:text-2xl font-light">Sheffield - UK</div> */}
@@ -280,19 +280,19 @@ const page = () => {
                         </div>}
 
                     {isManagerEditMode &&
-                        <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-[#FAF2F0] h-auto w-72 shadow-xl rounded-xl mt-10 flex flex-col justify-center items-center text-[#292929] py-6 ">
+                        <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-[#FAF2F0] h-auto w-72 shadow-xl rounded-xl my-5 flex flex-col justify-center items-center text-[#292929] py-6 ">
                             <input name="teamname" className="text-center mt-6 text-xl lg:text-2xl rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserTeamName}></input>
                             <input name="company" className="mt-6 text-center rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserCompany}></input>
                             <button type="submit" className="mx-auto my-5 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] px-4 border border-[#292929] border-opacity-60 w-1/2 rounded-full">Save changes</button>
                         </form>
                     }
 
-                    <div className="bg-[#FAF2F0] shadow-xl h-auto w-72 rounded-xl my-10 py-6 text-center text-[#292929] text-2xl flex flex-col justify-center">
+                    <div className="bg-[#FAF2F0] shadow-xl h-auto w-72 rounded-xl my-5 py-6 text-center text-[#292929] text-2xl flex flex-col justify-center">
                         <p>Team Members</p>
                         <div className='pt-6 text-5xl'>{users?.length}</div>
                     </div>
 
-                    <div className="bg-[#FAF2F0] shadow-xl h-auto w-72 rounded-xl my-10 overflow-y-scroll py-6 text-[#292929] flex flex-col justify-center">
+                    <div className="bg-[#FAF2F0] shadow-xl h-auto w-72 rounded-xl my-5 overflow-y-scroll py-6 text-[#292929] flex flex-col justify-center">
                         <div className='text-center pb-6 mb-2 text-2xl'>Current Users</div>
                         {userData && users?.length !== 0 && users.map((user: any, index) => (
                             <div key={index} className={"flex flex-col items-center"}>
@@ -302,10 +302,10 @@ const page = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="bg-[#FAF2F0] h-auto shadow-xl w-72 rounded-xl my-10 py-6 flex flex-col justify-center">
-                        <div className="text-center pb-6 text-2xl">Weeks High Scorer</div>
+                    <div className="bg-[#FAF2F0] h-auto shadow-xl w-72 rounded-xl my-5 py-6 flex flex-col justify-center">
+                        <div className="text-center pb-6 text-2xl">Week's High Scorer</div>
                         <div className="mt-6 text-center text-2xl  text-[#292929]">{firstPlaceName ? firstPlaceName : (
-                            <Link href="/scoreboard"><button className='mx-auto w-fit block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  py-2 px-4 border border-[#292929] border-opacity-60 w-4/12 rounded-full text-lg lg:text-xl'>View Scoreboard</button></Link>
+                            <Link href="/scoreboard"><button className='mx-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  py-2 px-4 border border-[#292929] border-opacity-60 w-4/12 rounded-full text-lg lg:text-xl'>View Scoreboard</button></Link>
                         )}</div>
 
                     </div>

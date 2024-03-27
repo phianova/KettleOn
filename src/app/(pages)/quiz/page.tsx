@@ -112,6 +112,7 @@ export default function App() {
     const [useAi, setUseAi] = useState(false);
     const [limitGameplay, setLimitGameplay] = useState(false);
     const [isLoading, setIsLoading] = useState(true)
+    const [isLoadingChatGPT, setIsLoadingChatGPT] = useState(false)
 
     const apiKey = process.env.NEXT_PUBLIC_CHATGPT_API_KEY;
 
@@ -181,6 +182,7 @@ export default function App() {
     }, [showScore])
 
     const callChatGPT = async () => {
+        setIsLoadingChatGPT(true)
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -206,6 +208,8 @@ export default function App() {
             console.log(typeof quizArray)
 
             setQuestionState(quizArray)
+            setIsLoadingChatGPT(false)
+            
             toast({
                 title: "Success!",
                 description: "New questions loaded!",
@@ -301,19 +305,19 @@ export default function App() {
                 <div className="bg-[#FAF2F0] mx-10 my-6 pt-6 pb-16 rounded-xl shadow-xl">
                     <Navbar></Navbar>
 
-                    <div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 app rounded-xl'>
+                    <div className='ml-auto mr-auto mt-10 bg-slate-200 w-96 sm:w-6/12 app rounded-xl'>
 
 
                         {limitGameplay ? (
                             <div className="mx-auto text-center">
-                                <div className='w-72 h-72 p-4 font-sm'>You have reached the daily limit of attempts for today. Please come back tomorrow to play again, or play another game.</div>
+                                <div className='w-72 h-72 px-4 py-10 font-sm text-center mx-auto'>You have reached the daily limit of attempts for today. Please come back tomorrow to play again, or play another game.</div>
                             </div>
                         ) : (<>
 
 
 
                             {showScore ? (
-                                <div className='mx-auto text-center w-72 h-72 p-4 score-section'><p className='mt-4 mb-8'>Congratulations!</p> You scored {currentScore} out of {questions.length}
+                                <div className='mx-auto text-center w-72 h-72 p-4 score-section text-lg'><p className='mt-4 mb-8'>Congratulations!</p> You scored {currentScore} out of {questions.length}
 
                                     <button className="mx-auto mt-20 bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2" onClick={() => handleReset()}>
                                         Reset
@@ -324,14 +328,14 @@ export default function App() {
                                 <>
 
                                     <div className=' question-section'>
-                                        <div className='ml-4 font-bold mb-6 pt-4 question-count'>
-                                            <span>Break Room Question {currentQuestion + 1}</span>/{questionState.length}
+                                        <div className='ml-4 text-2xl mb-6 pt-4 question-count'>
+                                            <span>Question {currentQuestion + 1}</span>/{questionState.length}
                                         </div>
 
                                         <div className="flex">
-                                            <div className='mx-4 w-3/5 text-base question-text'>{questionState[currentQuestion].questionText}</div>
+                                            <div className='mx-4 w-3/5 text-base md:text-xl question-text'>{questionState[currentQuestion].questionText}</div>
 
-                                            <div className='pr-2 answer-section'>
+                                            <div className='pr-2 answer-section mx-3'>
                                                 {questionState[currentQuestion].answerOptions.map(answerOption =>
                                                     <button key={answerOption.answerText} onClick={() => handleAnswerButtonClick(answerOption.isCorrect)} className="bg-transparent border w-full border-slate-300 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-full mb-2">
                                                         {answerOption.answerText}
@@ -340,8 +344,9 @@ export default function App() {
                                         </div>
                                     </div>
                                     <div className="p-12 border m-6 rounded">
+                                    {/* {isLoadingChatGPT ? <p className="mt-4">Loading...</p> : null} */}
 
-                                        <div onClick={() => setUseAi(!useAi)} className="text-xs">Turn On AI mode
+                                        <div onClick={() => setUseAi(!useAi)} className="text-xs md:text-lg">Turn On AI mode
 
                                             <div className={classNames("flex w-8 rounded-full h-4", { "bg-green-600": useAi, })}>
 
@@ -354,8 +359,10 @@ export default function App() {
                             
                     {useAi ? (
                         <div className=" p-4">
-                            <p className=" text-sm mb-2">Use AI to create bespoke questions</p>
+                            <p className=" text-sm md:text-lg mb-2">Use AI to create bespoke questions</p>
                             <form onSubmit={handleSubmitTopic}>
+                                {isLoadingChatGPT ? <Spinner></Spinner> : null}
+                                
                                 <label>
                                     {/* Topic: */}
                                     <input placeholder="Topic" className="bg-white border w-full mb-2 border-slate-300 hover:bg-slate-300 text-slate-500s font-base py-2 px-4 rounded-full" type="text" value={topic} onChange={handleChangeTopic} />
