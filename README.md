@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# KettleOn
 
-## Getting Started
+_A team building app for remote workers. Get to know your teammates, boost morale and spend time mingling. 
+Play games, quizzes and learn more about each other.
+Designed for a modern style of working._
 
-First, run the development server:
+The site features a series of team-building quizzes and games for remote workers to participate in and get to know one another.
+Managers or team leaders can sign their team up via the registration link on the landing page, and add members via the dashboard. User data is stored on Kinde and MongoDB.
+A daily icebreaker question helps team members to open up about their personal interests, and the answers feed into a quiz each week.
+Our leaderboard inspires a little healthy competition to encourage team members to play against one another.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+[Try KettleOn here!](https://kettle-on.vercel.app)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This is a fullstack [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+We used UI components from [ShadCN] and [Aceternity], as well as video hosting from [Next-Videos] and TailwindCSS styling. The site is built in TypeScript.
 
-## Learn More
+Our backend API service was built with tRPC/TanStack Query, MongoDB and Mongoose. 
 
-To learn more about Next.js, take a look at the following resources:
+We used [Kinde] for authentication, utilising both their NextJS SDK and their API.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+We used the ChatGPT API to build our "Mastermind-style" general knowledge quiz.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## The KettleOn Team
 
-## Deploy on Vercel
+- Sophia Warren - Backend & Auth
+ - [Github](https://github.com/phianova)
+ - [Portfolio](https://phianova.github.io/portfolio)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Andy Hinchliffe - Frontend
+ - [Github](https://github.com/andyhinchliffe)
+ - [Portfolio](https://github.com/andyhinchliffe/portfolio)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Phillip Hickinbotham - Full-stack
+ - [Github](https://github.com/Philliphick)
+ - [Portfolio](https://www.phillipanthony.co.uk/)
+
+
+## Deployed on Vercel - [click here to visit site](https://kettle-on.vercel.app)
