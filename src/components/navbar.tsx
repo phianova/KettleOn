@@ -8,13 +8,14 @@ import { IoHome } from "react-icons/io5";
 import { FaUserGroup } from "react-icons/fa6";
 import Image from 'next/image'
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs';
+import { FaTrophy } from "react-icons/fa6";
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/shadcn/tooltip"
+} from "./shadcn/tooltip"
 
 const navbar = () => {
   return (
@@ -61,6 +62,17 @@ const navbar = () => {
             </TooltipTrigger>
             <TooltipContent> 
               <p>Dashboard</p>
+            </TooltipContent>
+            </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+            <Tooltip>
+            <TooltipTrigger>
+            <div className="my-auto mr-4 "><a href="/scoreboard"><FaTrophy className="hover:scale-125 transition duration-300" size={35}/></a></div>
+            </TooltipTrigger>
+            <TooltipContent> 
+              <p>Leaderboard</p>
             </TooltipContent>
             </Tooltip>
             </TooltipProvider>

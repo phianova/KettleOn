@@ -167,9 +167,8 @@ const page = () => {
     useEffect(() => {
         if (isLoading === false && isAuthenticated === false) {
             toast({
-                title: "Error!",
-                description: "You are not authenticated. Please log in to access this page.",
-                variant: "destructive",
+                title: "You are not logged in.",
+                description: "Redirecting you to landing page...",
             })
             setLoading(false)
             router.push('/');
@@ -210,7 +209,7 @@ const page = () => {
                 <div className='mx-10 mt-6 pt-6 w-auto shadow-xl rounded-xl bg-[#FAF2F0] text-[#292929]'>
                     <Navbar></Navbar>
                     <div className='text-xl sm:text-3xl text-center w-full mb-2'>{displayName}'s dashboard</div>
-                    <div className='flex mx-auto w-8/12'>
+                    <div className='flex mx-auto w-9/12'>
 
                         {!isEditMode &&
                             <div className='my-auto p-3 flex flex-col sm:flex-row w-full justify-between items-center'>
@@ -225,6 +224,7 @@ const page = () => {
                                 <span></span>
                                 <span></span>
                                 <button onClick={() => setEditMode(true)} className="my-4 mx-3 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-2/12 rounded-full text-lg lg:text-xl justify-self-end">Edit</button>
+                                <a href="/merchandise" className="my-4 mx-3 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] p-2 border border-[#292929] border-opacity-60 w-1/2 sm:w-2/12 rounded-full text-lg lg:text-xl justify-self-end text-center">Get merch!</a>
                             </div>}
                         {isEditMode &&
                             <div className="flex flex-col sm:flex-row w-full items-center">
@@ -243,11 +243,6 @@ const page = () => {
                                     onSuccess={async (results: any, error) => {
                                         if (error) {
                                             console.log(error);
-                                            toast({
-                                                title: "Error!",
-                                                description: "Could not update profile picture.",
-                                                variant: "destructive",
-                                            })
                                         }
                                         const url = results?.info?.url.toString()
                                         updateImage({ image: url })

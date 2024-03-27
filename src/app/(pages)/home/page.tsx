@@ -157,9 +157,8 @@ export default function Home() {
   useEffect(() => {
     if (isLoading === false && isAuthenticated === false) {
       toast({
-        title: "Error!",
-        description: "You do not have permission to access this page.",
-        variant: "destructive",
+        title: "You are not logged in.",
+        description: "Redirecting you to landing page...",
       })
       console.log("You do not have permission to access this page.")
       setLoading(false)
@@ -250,21 +249,21 @@ export default function Home() {
         {/* <DrawerTrigger>
           Open Drawer
         </DrawerTrigger> */}
-        <DrawerContent>
-          <div className="mx-auto w-full max-w-sm">
-            <DrawerHeader>
-              <DrawerTitle>Before you start, please answer today's icebreaker question:</DrawerTitle>
-              <DrawerDescription className='mt-2'>{question}
+        <DrawerContent className="bg-[#FAF2F0]">
+          <div className="mx-auto w-full text-center">
+            <DrawerHeader className="w-full">
+              <DrawerTitle className="text-lg font-normal w-full text-center">Before you start, please answer today's icebreaker question:</DrawerTitle>
+              <DrawerDescription className='mt-2 text-[#292929] text-xl text-center'>{question}
 
               </DrawerDescription>
 
             </DrawerHeader>
             <form onSubmit={(e) => submitAnswerCall(e)}>
-              <label>
-                <input placeholder="Enter your answer here" className='pl-4 w-full h-10 rounded-xl max-w-sm bg-slate-200'
+              <label className="flex flex-col items-center">
+                <input placeholder="Enter your answer here" className='pl-4 w-full h-10 rounded-xl max-w-sm bg-white placeholder-[#E29D65] text-[#292929] border-2 border-[#E29D65] focus:border-[#E29D65] focus:outline-none'
                   type="text" name="answer"
                 />
-                <button className="w-full mt-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-xl shadow" type="submit">Submit answer</button>
+                <button className=" mt-4 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] font-semibold py-2 px-4 border border-[#292929] rounded-xl shadow w-fit" type="submit">Submit answer</button>
               </label>
             </form>
 
