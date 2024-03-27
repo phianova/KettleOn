@@ -47,8 +47,27 @@ export const appRouter = router({
                 role: "Team Leader",
                 image: "",
                 bio: "",
-                prompts: [{}],
-                game: [{}],
+                prompts: [],
+                game: [        {
+                    name: "NumberGame",
+                    score: 0,
+                    usage: 0
+                  },
+                  {
+                    name: "aiQuiz",
+                    score: 0,
+                    usage: 0
+                  },
+                  {
+                    name: "weeklyQuiz",
+                    score: 0,
+                    usage: 0
+                  }, 
+                  {
+                    name: "nameQuiz",
+                    score: 0, 
+                    usage: 0
+                  }],
                 rank: 0
             })
         }
