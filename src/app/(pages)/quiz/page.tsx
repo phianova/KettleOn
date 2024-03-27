@@ -112,6 +112,7 @@ export default function App() {
     const [useAi, setUseAi] = useState(false);
     const [limitGameplay, setLimitGameplay] = useState(false);
     const [isLoading, setIsLoading] = useState(true)
+    const [isLoadingChatGPT, setIsLoadingChatGPT] = useState(false)
 
     const apiKey = process.env.NEXT_PUBLIC_CHATGPT_API_KEY;
 
@@ -181,6 +182,7 @@ export default function App() {
     }, [showScore])
 
     const callChatGPT = async () => {
+        setIsLoadingChatGPT(true)
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -206,6 +208,8 @@ export default function App() {
             console.log(typeof quizArray)
 
             setQuestionState(quizArray)
+            setIsLoadingChatGPT(false)
+            
             toast({
                 title: "Success!",
                 description: "New questions loaded!",
@@ -340,6 +344,7 @@ export default function App() {
                                         </div>
                                     </div>
                                     <div className="p-12 border m-6 rounded">
+                                    {/* {isLoadingChatGPT ? <p className="mt-4">Loading...</p> : null} */}
 
                                         <div onClick={() => setUseAi(!useAi)} className="text-xs">Turn On AI mode
 
@@ -356,6 +361,8 @@ export default function App() {
                         <div className=" p-4">
                             <p className=" text-sm mb-2">Use AI to create bespoke questions</p>
                             <form onSubmit={handleSubmitTopic}>
+                                {isLoadingChatGPT ? <Spinner></Spinner> : null}
+                                
                                 <label>
                                     {/* Topic: */}
                                     <input placeholder="Topic" className="bg-white border w-full mb-2 border-slate-300 hover:bg-slate-300 text-slate-500s font-base py-2 px-4 rounded-full" type="text" value={topic} onChange={handleChangeTopic} />

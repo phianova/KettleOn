@@ -23,7 +23,7 @@ export default function App() {
     const [nameSentToChatGPT, setNameSentToChatGPT] = useState(0);
 
     const [isloading, setIsLoading] = useState(true)
-    const [limitGameplay, setLimitGameplay] = useState(false)
+    const [limitGameplay, setLimitGameplay] = useState(true)
 
     const randomNumber = Math.floor(Math.random() * teamNames.length);
 
@@ -173,17 +173,9 @@ export default function App() {
 			{/* <div>number of plays is {numberOfPlays}</div>
             <div>score is {score}</div> */}
             
-            {limitGameplay ? (<div className='w-screen h-screen flex flex-col justify-center items-center text-[#FAF2F0]'>
-            <div className="p-10 bg-[#08605F] w-2/3 h-fit rounded opacity-80 border-4 border-[#74AA8D] text-center ">
-              <h1 className='text-3xl font-bold mb-4 '>Play limit reached for the day</h1>
-              <h2 className='text-2xl '>Test your skills with another activity or come back tomorrow!</h2>
-            </div>
-            <div className="flex flex-row gap-4 mt-2 ">
-              <Link href="/home"><button className="bg-[#E29D65] text-white md:text-xl mx-auto font-bold py-2 px-4 rounded hover:bg-[#08605F] transition duration-300">Home</button></Link>
-              <Link href="/scoreboard"><button className="bg-[#E29D65] text-white md:text-xl mx-auto font-bold py-2 px-4 rounded hover:bg-[#08605F] transition duration-300">Leaderboard</button></Link>
-
-            </div>
-          </div>) : (
+            {limitGameplay ? (<div className="mx-auto ml-6 mt-6 text-center">
+                                <div className='w-72 h-72 ml-6 text-center font-sm'>You have reached the daily limit of attempts for today. Please come back tomorrow to play again, or play another game.</div>
+                            </div>) : (
                 
             <>
 			{isAnswered ? (
