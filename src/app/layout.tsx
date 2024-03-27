@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 const lilita = Lilita_One({ weight: ["400"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kettle On",
+  title: "KettleOn",
   description: "A team building platform for remote workers.",
 };
 
@@ -23,6 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head> 
+      <meta property="og:image" content="<generated>" />
+  <meta property="og:image:type" content="<generated>" />
+  <meta property="og:image:width" content="<generated>" />
+  <meta property="og:image:height" content="<generated>" />
+
       <link rel="icon" href="/favicon.ico" sizes="any" />
       
       <link

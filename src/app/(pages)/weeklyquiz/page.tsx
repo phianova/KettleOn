@@ -116,9 +116,8 @@ const page = () => {
         console.log(isLoading)
         if (isLoading === false && isAuthenticated === false) {
             toast({
-                title: "Error!",
-                description: "You do not have permission to access this page.",
-                variant: "destructive"
+                title: "You are not logged in.",
+                description: "Redirecting you to landing page...",        
             })
             console.log("You do not have permission to access this page.")
             setLoading(false)
