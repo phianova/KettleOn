@@ -23,7 +23,7 @@ export default function App() {
     const [nameSentToChatGPT, setNameSentToChatGPT] = useState(0);
 
     const [isloading, setIsLoading] = useState(true)
-    const [limitGameplay, setLimitGameplay] = useState(false)
+    const [limitGameplay, setLimitGameplay] = useState(true)
 
     const randomNumber = Math.floor(Math.random() * teamNames.length);
 
@@ -183,8 +183,7 @@ export default function App() {
               <Link href="/scoreboard"><button className="bg-[#E29D65] text-white md:text-xl mx-auto font-bold py-2 px-4 rounded hover:bg-[#08605F] transition duration-300">Leaderboard</button></Link>
 
             </div>
-          </div>) : (
-                
+          </div>) : (                
             <>
 			{isAnswered ? (
 				
