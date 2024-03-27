@@ -162,8 +162,16 @@ export default function NumberGame() {
 
   const handleMathSymbolClick = (symbol: string) => {
     if (symbol !== "=") {
+      if(symbol === "÷"){
+        setInputValue((prevValue) => prevValue + symbol);
+      setEquation((prevEquation) => prevEquation + "/");
+      } else if(symbol === "X"){
       setInputValue((prevValue) => prevValue + symbol);
+      setEquation((prevEquation) => prevEquation + "*");
+      } else {
+        setInputValue((prevValue) => prevValue + symbol);
       setEquation((prevEquation) => prevEquation + symbol);
+      }
     }
   };
 
@@ -337,7 +345,7 @@ export default function NumberGame() {
                         {/* Math Symbols Keypad */}
                         <div className="col-span-1">
                           <div className="grid grid-cols-2 gap-2">
-                            {["+", "-", "*", "÷"].map((symbol) => (
+                            {["+", "-", "X", "÷"].map((symbol) => (
                               <button
                                 key={symbol}
                                 onClick={() => handleMathSymbolClick(symbol)}

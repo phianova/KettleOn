@@ -22,8 +22,9 @@ export default function App() {
     const [isAnswered, setIsAnswered] = useState(false);
     const [nameSentToChatGPT, setNameSentToChatGPT] = useState(0);
 
-    const [isloading, setIsLoading] = useState(true)
-    const [limitGameplay, setLimitGameplay] = useState(true)
+    const [isloading, setIsLoading] = useState(true);
+    const [limitGameplay, setLimitGameplay] = useState(false);
+
 
     const randomNumber = Math.floor(Math.random() * teamNames.length);
 
@@ -140,8 +141,8 @@ export default function App() {
             nameQuizUsage(usageObj)
 
             setScore(score+5)
-            const scoreObj = {score: score}
-            nameQuizScore(scoreObj)
+            // const scoreObj = {score: score}
+            // nameQuizScore(scoreObj)
             
             // console.log("correct")
         
@@ -150,6 +151,10 @@ export default function App() {
         // 
     }
 }
+useEffect(() => {
+        const scoreObj = {score: score}
+            nameQuizScore(scoreObj)
+}, [score])
 
 
 
