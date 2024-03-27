@@ -143,22 +143,29 @@ Learn more about each other and compete against others in your team to help buil
         <AccordionItem value="item-1">
     <AccordionTrigger className="font-semibold">Sophia</AccordionTrigger>
     <AccordionContent>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. In autem quas corporis ducimus ipsa sint laborum amet blanditiis quibusdam maxime nemo nihil officia fugit dolores aliquid, cum labore nisi laudantium.
+      <div className="flex flex-row justify-between">
+      <p className="pr-3 my-auto">Sophia is a full-stack developer based in London. Her background is in welfare policy and data analysis. She loves solving puzzles and sipping coffee.</p>
+      <img src="sophia.png" alt="Sophia" className="w-16 h-16 mx-5 my-auto rounded-full"/>
+      </div>
     </AccordionContent>
   </AccordionItem>
 
   <AccordionItem value="item-2">
     <AccordionTrigger className="font-semibold">Phillip</AccordionTrigger>
     <AccordionContent>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. In autem quas corporis ducimus ipsa sint laborum amet blanditiis quibusdam maxime nemo nihil officia fugit dolores aliquid, cum labore nisi laudantium.
-    </AccordionContent>
+    <div className="flex flex-row justify-between">
+      <p className="pr-3 my-auto">Phillip is...</p>
+      <img src="phillip.png" alt="Phillip" className="w-16 h-16 mx-5 my-auto rounded-full"/>
+      </div>    </AccordionContent>
   </AccordionItem>
 
   <AccordionItem value="item-3">
     <AccordionTrigger className="font-semibold">Andy</AccordionTrigger>
     <AccordionContent>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. In autem quas corporis ducimus ipsa sint laborum amet blanditiis quibusdam maxime nemo nihil officia fugit dolores aliquid, cum labore nisi laudantium.
-    </AccordionContent>
+    <div className="flex flex-row justify-between">
+      <p className="pr-3 my-auto">Andy is...</p>
+      <img src="andy.png" alt="Andy" className="w-16 h-16 mx-5 my-auto rounded-full"/>
+      </div>    </AccordionContent>
   </AccordionItem>
         </Accordion>  
 

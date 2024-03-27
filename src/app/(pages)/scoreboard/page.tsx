@@ -165,62 +165,63 @@ console.log(currentUser)
 
 
     return (
-
-        <div className='m-20'>
+        <><div className='w-full m-4'>
             <Navbar></Navbar>
-            <div className="h-fit w-fill ring-4 ring-[#E29D65] m-12 rounded-lg bg-gradient-to-br from-[#08605F] via-[#74AA8D] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl">
-                <h1 className='text-3xl p-4 text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65] rounded-xl'>LEADERBOARD</h1>
-                {uniqueUsernamesArray.map((user, index) => (
-                    <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
-                        <p className='text-3xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>{index + 1}</p>
-                        <p className="text-3xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-2">{user.toString().toUpperCase()}</p>
-                        {/* <p>{user.averageRank}</p> */}
-                    </div>
-                ))}
-            </div>
-            <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl ">
-                
-                <h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>NUMBER GAME</h1> 
-                
-                
-                {numberGameScores.map((score, index) => {
-                    return (
+        </div><div className='m-20'>
+
+                <div className="h-fit w-fill ring-4 ring-[#E29D65] m-12 rounded-lg bg-gradient-to-br from-[#08605F] via-[#74AA8D] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl">
+                    <h1 className='text-3xl p-4 text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65] rounded-xl'>LEADERBOARD</h1>
+                    {uniqueUsernamesArray.map((user, index) => (
                         <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
-
-                            <p className='text-2xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>SCORE: {score[0]}</p>
-                            <p className='text-2xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-3'>{score[2].toUpperCase()}</p>
+                            <p className='text-3xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>{index + 1}</p>
+                            <p className="text-3xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-2">{user.toString().toUpperCase()}</p>
+                            {/* <p>{user.averageRank}</p> */}
                         </div>
-                    );
-                })}
-                <Link href="/NumberGame/game"><button className='text-xl bg-[#292929] text-[#FAF2F0] rounded-lg mt-6 py-1 px-3'>PLAY NOW</button></Link>
-            </div>
-            <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl"><h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>GENERAL KNOWLEDGE QUIZ</h1>
-                {aiQuizScores.map((score, index) => {
-                    return (
-                        <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
+                    ))}
+                </div>
+                <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl ">
 
-                            <p className='text-2xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>SCORE: {score[0]}</p>
-                            <p className='text-2xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-3'>{score[2].toUpperCase()}</p>
-                        </div>
-                    );
-                })}
-                <Link href="/Quiz"><button className='text-xl bg-[#292929] text-[#FAF2F0] rounded-lg mt-6 py-1 px-3'>PLAY NOW</button></Link>
-            </div>
-            <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl"><h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>TEAM QUIZ</h1>
-                {weeklyQuizScores.map((score, index) => {
-                    return (
-                        <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
-
-                            <p className='text-2xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>SCORE: {score[0]}</p>
-                            <p className='text-2xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-3'>{score[2].toUpperCase()}</p>
-                        </div>
-                    );
-                })}
-                <Link href="/weeklyquiz"><button className='text-xl bg-[#292929] text-[#FAF2F0] rounded-lg mt-6 py-1 px-3'>PLAY NOW</button></Link>
-            </div>
+                    <h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>NUMBER GAME</h1>
 
 
-        </div>
+                    {numberGameScores.map((score, index) => {
+                        return (
+                            <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
+
+                                <p className='text-2xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>SCORE: {score[0]}</p>
+                                <p className='text-2xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-3'>{score[2].toUpperCase()}</p>
+                            </div>
+                        );
+                    })}
+                    <Link href="/NumberGame/game"><button className='text-xl bg-[#292929] text-[#FAF2F0] rounded-lg mt-6 py-1 px-3'>PLAY NOW</button></Link>
+                </div>
+                <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl"><h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>GENERAL KNOWLEDGE QUIZ</h1>
+                    {aiQuizScores.map((score, index) => {
+                        return (
+                            <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
+
+                                <p className='text-2xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>SCORE: {score[0]}</p>
+                                <p className='text-2xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-3'>{score[2].toUpperCase()}</p>
+                            </div>
+                        );
+                    })}
+                    <Link href="/Quiz"><button className='text-xl bg-[#292929] text-[#FAF2F0] rounded-lg mt-6 py-1 px-3'>PLAY NOW</button></Link>
+                </div>
+                <div className="h-fit w-fill m-12 rounded-lg bg-gradient-to-br from-[#74AA8D] via-[#08605F] to-[#08605F] text-center flex flex-col items-center justify-center py-10 shadow-xl"><h1 className='text-2xl p-2 rounded-lg text-[#292929] bg-gradient-to-br from-[#FAF2F0] via-[#E29D65] to-[#E29D65]'>TEAM QUIZ</h1>
+                    {weeklyQuizScores.map((score, index) => {
+                        return (
+                            <div key={index} className='w-2/3 flex flex-row justify-between border-b-2 border-[#E29D65] border-dashed  px-4 pt-6 pb-1'>
+
+                                <p className='text-2xl bg-[#292929] text-[#FAF2F0] rounded-lg py-1 px-3'>SCORE: {score[0]}</p>
+                                <p className='text-2xl bg-[#FAF2F0] text-[#292929] rounded-lg py-1 px-3'>{score[2].toUpperCase()}</p>
+                            </div>
+                        );
+                    })}
+                    <Link href="/weeklyquiz"><button className='text-xl bg-[#292929] text-[#FAF2F0] rounded-lg mt-6 py-1 px-3'>PLAY NOW</button></Link>
+                </div>
+
+
+            </div></>
     )
 }
 

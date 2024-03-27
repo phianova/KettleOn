@@ -59,26 +59,26 @@ export default function Home() {
   const [content, setContent] = useState([
 
     {
+      title: "Number Game",
+      image: "/numbergame.png",
+      description: "Test your mathematical skills in this countdown-inspired game!",
+      link: "/NumberGame/start"
+    },
+    {
       title: "General Knowledge Quiz",
-      image: "/quiz.jpg",
+      image: "/aiquiz.png",
       description: "Test your knowledge of different topics. Try our AI topic generator!",
       link: "/quiz"
     },
     {
       title: "Big Fat Quiz of the Week",
-      image: "/team.jpg",
+      image: "/weeklyquiz.png",
       description: "Find out new facts about your teammates based on their answers to the daily questions!",
       link: "/weeklyquiz"
     },
     {
-      title: "Number Game",
-      image: "/games.jpg",
-      description: "Test your mathematical skills in this countdown-inspired game!",
-      link: "/NumberGame/start"
-    },
-    {
       title: "Name Game",
-      image: "/games.jpg",
+      image: "/namequiz.png",
       description: "A quiz about your teammates' names! Find out fun facts and test your general knowledge.",
       link: "/name_quiz"
     }
@@ -230,7 +230,7 @@ export default function Home() {
     <GoogleAnalytics gaId="G-R0Y4M12C9B" />
 
 
-      <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-10">
+      <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-5">
 
         <Navbar />
         {/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
@@ -238,7 +238,7 @@ export default function Home() {
 
         <div className="flex flex-col items-center">
           <InfiniteMovingCards items={content} className={undefined} />
-          <div className="flex flex-row items-center justify-center my-10 w-full">
+          <div className="flex flex-row items-center justify-center my-5 w-full">
             <AnimatedTooltip icons={users} />
           </div>
           {/* <AnimateadTooltip icons={users} /> */}
