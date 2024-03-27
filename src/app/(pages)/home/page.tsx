@@ -21,6 +21,12 @@ import {
   DrawerTrigger,
 } from "../../../components/shadcn/drawer"
 import Spinner from "../../../components/Spinner"
+import schedule from 'node-schedule';
+import { useToast } from "../../../components/shadcn/use-toast";
+import { GoogleAnalytics } from '@next/third-parties/google'
+
+
+
 
 
 export default function Home() {
@@ -34,6 +40,7 @@ export default function Home() {
   let currentUserAnswer: string | null | undefined;
 
   const router = useRouter()
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true)
 
   const { isAuthenticated, isLoading, user, permissions } = useKindeBrowserClient();
@@ -52,22 +59,28 @@ export default function Home() {
   const [content, setContent] = useState([
 
     {
-      title: "Quiz",
-      image: "/quiz.jpg",
-      description: "A quiz to test your teams knowledge",
+      title: "Number Game",
+      image: "/numbergame.png",
+      description: "Test your mathematical skills in this countdown-inspired game!",
+      link: "/NumberGame/start"
+    },
+    {
+      title: "General Knowledge Quiz",
+      image: "/aiquiz.png",
+      description: "Test your knowledge of different topics. Try our AI topic generator!",
       link: "/quiz"
     },
     {
-      title: "Team Building Question",
-      image: "/team.jpg",
-      description: "Find out new facts about your team.",
-      link: "/TeamQuestion"
+      title: "Big Fat Quiz of the Week",
+      image: "/weeklyquiz.png",
+      description: "Find out new facts about your teammates based on their answers to the daily questions!",
+      link: "/weeklyquiz"
     },
     {
-      title: "Games",
-      image: "/games.jpg",
-      description: "Play games and compare your score to other team members.",
-      link: "/game"
+      title: "Name Game",
+      image: "/namequiz.png",
+      description: "A quiz about your teammates' names! Find out fun facts and test your general knowledge.",
+      link: "/name_quiz"
     }
   ])
 
@@ -104,6 +117,25 @@ export default function Home() {
     },
   ])
 
+  const { mutate: teamUsageReset } = trpc.teamUsageReset.useMutation();
+  const { mutate: teamScoreReset } = trpc.teamScoreReset.useMutation();
+  
+  
+
+
+  useEffect(() => {
+    console.log("inside useeffect")
+     // node-scheduler that runs at midnight
+  schedule.scheduleJob('0 0 * * *', function() {
+    console.log('24 hrs passed');
+    teamUsageReset()
+});
+  schedule.scheduleJob('0 0 * * 1', function() {
+    console.log('1 week passed');
+    teamScoreReset();
+  })
+  }, [])
+
   useEffect(() => {
     if (userData) {
       const userArray = userData?.data
@@ -123,8 +155,11 @@ export default function Home() {
   const currentUserRole = currentUserProfile?.role.toString()
 
   useEffect(() => {
-    console.log(isLoading)
     if (isLoading === false && isAuthenticated === false) {
+      toast({
+        title: "You are not logged in.",
+        description: "Redirecting you to landing page...",
+      })
       console.log("You do not have permission to access this page.")
       setLoading(false)
       router.push('/');
@@ -148,12 +183,30 @@ export default function Home() {
   useEffect(() => {
     if (asked === true) {
       setDrawerOpen(false)
-    } else {
+    } else if (!isLoading && asked === false) {
       setDrawerOpen(true)
     }
-  }, [asked])
+  }, [questionData])
 
-  const { mutate: submitAnswer } = trpc.submitAnswer.useMutation()
+  const { mutate: submitAnswer } = trpc.submitAnswer.useMutation({
+    onSuccess: (success) => {
+      if (success) {
+        toast({
+          title: "Success!",
+          description: "Answer submitted successfully."
+        })
+      }
+    },
+    onError: (error) => {
+      if (error) {
+        toast({
+          title: "Error!",
+          description: "Could not submit answer.",
+          variant: "destructive",
+        })
+      }
+    }
+  })
 
   const submitAnswerCall = (e: any) => {
     e.preventDefault();
@@ -173,43 +226,44 @@ export default function Home() {
 
   return (
     <div className="h-full w-full">
-    
-    
-    <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-10">
-    
-    <Navbar />
-      {/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
-      <h1 className="teamTitle text-center mx-auto mb-10 text-6xl ">{currentUserTeamName}</h1>
-      
-      <div className="flex flex-col items-center">
-        <InfiniteMovingCards items={content} className={undefined} />
-        <div className="flex flex-row items-center justify-center my-10 w-full">
-          <AnimatedTooltip icons={users} />
+    <GoogleAnalytics gaId="G-R0Y4M12C9B" />
+
+
+      <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-5">
+
+        <Navbar />
+        {/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
+        <h1 className="teamTitle text-center mx-auto mb-10 text-6xl ">{currentUserTeamName}</h1>
+
+        <div className="flex flex-col items-center">
+          <InfiniteMovingCards items={content} className={undefined} />
+          <div className="flex flex-row items-center justify-center my-5 w-full">
+            <AnimatedTooltip icons={users} />
+          </div>
+          {/* <AnimateadTooltip icons={users} /> */}
+          {/* <p>{connected}</p> */}
         </div>
-        {/* <AnimateadTooltip icons={users} /> */}
-        {/* <p>{connected}</p> */}
-      </div>
-      
-    </main>
+
+      </main>
       <Drawer open={!loading && drawerOpen}>
         {/* <DrawerTrigger>
           Open Drawer
         </DrawerTrigger> */}
-        <DrawerContent>
-          <div className="mx-auto w-full max-w-sm">
-            <DrawerHeader>
-              <DrawerTitle>Before you start, please answer our team question of the week</DrawerTitle>
-              <DrawerDescription className='mt-2'>{question}
+        <DrawerContent className="bg-[#FAF2F0]">
+          <div className="mx-auto w-full text-center">
+            <DrawerHeader className="w-full">
+              <DrawerTitle className="text-lg font-normal w-full text-center">Before you start, please answer today's icebreaker question:</DrawerTitle>
+              <DrawerDescription className='mt-2 text-[#292929] text-xl text-center'>{question}
 
               </DrawerDescription>
 
             </DrawerHeader>
             <form onSubmit={(e) => submitAnswerCall(e)}>
-              <label>
-                <input placeholder="Enter your answer here" className='pl-4 w-full h-10 rounded-xl max-w-sm bg-slate-200'
+              <label className="flex flex-col items-center">
+                <input placeholder="Enter your answer here" className='pl-4 w-full h-10 rounded-xl max-w-sm bg-white placeholder-[#E29D65] text-[#292929] border-2 border-[#E29D65] focus:border-[#E29D65] focus:outline-none'
                   type="text" name="answer"
                 />
-                <button className="w-full mt-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-xl shadow" type="submit">Submit answer</button>
+                <button className=" mt-4 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] font-semibold py-2 px-4 border border-[#292929] rounded-xl shadow w-fit" type="submit">Submit answer</button>
               </label>
             </form>
 

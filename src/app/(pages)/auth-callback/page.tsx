@@ -1,49 +1,57 @@
 "use client"
-import React from 'react';
+import React, {useEffect, useMemo} from 'react';
 import { useRouter, useSearchParams, redirect } from "next/navigation";
 import { trpc } from "../../_trpc/client";
 import { Suspense } from 'react';
 // import { Loader } from "lucide-react";
+import { useToast } from "../../../components/shadcn/use-toast";
 
 const Page = () => {
   const router = useRouter();
+  const {toast} = useToast();
 
-  // const searchParams = useSearchParams();
-  // const origin = searchParams.get("origin");
-
-  // if (
-  //   origin !== "register" 
-  // ) {
-  //   router.push("/login");
-  // }
-
-  trpc.authCallback.useQuery(undefined, {
-    onSuccess: ({ success }) => {
-      if (success) {
-        router.push("/home");
-      }
-    },
-    onError: (err) => {
-      router.push("/");
-    },
-
+  const data = trpc.authCallback.useQuery(undefined, {
     retry: true,
     retryDelay: 5000,
   });
 
+  const isSuccess = useMemo(() => data.data?.success, [data]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast({
+        title: "Success!",
+        description: "Taking you to homepage...",
+        duration: 2000
+      })
+      router.push("/home");
+    }
+  
+    if (data.isError) {
+      toast({
+        title: "Error!",
+        description: "Authentication failed. Please try again.",
+        variant: "destructive",
+        duration: 2000
+      })
+      router.push("/");
+    }
+  }, [isSuccess, data.isError, router, toast]);
+
+
+
   return (
     <div className="w-full flex justify-center min-h-screen items-center">
       <div className="flex flex-col items-center gap-2">
-        {/* <Loader className="w-10 h-10 animate-spin" /> */}
-        <h3 className="text-lg font-semibold text-gray-700">
-          Please wait while we create your account...
+        <h3 className="text-2xl text-[#292929]">
+          Checking user data...
         </h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-lg text-[#292929]/70">
           This should only take a few seconds.
         </p>
       </div>
     </div>
-  ); 
+  );
 };
 
 export default Page;

@@ -8,13 +8,14 @@ import { IoHome } from "react-icons/io5";
 import { FaUserGroup } from "react-icons/fa6";
 import Image from 'next/image'
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs';
+import { FaTrophy } from "react-icons/fa6";
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/shadcn/tooltip"
+} from "./shadcn/tooltip"
 
 const navbar = () => {
   return (
@@ -22,7 +23,7 @@ const navbar = () => {
 
         <div className="w-full flex justify-between my-auto rounded-xl m-4  h-20">
         <div>
-            <div className="my-auto" ><Image src="/logo.png" className="hover:scale-125 transition duration-300 hidden sm:block" alt="logo" width={150} height={150} /></div>
+            <div className="my-auto" ><a href="/home"><Image src="/logo.png" className="hover:scale-125 transition duration-300 hidden sm:block" alt="logo" width={150} height={150} /></a></div>
             
         </div>
 
@@ -31,7 +32,7 @@ const navbar = () => {
             <TooltipProvider>
             <Tooltip>
             <TooltipTrigger>
-            <div className="my-auto mr-4 "><IoHome className="hover:scale-125 transition duration-300" size={35}/></div>
+            <div className="my-auto mr-4 "><a href="/home"><IoHome className="hover:scale-125 transition duration-300" size={35}/></a></div>
             </TooltipTrigger>
             <TooltipContent> 
               <p>Home</p>
@@ -44,7 +45,7 @@ const navbar = () => {
             <TooltipProvider>
             <Tooltip>
             <TooltipTrigger>
-            <div className="my-auto mr-4 "><TfiHelpAlt className="hover:scale-125 transition duration-300" size={35}/></div>
+            <div className="my-auto mr-4 "><a href="/help"><TfiHelpAlt className="hover:scale-125 transition duration-300" size={35}/></a></div>
             </TooltipTrigger>
             <TooltipContent> 
               <p>Help</p>
@@ -57,10 +58,21 @@ const navbar = () => {
             <TooltipProvider>
             <Tooltip>
             <TooltipTrigger>
-            <div className="my-auto mr-4 "><FaUserGroup className="hover:scale-125 transition duration-300" size={35}/></div>
+            <div className="my-auto mr-4 "><a href="/dashboard"><FaUserGroup className="hover:scale-125 transition duration-300" size={35}/></a></div>
             </TooltipTrigger>
             <TooltipContent> 
-              <p>Profile</p>
+              <p>Dashboard</p>
+            </TooltipContent>
+            </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+            <Tooltip>
+            <TooltipTrigger>
+            <div className="my-auto mr-4 "><a href="/scoreboard"><FaTrophy className="hover:scale-125 transition duration-300" size={35}/></a></div>
+            </TooltipTrigger>
+            <TooltipContent> 
+              <p>Leaderboard</p>
             </TooltipContent>
             </Tooltip>
             </TooltipProvider>

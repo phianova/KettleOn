@@ -15,10 +15,10 @@ const CookiePolicy = () => {
         setIsVisible(false);
     };
 
-    const handleDecline = () => {
+    // const handleDecline = () => {
         
-        <Link href="/help"></Link>
-    };
+    //     setIsVisible(true);
+    // };
 
     return (
         <>
@@ -45,9 +45,9 @@ const CookiePolicy = () => {
                         <button onClick={handleAccept} className="mt-4 bg-[#E29D65] hover:bg-orange-300 text-white py-2 px-4 rounded">
                             Accept
                         </button>
-                        <button onClick={handleDecline} className="mt-4 bg-[#E29D65] hover:bg-orange-300 text-white py-2 px-4 rounded">
+                        <a href="/help" className="mt-4 bg-[#E29D65] hover:bg-orange-300 text-white py-2 px-4 rounded">
                             Decline
-                        </button>
+                        </a>
                         </div>
                     </div>
                 </div>

@@ -16,6 +16,7 @@ export interface User {
     game: [
       {usage: Number, score: Number, name: String}
     ],
+    rank: Number,
   
   }
    
@@ -37,6 +38,7 @@ export interface User {
     game: [
       {usage: Number, score: Number, name: String}
     ],
+    rank: Number,
   };
 
 
@@ -59,7 +61,8 @@ const UserSchema = new mongoose.Schema<User>({
         score: { type: Number, default: 0 },
         name: { type: String, required: true }
       }
-      ]
+      ],
+    rank: {type: Number, default: 0},
 });
 
 export default mongoose.models.User || mongoose.model<User>("User", UserSchema);
