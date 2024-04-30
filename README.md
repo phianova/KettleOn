@@ -15,11 +15,11 @@ Our leaderboard inspires a little healthy competition to encourage team members 
 
 This is a fullstack [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-We used UI components from [ShadCN] and [Aceternity], as well as video hosting from [Next-Videos] and TailwindCSS styling. The site is built in TypeScript.
+We used UI components from [ShadCN](https://ui.shadcn.com/) and [Aceternity](https://ui.aceternity.com/), as well as video hosting from [Next-Videos](https://www.npmjs.com/package/next-videos) and TailwindCSS styling. The site is built in TypeScript.
 
 Our backend API service was built with tRPC/TanStack Query, MongoDB and Mongoose. 
 
-We used [Kinde] for authentication, utilising both their NextJS SDK and their API.
+We used [Kinde](https://kinde.com/) for authentication, utilising both their NextJS SDK and their API.
 
 We used the ChatGPT API to build our "Mastermind-style" general knowledge quiz.
 
