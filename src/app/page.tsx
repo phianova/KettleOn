@@ -34,7 +34,7 @@ export default function Home() {
     </div>
       </div>
      <video 
-    src="https://backgroundmusic.uk/dailyoperation/video/loopHD2.mp4"
+    src="/loopHD.mp4"
     autoPlay
     muted
     loop
