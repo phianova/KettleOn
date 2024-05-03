@@ -659,7 +659,7 @@ teamUsageReset: privateProcedure
 
             for(let i = 0; i < users.length; i++) {
                 users.forEach((user) => {
-                    user.game.forEach((game) => {
+                user.game.forEach((game) => {
                         game.usage = 0
                     });
                 });
