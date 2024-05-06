@@ -245,10 +245,7 @@ export default function Home() {
         </div>
 
       </main>
-      <Drawer open={!loading && drawerOpen}>
-        {/* <DrawerTrigger>
-          Open Drawer
-        </DrawerTrigger> */}
+      {/* <Drawer open={!loading && drawerOpen}>
         <DrawerContent className="bg-[#FAF2F0]">
           <div className="mx-auto w-full text-center">
             <DrawerHeader className="w-full">
@@ -273,7 +270,7 @@ export default function Home() {
             </DrawerFooter>
           </div>
         </DrawerContent>
-      </Drawer>
+      </Drawer> */}
     </div>
   );
 }

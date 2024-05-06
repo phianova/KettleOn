@@ -108,12 +108,10 @@ const page = () => {
             }
             questionsArray.push(questionObject)
         }
-        console.log(questionsArray)
         return questionsArray;
     }
 
     useEffect(() => {
-        console.log(isLoading)
         if (isLoading === false && isAuthenticated === false) {
             toast({
                 title: "You are not logged in.",
@@ -135,14 +133,9 @@ const page = () => {
     const handleAnswer = (e: any) => {
         e.preventDefault()
         const inputNames = quizArray[currentQuestion].answers.map((ans: answer) => ans.answer?.replace(/\s+/g, ''));
-        console.log(inputNames)
         let questionScore = 0
         for (let i = 0; i < inputNames.length; i++) {
-            console.log(e.target.elements[inputNames[i]].value)
-            console.log(inputNames[i])
-            console.log(quizArray[currentQuestion].answers)
             const correct = quizArray[currentQuestion].answers.find((a: answer) => (a.name === e.target.elements[inputNames[i]].value && a.answer?.replace(/\s+/g, '').toString() === inputNames[i])) ? true : false;
-            console.log("correct", correct)
             if (correct) {
                 questionScore++;
             }
@@ -157,11 +150,10 @@ const page = () => {
         } else {
             setShowScore(true);
         }
-        console.log(currentScore)
         e.target.reset();
     }
 
-    useEffect(() => {
+     useEffect(() => {
         if (currentUsage >= 3) {
             setLimitReached(true)
         }
@@ -173,19 +165,19 @@ const page = () => {
         <div className="my-5 pb-10 pt-6 mx-auto w-10/12 h-full bg-[#FAF2F0] text-[#292929] rounded-3xl drop-shadow-lg">
             <Navbar></Navbar>
             <div className="flex flex-col items-center">
-                <h1 className="mt-5 text-3xl md:text-5xl font-bold p-5">Big Fat Quiz of the Week</h1>
+                <h1 className="mt-5 text-3xl md:text-5xl font-bold p-5 text-center">Big Fat Quiz of the Week</h1>
                 <div className="flex flex-col sm:flex-row mx-auto">
                     <p className="my-5 p-3 text-xl text-center">Match your teammates with their answers to this week's questions!</p>
-                    <p className="font-bold bg-[#08605F]/60 p-3 rounded-lg my-auto mx-auto justify-self-end">Score: {currentScore}</p>
+                    <p className="font-bold bg-[#08605F]/60 p-3 rounded-lg my-auto mx-auto sm:ml-5 sm:justify-self-end">Score: {currentScore}</p>
                 </div>
                 {!quizStarted && <button className="bg-[#08605F] text-[#FAF2F0] text-3xl w-1/3 mx-auto mt-5 font-bold py-5 px-4 rounded-full hover:bg-[#74AA8D] hover:text-[#292929]" onClick={() => setQuizStarted(true)}>Start Quiz</button>}
                 {!loading && quizArray.length > 0 && !showScore && !limitReached && quizStarted &&
                     <div className="flex flex-col items-center">
-                            <p className="p-3 font-bold text-3xl bg-[#E29D65]/40 rounded-full drop-shadow-md">Question {currentQuestion + 1}:</p>
-                            <p className="p-3 m-2 font-bold text-2xl italic">"{quizArray[currentQuestion].question}"</p>
+                            <p className="p-3 font-bold text-3xl bg-[#E29D65]/40 rounded-full drop-shadow-md mt-5">Question {currentQuestion + 1}:</p>
+                            <p className="p-3 m-2 font-bold text-2xl italic text-center">"{quizArray[currentQuestion].question}"</p>
                         <form onSubmit={handleAnswer} className="flex flex-col items-center w-full">
                             {quizArray[currentQuestion].answers.map((answer: answer, index: number) => (
-                                <div key={index} className="mb-10 flex flex-row justify-between w-full">
+                                <div key={index} className="mb-10 flex flex-col w-10/12 sm:flex-row justify-between sm:w-full">
                                     <p className="my-auto italic bg-[#E29D65]/40 p-5 rounded-full text-center">"{answer.answer}"</p>
                                     <div className="flex flex-col">
                                         {usernamesArray.map((username: any, usernameIndex: number) => (
@@ -206,21 +198,21 @@ const page = () => {
                 }
                 {limitReached && quizStarted &&
                     <div className="flex flex-col items-center">
-                        <p className="font-bold bg-[#E29D65]/40 p-5 rounded-lg">Plays: {currentUsage}/3</p>
-                        <p className="bg-[#E29D65] p-5 rounded-lg mt-10">You have already played this week's quiz three times today.</p>
-                        <button onClick={() => router.push('/home')} className="font-bold text-xl text-center mx-auto hover:text-[#E29D65] p-5 rounded-lg">Back to homepage</button>
+                        {/* <p className="font-bold bg-[#E29D65]/40 p-5 rounded-lg mt-5">Plays: {currentUsage}/3</p> */}
+                        <p className="bg-[#E29D65] p-5 rounded-lg mt-10 text-center w-10/12">You have already played this week's quiz three times today.</p>
+                        <button onClick={() => router.push('/home')} className="text-xl text-center mx-auto p-5 bg-[#08605F] text-[#FAF2F0] mt-5 font-bold py-5 px-4 rounded-full hover:bg-[#74AA8D] hover:text-[#292929]">Back to homepage</button>
                     </div>}
                 {showScore && !limitReached && quizStarted &&
-                    <div className="flex flex-col items-center">
-                        <p>You scored {currentScore} points!</p>
-                        <p className="font-bold bg-[#E29D65]/40 p-5 rounded-lg">Plays: {currentUsage}/3</p>
+                    <div className="flex flex-col items-center mt-5">
+                        <p className="text-3xl animate-bounce repeat-1 text-[#08605F] p-5">You scored {currentScore} points!</p>
+                        {/* <p className="font-bold bg-[#E29D65]/40 p-5 rounded-lg mt-3">Plays: {currentUsage}/3</p> */}
                         <button onClick={() => {
                             setCurrentScore(0)
                             setCurrentQuestion(0)
                             setShowScore(false)
                             setQuizStarted(false)
                             window.location.reload();
-                        }} className="font-bold text-xl text-center mx-auto hover:text-[#E29D65] p-5 rounded-lg">Play again</button>
+                        }} className="text-xl text-center mx-auto p-5 bg-[#08605F] text-[#FAF2F0] mt-5 font-bold py-5 px-4 rounded-full hover:bg-[#74AA8D] hover:text-[#292929]">Play again</button>
                     </div>
                 }
             </div>
