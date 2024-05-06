@@ -95,11 +95,11 @@ const AddUserForm: FC<AddUserProps> = (props: AddUserProps) => {
 
   return (
     <form onSubmit={(e) => addUserCall(e, props)} className={"flex flex-col justify-center"}>
-      <input name="given_name" type="text" placeholder="Enter first name" className="mx-auto my-auto block bg-white rounded-xl text-base lg:text-lg text-center h-10 w-8/12 mb-2 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" />
-      <input name="family_name" type="text" placeholder="Enter surname" className="mx-auto my-auto block bg-white rounded-xl text-base lg:text-lg text-center h-10 w-8/12 mb-2 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" />
-      <input name="email" type="email" placeholder="Enter email" className="mx-auto my-auto block bg-white rounded-xl text-base lg:text-lg text-center h-10 w-8/12 mb-2 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" />
-      <input name="role" type="text" placeholder="Enter role" className="mx-auto my-auto block bg-white rounded-xl text-base lg:text-lg text-center h-10 w-8/12 mb-2 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" />
-      <button type="submit" className="mx-auto my-auto block bg-[#FAF2F0] hover:bg-[#74AA8D] text-[#292929] font-semibold py-2 px-4 border border-[#292929] w-8/12 rounded-full text-base lg:text-lg">Add new user</button>
+      <input name="given_name" type="text" placeholder="Enter first name" className="mx-auto my-auto block bg-white rounded-xl text-lg sm:text-xl text-center h-10 w-8/12 mb-2 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" />
+      <input name="family_name" type="text" placeholder="Enter surname" className="mx-auto my-auto block bg-white rounded-xl text-lg sm:text-xl text-center h-10 w-8/12 mb-2 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" />
+      <input name="email" type="email" placeholder="Enter email" className="mx-auto my-auto block bg-white rounded-xl text-lg sm:text-xl text-center h-10 w-8/12 mb-2 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" />
+      <input name="role" type="text" placeholder="Enter role" className="mx-auto my-auto block bg-white rounded-xl text-lg sm:text-xl text-center h-10 w-8/12 mb-2 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" />
+      <button type="submit" className="mx-auto my-auto block bg-[#FAF2F0] hover:bg-[#74AA8D] text-[#292929] font-semibold py-2 px-4 border border-[#292929] w-8/12 rounded-full text-xl">Add new user</button>
     </form>
 
   )

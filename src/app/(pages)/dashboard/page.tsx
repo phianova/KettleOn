@@ -208,15 +208,15 @@ const page = () => {
             <div className='col-span-6'>
                 <div className='mx-10 mt-6 pt-6 w-auto shadow-xl rounded-xl bg-[#FAF2F0] text-[#292929]'>
                     <Navbar></Navbar>
-                    <div className='text-xl sm:text-3xl text-center w-full mb-2'>{displayName}'s dashboard</div>
+                    <div className='text-2xl sm:text-3xl text-center w-full mb-2'>{displayName}'s dashboard</div>
                     <div className='flex mx-auto w-9/12'>
 
                         {!isEditMode &&
                             <div className='my-auto p-3 flex flex-col sm:flex-row w-full justify-between items-center'>
                                 <div className="flex flex-col mb-3">
-                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Email: <p className="text-base lg:text-lg px-2">{currentUser}</p></div>
-                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Role: <p className="text-base lg:text-lg px-2">{currentUserRole}</p></div>
-                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Bio: <p className="text-base lg:text-lg px-2">{currentUserBio}</p></div>
+                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Email: <p className="text-base lg:text-lg px-2 mx-2 bg-[#E29D65]/50 rounded-lg">{currentUser}</p></div>
+                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Role: <p className="text-base lg:text-lg px-2 mx-2 bg-[#E29D65]/50 rounded-lg">{currentUserRole}</p></div>
+                                    <div className='text-lg lg:text-xl font-light pr-2 flex flex-row items-baseline'>Bio: <p className="text-base lg:text-lg px-2 mx-2 bg-[#E29D65]/50 rounded-lg">{currentUserBio}</p></div>
                                 </div>
                                 <img className="my-auto rounded-full h-16 w-16 lg:h-24 lg:w-24" src={currentUserImage}>
                                 </img>
@@ -262,33 +262,33 @@ const page = () => {
 
                 {isManager &&
                     <div className='ml-10 mt-6 shadow-xl rounded-xl w-full-screen mr-10 px-4 py-10 bg-[#FAF2F0] text-[#292929]'>
-                        <div className='text-center text-xl lg:text-2xl mb-6'>Add a new member to your team</div>
+                        <div className='text-center text-2xl mb-6'>Add a new member to your team</div>
                         <AddUserForm currentUser={currentUserEmail} organisation={organisation} role={role}></AddUserForm>
                     </div>}
                 <div className='pt-2 flex flex-wrap justify-center sm:justify-between mx-10'>
                     {!isManagerEditMode &&
                         <div className="bg-[#FAF2F0] h-auto w-72 shadow-xl rounded-xl my-5 text-[#292929] flex flex-col justify-center">
-                            <div className="text-center pt-6 text-2xl  text-[#292929]">{currentUserTeamName}</div>
-                            <div className="mt-6 text-center text-lg">{currentUserCompany}</div>
+                            <div className="text-center pt-6 text-2xl lg:text-3xl text-[#292929]">{currentUserTeamName}</div>
+                            <div className="mt-6 text-center text-xl">{currentUserCompany}</div>
                             {/* <div className="mt-6 text-center text-xl lg:text-2xl font-light">Sheffield - UK</div> */}
                             {isManager && <button onClick={() => setManagerEditMode(true)} className="mx-auto my-5 block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  py-2 px-4 border border-[#292929] border-opacity-60 w-4/12 rounded-full text-lg lg:text-xl">Edit</button>}
                         </div>}
 
                     {isManagerEditMode &&
                         <form onSubmit={(e) => handleManagerSubmit(e)} className="bg-[#FAF2F0] h-auto w-72 shadow-xl rounded-xl my-5 flex flex-col justify-center items-center text-[#292929] py-6 ">
-                            <input name="teamname" className="text-center mt-6 text-xl lg:text-2xl rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserTeamName}></input>
-                            <input name="company" className="mt-6 text-center rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserCompany}></input>
+                            <input name="teamname" className="text-center mt-6 text-2xl lg:text-3xl rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserTeamName}></input>
+                            <input name="company" className="mt-6 text-xl text-center rounded-xl p-1 text-[#292929] placeholder-[#E29D65] placeholder-opacity-60" placeholder={currentUserCompany}></input>
                             <button type="submit" className="mx-auto my-5 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] px-4 border border-[#292929] border-opacity-60 w-1/2 rounded-full">Save changes</button>
                         </form>
                     }
 
                     <div className="bg-[#FAF2F0] shadow-xl h-auto w-72 rounded-xl my-5 py-6 text-center text-[#292929] text-2xl flex flex-col justify-center">
-                        <p>Team Members</p>
-                        <div className='pt-6 text-5xl'>{users?.length}</div>
+                        <p className='text-center pb-6 mb-2 text-2xl underline'>Team Members</p>
+                        <div className='text-5xl'>{users?.length}</div>
                     </div>
 
                     <div className="bg-[#FAF2F0] shadow-xl h-auto w-72 rounded-xl my-5 overflow-y-scroll py-6 text-[#292929] flex flex-col justify-center">
-                        <div className='text-center pb-6 mb-2 text-2xl'>Current Users</div>
+                        <div className='text-center pb-6 mb-2 text-2xl underline'>Current Users</div>
                         {userData && users?.length !== 0 && users.map((user: any, index) => (
                             <div key={index} className={"flex flex-col items-center"}>
                                 {/* <div className={"flex flex-row justify-around w-full"}> */}
@@ -298,8 +298,8 @@ const page = () => {
                         ))}
                     </div>
                     <div className="bg-[#FAF2F0] h-auto shadow-xl w-72 rounded-xl my-5 py-6 flex flex-col justify-center">
-                        <div className="text-center pb-6 text-2xl">Week's High Scorer</div>
-                        <div className="mt-6 text-center text-2xl  text-[#292929]">{firstPlaceName ? firstPlaceName : (
+                        <div className="text-center pb-6 text-2xl underline">Week's High Scorer</div>
+                        <div className="my-3 sm:mt-6 text-center text-xl  text-[#292929]">{firstPlaceName ? firstPlaceName : (
                             <Link href="/scoreboard"><button className='mx-auto block bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929]  py-2 px-4 border border-[#292929] border-opacity-60 w-4/12 rounded-full text-lg lg:text-xl'>View Scoreboard</button></Link>
                         )}</div>
 
