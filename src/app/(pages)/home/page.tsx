@@ -21,7 +21,6 @@ import {
   DrawerTrigger,
 } from "../../../components/shadcn/drawer"
 import Spinner from "../../../components/Spinner"
-import schedule from 'node-schedule';
 import { useToast } from "../../../components/shadcn/use-toast";
 import { GoogleAnalytics } from '@next/third-parties/google'
 
@@ -122,31 +121,7 @@ export default function Home() {
   
   
 
-  useEffect(() => {
-    console.log("inside useeffect")
-     // node-scheduler that runs at midnight
-  schedule.scheduleJob('36 12 * * *', function() {
-    console.log('24 hrs passed');
-    teamUsageReset()
-});
-  schedule.scheduleJob('36 12 * * *', function() {
-    console.log('1 week passed');
-    teamScoreReset();
-  })
-  }, [])
-//   useEffect(() => {
-//     console.log("inside useeffect")
-//      // node-scheduler that runs at midnight
-//   schedule.scheduleJob('48 14 * * *', function() {
-//     console.log('24 hrs passed');
-//     teamUsageReset()
-// });
-//   schedule.scheduleJob('0 0 * * 1', function() {
-//     console.log('1 week passed');
-//     teamScoreReset();
-//   })
-//   }, [])
-
+//  
   useEffect(() => {
     if (userData) {
       const userArray = userData?.data
