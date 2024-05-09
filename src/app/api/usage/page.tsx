@@ -1,6 +1,8 @@
+"use client"
 import React, { useEffect } from 'react'
 import schedule from 'node-schedule';
 import { trpc } from "../../_trpc/client";
+
  
 
 const page = () => {
