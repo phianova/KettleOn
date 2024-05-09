@@ -125,11 +125,11 @@ export default function Home() {
   useEffect(() => {
     console.log("inside useeffect")
      // node-scheduler that runs at midnight
-  schedule.scheduleJob('*/15 * * * *', function() {
+  schedule.scheduleJob('36 12 * * *', function() {
     console.log('24 hrs passed');
     teamUsageReset()
 });
-  schedule.scheduleJob('*/15 * * * *', function() {
+  schedule.scheduleJob('36 12 * * *', function() {
     console.log('1 week passed');
     teamScoreReset();
   })
