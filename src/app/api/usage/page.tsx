@@ -12,11 +12,11 @@ const page = () => {
     useEffect(() => {
         console.log("inside useeffect")
          // node-scheduler that runs at midnight
-      schedule.scheduleJob('46 10 * * *', function() {
+      schedule.scheduleJob('15 11 * * *', function() {
         console.log('24 hrs passed');
         teamUsageReset()
     });
-      schedule.scheduleJob('0 0 * * 1', function() {
+      schedule.scheduleJob('15 11 * * *', function() {
         console.log('1 week passed');
         teamScoreReset();
       })
