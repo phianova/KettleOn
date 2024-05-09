@@ -1,6 +1,8 @@
+"use client"
 import React, { useEffect } from 'react'
 import schedule from 'node-schedule';
 import { trpc } from "../../_trpc/client";
+
  
 
 const page = () => {
@@ -10,7 +12,7 @@ const page = () => {
     useEffect(() => {
         console.log("inside useeffect")
          // node-scheduler that runs at midnight
-      schedule.scheduleJob('12 15 * * *', function() {
+      schedule.scheduleJob('46 10 * * *', function() {
         console.log('24 hrs passed');
         teamUsageReset()
     });
