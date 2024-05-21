@@ -34,14 +34,14 @@ export default function Home() {
     </div>
       </div>
      <video 
-    src="/loopHD.mp4"
+    src="loopHD.mp4"
     autoPlay
     muted
     loop
     className={styles.video}/> 
 
 <Drawer >
-  <DrawerTrigger className="ml-20 text-center text-xl text-[#292929] sm:ml-60"><FaPowerOff style={{ color: "#E29D65", fontSize: "75px" }}/><p className="mt-2">Get Started</p></DrawerTrigger>
+  <DrawerTrigger className="ml-20 text-center text-xl text-[#292929] sm:ml-60"><img src="logo.png" height={"200"} width={"200"} alt="Logo"></img><p className="mt-2">Click To Start</p></DrawerTrigger>
   <DrawerContent className="justify-end ml-4 bg-gray-300 xs:w-72 md:w-1/5">
     <DrawerHeader>
       <DrawerTitle>

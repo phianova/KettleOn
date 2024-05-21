@@ -1,7 +1,15 @@
 "use client"
-// import Image from "next/image";
+import Image from "next/image";
 // import { serverClient } from "../trpc/server-client";
 import Navbar from '@/components/navbar';
+// 
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/shadcn/accordion"
 import React from 'react';
 import { InfiniteMovingCards } from "../../../components/ui/infinite-moving-cards";
 import { AnimatedTooltip } from "../../../components/ui/animated-tooltip";
@@ -21,11 +29,8 @@ import {
   DrawerTrigger,
 } from "../../../components/shadcn/drawer"
 import Spinner from "../../../components/Spinner"
+import schedule from 'node-schedule';
 import { useToast } from "../../../components/shadcn/use-toast";
-import { GoogleAnalytics } from '@next/third-parties/google'
-
-
-
 
 
 export default function Home() {
@@ -121,7 +126,20 @@ export default function Home() {
   
   
 
-//  
+
+  useEffect(() => {
+    console.log("inside useeffect")
+     // node-scheduler that runs at midnight
+  schedule.scheduleJob('0 0 * * *', function() {
+    console.log('24 hrs passed');
+    teamUsageReset()
+});
+  schedule.scheduleJob('0 0 * * 1', function() {
+    console.log('1 week passed');
+    teamScoreReset();
+  })
+  }, [])
+
   useEffect(() => {
     if (userData) {
       const userArray = userData?.data
@@ -143,8 +161,9 @@ export default function Home() {
   useEffect(() => {
     if (isLoading === false && isAuthenticated === false) {
       toast({
-        title: "You are not logged in.",
-        description: "Redirecting you to landing page...",
+        title: "Error!",
+        description: "You do not have permission to access this page.",
+        variant: "destructive",
       })
       console.log("You do not have permission to access this page.")
       setLoading(false)
@@ -166,11 +185,14 @@ export default function Home() {
   const question = questionData?.data.askQuestion;
   const asked = questionData?.data.alreadyAsked;
 
+
+  
+
   useEffect(() => {
     if (asked === true) {
       setDrawerOpen(false)
     } else if (!isLoading && asked === false) {
-      setDrawerOpen(true)
+      setDrawerOpen(false)
     }
   }, [questionData])
 
@@ -212,18 +234,83 @@ export default function Home() {
 
   return (
     <div className="h-full w-full">
-    <GoogleAnalytics gaId="G-R0Y4M12C9B" />
 
 
-      <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-5">
+      <main className="bg-[#FAF2F0] w-11/12 rounded-xl mx-auto py-5 my-10">
 
         <Navbar />
         {/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
         <h1 className="teamTitle text-center mx-auto mb-10 text-6xl ">{currentUserTeamName}</h1>
 
-        <div className="flex flex-col items-center">
+
+        <div className="md:invisible">
+        <Accordion type="single" collapsible className="text-center w-full">
+      <AccordionItem  value="item-1">
+        <AccordionTrigger className='justify-center text-xl '>General Knowledge Quiz</AccordionTrigger>
+        <AccordionContent>
+          <a href="/quiz">
+        <Image
+            src="/aiquiz.png"
+            width={200}
+            height={200}
+            alt="gamesscreen"
+            className="rounded-xl mx-auto"
+            
+          />
+          </a>
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger className='justify-center text-xl '>Big Fat Quiz of the Week</AccordionTrigger>
+        <AccordionContent>
+          <a href="/TeamQuestion">
+        <Image
+            src="/weeklyquiz.png"
+            width={200}
+            height={200}
+            alt="gamesscreen"
+            className="rounded-xl mx-auto"
+          />
+          </a>
+        
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-3">
+        <AccordionTrigger className='justify-center text-xl '>Number Game</AccordionTrigger>
+        <AccordionContent>
+        <a href="/games">
+        <Image
+            src="/numbergame.png"
+            width={200}
+            height={200}
+            alt="gamesscreen"
+            className="rounded-xl mx-auto"
+          />
+          </a>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="item-4">
+        <AccordionTrigger className='justify-center text-xl '>Name Game</AccordionTrigger>
+        <AccordionContent>
+        <a href="/games">
+        <Image
+            src="/namequiz.png"
+            width={200}
+            height={200}
+            alt="gamesscreen"
+            className="rounded-xl mx-auto"
+          />
+          </a>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+        </div>
+
+
+        <div className="flex flex-col items-center invisible md:visible">
           <InfiniteMovingCards items={content} className={undefined} />
-          <div className="flex flex-row items-center justify-center my-5 w-full">
+          <div className="flex flex-row items-center justify-center my-10 w-full">
             <AnimatedTooltip icons={users} />
           </div>
           {/* <AnimateadTooltip icons={users} /> */}
@@ -231,25 +318,35 @@ export default function Home() {
         </div>
 
       </main>
+
+
+{/* --------------Temp disable to see screen ---------- */}
+      
       <Drawer open={!loading && drawerOpen}>
         {/* <DrawerTrigger>
           Open Drawer
         </DrawerTrigger> */}
-        <DrawerContent className="bg-[#FAF2F0]">
-          <div className="mx-auto w-full text-center">
-            <DrawerHeader className="w-full">
-              <DrawerTitle className="text-lg font-normal w-full text-center">Before you start, please answer today's icebreaker question:</DrawerTitle>
-              <DrawerDescription className='mt-2 text-[#292929] text-xl text-center'>{question}
+        <DrawerContent>
+          <div className="mx-auto w-full max-w-sm">
+
+          
+
+
+            <DrawerHeader>
+              <DrawerTitle>Before you start, please answer our team question of the week</DrawerTitle>
+              <DrawerDescription className='mt-2'>{question}
 
               </DrawerDescription>
 
             </DrawerHeader>
+
+            
             <form onSubmit={(e) => submitAnswerCall(e)}>
-              <label className="flex flex-col items-center">
-                <input placeholder="Enter your answer here" className='pl-4 w-full h-10 rounded-xl max-w-sm bg-white placeholder-[#E29D65] text-[#292929] border-2 border-[#E29D65] focus:border-[#E29D65] focus:outline-none'
+              <label>
+                <input placeholder="Enter your answer here" className='pl-4 w-full h-10 rounded-xl max-w-sm bg-slate-200'
                   type="text" name="answer"
                 />
-                <button className=" mt-4 bg-[#FAF2F0] hover:bg-[#E29D65] text-[#292929] font-semibold py-2 px-4 border border-[#292929] rounded-xl shadow w-fit" type="submit">Submit answer</button>
+                <button className="w-full mt-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-xl shadow" type="submit">Submit answer</button>
               </label>
             </form>
 
@@ -260,6 +357,9 @@ export default function Home() {
           </div>
         </DrawerContent>
       </Drawer>
+
+      {/* --------------Temp disable to see screen ---------- */}
+      
     </div>
   );
 }
