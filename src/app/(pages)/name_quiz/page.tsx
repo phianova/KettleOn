@@ -138,7 +138,7 @@ export default function App() {
 
             setIsCorrect("Yes, that is correct!")
             const usageObj = {usage: numberOfPlays + 1}
-            nameQuizUsage(usageObj)
+            nameQuiz(usageObj)
 
             setScore(score+5)
             // const scoreObj = {score: score}
