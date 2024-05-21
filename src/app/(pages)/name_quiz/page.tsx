@@ -34,7 +34,7 @@ export default function App() {
 
     const { data: nameQuizData} = trpc.nameQuizData.useQuery()
     const { mutate: nameQuizScore } = trpc.nameQuizScore.useMutation() 
-    const  { mutate: nameQuizUsage } = trpc.nameQuizUsage.useMutation()
+    const  { mutate: nameQuiz } = trpc.nameQuizUsage.useMutation()
  
     const quizUsage = nameQuizData?.data?.usage
     
