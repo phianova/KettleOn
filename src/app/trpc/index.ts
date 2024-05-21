@@ -7,6 +7,7 @@ import QuestionSchema, { TQuestion } from "../../models/question";
 import { TRPCError } from "@trpc/server";
 import { NextResponse } from "next/server";
 import { trpc } from "../_trpc/client";
+import { KindePermissions, KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
 
 const clientId = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_ID
 const clientSecret = process.env.NEXT_PUBLIC_KINDE_CLIENT_M2M_SECRET
@@ -18,16 +19,78 @@ export type Game = {
 }
 
 export const appRouter = router({
-    // apiTest: publicProcedure.query(async ({ ctx, input }) => {
-    //     await dbConnect();
-    //     console.log("db connected");
-    //     return {data: "apiTest"};
-    // }),
     authCallback: publicProcedure.query(async ({ ctx, input }) => {
         const { getUser, getPermissions } = getKindeServerSession();
         const user = (await getUser()) as any;
         const permissions = (await getPermissions()) as any;
-        const organisation = permissions?.orgCode
+        let organisation = permissions?.orgCode
+        if (organisation === undefined || organisation === null) {
+            const url = 'https://kettleon.kinde.com/oauth2/token';
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    grant_type: 'client_credentials',
+                    client_id: `${clientId}`,
+                    client_secret: `${clientSecret}`,
+                    audience: 'https://kettleon.kinde.com/api'
+                })
+            };
+            const response = await fetch(url, options);
+            const data = await response.json();
+            const accessToken = data.access_token
+            const authString = "Bearer " + accessToken
+
+            const newOrgName = "Org" + Math.floor(Math.random() * 1000)
+            const orgInputBody = {
+                name: newOrgName
+            };
+            const userInputBody = {
+                users: [{
+                    id: user.id,
+                    roles: ["manager"],
+                    permissions: ["manager"]
+                }]
+            }
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': "application/json",
+                'Authorization': authString,
+                'audience': "https://kettleon.kinde.com/api"
+            };
+
+            let newOrgCode;
+
+            await fetch('https://kettleon.kinde.com/api/v1/organization',
+                {
+                    method: 'POST',
+                    body: JSON.stringify(orgInputBody),
+                    headers: headers
+                })
+                .then(function (res) {
+                    return res.json();
+                }).then(function (body) {
+                    console.log(body);
+                    newOrgCode = body.organization.code
+                });
+
+            await fetch(`https://kettleon.kinde.com/api/v1/organizations/${newOrgCode}/users`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(userInputBody),
+                    headers: headers
+                })
+                .then(function (res) {
+                    return res.json();
+                });
+
+            organisation = newOrgCode
+        }
+        const { refreshTokens } = getKindeServerSession();
+        await refreshTokens();
+
         if (!user.id || !user.email) {
             throw new TRPCError({
                 code: "UNAUTHORIZED",
@@ -36,7 +99,6 @@ export const appRouter = router({
         await dbConnect();
         // check if user exists in db collection users
         const foundUser = await UserSchema.findOne({ email: user.email });
-        console.log("founduser", foundUser)
         if (!foundUser) {
             await UserSchema.create({
                 email: user.email,
@@ -48,26 +110,26 @@ export const appRouter = router({
                 image: "",
                 bio: "",
                 prompts: [],
-                game: [        {
+                game: [{
                     name: "NumberGame",
                     score: 0,
                     usage: 0
-                  },
-                  {
+                },
+                {
                     name: "aiQuiz",
                     score: 0,
                     usage: 0
-                  },
-                  {
+                },
+                {
                     name: "weeklyQuiz",
                     score: 0,
                     usage: 0
-                  }, 
-                  {
+                },
+                {
                     name: "nameQuiz",
-                    score: 0, 
+                    score: 0,
                     usage: 0
-                  }],
+                }],
                 rank: 0
             })
         }
@@ -95,14 +157,14 @@ export const appRouter = router({
                     question: z.string(), //will be empty on initialisation
                     answer: z.string() //will be empty on initialisation
                 })),
-          
+
             game: z.array(
                 z.object({
                     usage: z.number(),
                     score: z.number(),
                     name: z.string(),
                 })
-            ), 
+            ),
             rank: z.number(),
 
         })
@@ -276,8 +338,6 @@ export const appRouter = router({
                     rank: foundUser.rank
                 }
 
-                console.log(currentUserData)
-
                 return { data: currentUserData, status: 200, success: true };
             } catch (err) {
                 console.log("there's an error")
@@ -298,36 +358,48 @@ export const appRouter = router({
                 return { data: emptyUser, status: 500, success: false };
             }
         }),
-         
-   numberGameData: privateProcedure
-   .query(async ({ ctx, input }) => {
-       try {
-           const { userEmail } = ctx;
-           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-           await dbConnect();
-           const foundUser = await UserSchema.findOne({ email: userEmail });
-           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-           
-           const gameData = foundUser.game.find((game : Game) => game.name === "NumberGame");
-           return { data: gameData, status: 200, success: true };
-       } catch (err) {
-           console.log(err)
-           return { data: [], status: 500, success: false };
-       }
-   }), 
+    refreshUser: privateProcedure.query(async ({ ctx, input }) => {
+        const { refreshTokens } = getKindeServerSession()
+        const tokens = (await refreshTokens()) as { accessToken: string, refreshToken: string };
+        console.log(tokens)
+        const{ getPermissions } = getKindeServerSession()
+        const permissions = (await getPermissions()) as KindePermissions | null;
+        console.log(permissions)
+        return { data: permissions?.permissions, status: 200, success: true };
+    }),
 
-   numberGameUsage: privateProcedure.input(z.object({
-       usage: z.number(),
-   })
-   ).mutation<Promise<any>>(async ({ ctx, input }) => {
-       try {
-           const { userEmail } = ctx;
-           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-           await dbConnect();
-           const foundUser = await UserSchema.findOne({ email: userEmail });
-           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-           
-           const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "NumberGame");
+
+
+    ///////// GAME & QUIZ FUNCTIONS
+    numberGameData: privateProcedure
+        .query(async ({ ctx, input }) => {
+            try {
+                const { userEmail } = ctx;
+                if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+                await dbConnect();
+                const foundUser = await UserSchema.findOne({ email: userEmail });
+                if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+
+                const gameData = foundUser.game.find((game: Game) => game.name === "NumberGame");
+                return { data: gameData, status: 200, success: true };
+            } catch (err) {
+                console.log(err)
+                return { data: [], status: 500, success: false };
+            }
+        }),
+
+    numberGameUsage: privateProcedure.input(z.object({
+        usage: z.number(),
+    })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        try {
+            const { userEmail } = ctx;
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+
+            const gameIndex = foundUser.game.findIndex((game: Game) => game.name === "NumberGame");
             if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
 
             // Update the usage of the found game
@@ -337,113 +409,113 @@ export const appRouter = router({
 
             await foundUser.save();
             return { status: 200, success: true };
-       } catch (err) {
-           console.log(err)
-           return { status: 500, success: false };
-       }
-   }),
-    
-   numberGameScore: privateProcedure.input(z.object({
-       score: z.number(),
-   })
-   ).mutation<Promise<any>>(async ({ ctx, input }) => {
-    console.log("score", input.score)
-       try {
-           const { userEmail } = ctx;
-           console.log("email", userEmail)
-           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-           await dbConnect();
-           const foundUser = await UserSchema.findOne({ email: userEmail });
-           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-           
-           const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "NumberGame");
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
+
+    numberGameScore: privateProcedure.input(z.object({
+        score: z.number(),
+    })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        console.log("score", input.score)
+        try {
+            const { userEmail } = ctx;
+            console.log("email", userEmail)
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+
+            const gameIndex = foundUser.game.findIndex((game: Game) => game.name === "NumberGame");
             if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
 
-            
+
             // add input.score to the current score
             foundUser.game[gameIndex].score += input.score;
             // foundUser.game[gameIndex].score = input.score;
             await foundUser.save();
             return { status: 200, success: true };
-   } catch (err) {
-    console.log(err)
-    return { status: 500, success: false };
-}
-   }),
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
 
-   aiQuizScore: privateProcedure.input(z.object({
-    score: z.number(),
-})
-).mutation<Promise<any>>(async ({ ctx, input }) => {
- console.log("score", input.score)
-    try {
-        const { userEmail } = ctx;
-        console.log("email", userEmail)
-        if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-        await dbConnect();
-        const foundUser = await UserSchema.findOne({ email: userEmail });
-        if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-        
-        const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "aiQuiz");
-         if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+    aiQuizScore: privateProcedure.input(z.object({
+        score: z.number(),
+    })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        console.log("score", input.score)
+        try {
+            const { userEmail } = ctx;
+            console.log("email", userEmail)
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
 
-         
-         // add input.score to the current score
-         foundUser.game[gameIndex].score += input.score;
-         // foundUser.game[gameIndex].score = input.score;
-         await foundUser.save();
-         return { status: 200, success: true };
-} catch (err) {
- console.log(err)
- return { status: 500, success: false };
-}
-}),
+            const gameIndex = foundUser.game.findIndex((game: Game) => game.name === "aiQuiz");
+            if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
 
-aiQuizData: privateProcedure
-   .query(async ({ ctx, input }) => {
-       try {
-           const { userEmail } = ctx;
-           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-           await dbConnect();
-           const foundUser = await UserSchema.findOne({ email: userEmail });
-           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-           
-           const gameData = foundUser.game.find((game : Game) => game.name === "aiQuiz");
-           return { data: gameData, status: 200, success: true };
-       } catch (err) {
-           console.log(err)
-           return { data: [], status: 500, success: false };
-       }
-   }), 
 
-aiQuizUsage: privateProcedure.input(z.object({
-    usage: z.number(),
-})
-).mutation<Promise<any>>(async ({ ctx, input }) => {
-    try {
-        const { userEmail } = ctx;
-        if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-        await dbConnect();
-        const foundUser = await UserSchema.findOne({ email: userEmail });
-        if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-        
-        const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "aiQuiz");
-         if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+            // add input.score to the current score
+            foundUser.game[gameIndex].score += input.score;
+            // foundUser.game[gameIndex].score = input.score;
+            await foundUser.save();
+            return { status: 200, success: true };
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
 
-     // Update the usage of the found game
-     foundUser.game[gameIndex].usage = input.usage;
+    aiQuizData: privateProcedure
+        .query(async ({ ctx, input }) => {
+            try {
+                const { userEmail } = ctx;
+                if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+                await dbConnect();
+                const foundUser = await UserSchema.findOne({ email: userEmail });
+                if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
 
-       
-         
-         await foundUser.save();
-         return { status: 200, success: true };
-    } catch (err) {
-        console.log(err)
-        return { status: 500, success: false };
-    }
-}),
+                const gameData = foundUser.game.find((game: Game) => game.name === "aiQuiz");
+                return { data: gameData, status: 200, success: true };
+            } catch (err) {
+                console.log(err)
+                return { data: [], status: 500, success: false };
+            }
+        }),
 
-   updateUser: privateProcedure.input(
+    aiQuizUsage: privateProcedure.input(z.object({
+        usage: z.number(),
+    })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        try {
+            const { userEmail } = ctx;
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+
+            const gameIndex = foundUser.game.findIndex((game: Game) => game.name === "aiQuiz");
+            if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+
+            // Update the usage of the found game
+            foundUser.game[gameIndex].usage = input.usage;
+
+
+
+            await foundUser.save();
+            return { status: 200, success: true };
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
+
+    updateUser: privateProcedure.input(
         z.object({
             role: z.string(),
             bio: z.string()
@@ -520,19 +592,19 @@ aiQuizUsage: privateProcedure.input(z.object({
             const diffHours = diff / (1000 * 60 * 60);
 
             // check if user has answered the question
-            const alreadyAsked = foundUser.prompts.find((q : any) => q.question === question?.question) ? true : false;
+            const alreadyAsked = foundUser.prompts.find((q: any) => q.question === question?.question) ? true : false;
             console.log(alreadyAsked)
             //if more than 24h, return next question
             if (diffHours >= 24) {
                 //find next question in database after question above
                 const newQuestion = await QuestionSchema.findOne({ _id: { $gt: question?._id } }).sort({ asked: 1 });
-                const alreadyAsked = foundUser.prompts.find((q : any) => q.question === newQuestion?.question) ? true : false;
+                const alreadyAsked = foundUser.prompts.find((q: any) => q.question === newQuestion?.question) ? true : false;
                 console.log(alreadyAsked)
 
                 const askQuestion = newQuestion?.question
                 return { data: { askQuestion, alreadyAsked }, status: 200, success: true };
             } else {
-                const alreadyAsked = foundUser.prompts.find((q : any) => q.question === question?.question) ? true : false;
+                const alreadyAsked = foundUser.prompts.find((q: any) => q.question === question?.question) ? true : false;
                 console.log(alreadyAsked)
 
                 const askQuestion = question.question
@@ -574,222 +646,222 @@ aiQuizUsage: privateProcedure.input(z.object({
             return { questions: questions, status: 200, success: true };
         } catch (err) {
             console.log(err)
-            return { questions: [],status: 500, success: false };
+            return { questions: [], status: 500, success: false };
         }
     }),
     weeklyQuizScore: privateProcedure.input(z.object({
         score: z.number(),
     })
     ).mutation<Promise<any>>(async ({ ctx, input }) => {
-     console.log("score", input.score)
+        console.log("score", input.score)
         try {
             const { userEmail } = ctx;
             console.log("email", userEmail)
-            if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
             await dbConnect();
             const foundUser = await UserSchema.findOne({ email: userEmail });
             if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-            
-            const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "weeklyQuiz");
-             if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
-    
-             
-             // add input.score to the current score
-             foundUser.game[gameIndex].score += input.score;
-             // foundUser.game[gameIndex].score = input.score;
-             await foundUser.save();
-             return { status: 200, success: true };
-    } catch (err) {
-     console.log(err)
-     return { status: 500, success: false };
-    }
+
+            const gameIndex = foundUser.game.findIndex((game: Game) => game.name === "weeklyQuiz");
+            if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+
+
+            // add input.score to the current score
+            foundUser.game[gameIndex].score += input.score;
+            // foundUser.game[gameIndex].score = input.score;
+            await foundUser.save();
+            return { status: 200, success: true };
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
     }),
     weeklyQuizData: privateProcedure
-   .query(async ({ ctx, input }) => {
-       try {
-           const { userEmail } = ctx;
-           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-           await dbConnect();
-           const foundUser = await UserSchema.findOne({ email: userEmail });
-           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-           
-           const gameData = foundUser.game.find((game : Game) => game.name === "weeklyQuiz");
-           return { data: gameData, status: 200, success: true };
-       } catch (err) {
-           console.log(err)
-           return { data: [], status: 500, success: false };
-       }
-   }), 
+        .query(async ({ ctx, input }) => {
+            try {
+                const { userEmail } = ctx;
+                if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+                await dbConnect();
+                const foundUser = await UserSchema.findOne({ email: userEmail });
+                if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
 
-weeklyQuizUsage: privateProcedure.input(z.object({
-    usage: z.number(),
-})
-).mutation<Promise<any>>(async ({ ctx, input }) => {
-    try {
-        const { userEmail } = ctx;
-        if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-        await dbConnect();
-        const foundUser = await UserSchema.findOne({ email: userEmail });
-        if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-        
-        const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "weeklyQuiz");
-         if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+                const gameData = foundUser.game.find((game: Game) => game.name === "weeklyQuiz");
+                return { data: gameData, status: 200, success: true };
+            } catch (err) {
+                console.log(err)
+                return { data: [], status: 500, success: false };
+            }
+        }),
 
-     // Update the usage of the found game
-     foundUser.game[gameIndex].usage = input.usage;
-
-       
-         
-         await foundUser.save();
-         return { status: 200, success: true };
-    } catch (err) {
-        console.log(err)
-        return { status: 500, success: false };
-    }
-}),
-teamUsageReset: privateProcedure
-.mutation<Promise<any>>(async ({ ctx }) => {
-     try {
+    weeklyQuizUsage: privateProcedure.input(z.object({
+        usage: z.number(),
+    })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        try {
             const { userEmail } = ctx;
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
             await dbConnect();
             const foundUser = await UserSchema.findOne({ email: userEmail });
-            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
 
-            const users = await UserSchema.find<TUser>({ team: foundUser.team });
+            const gameIndex = foundUser.game.findIndex((game: Game) => game.name === "weeklyQuiz");
+            if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
 
-            for(let i = 0; i < users.length; i++) {
-                users.forEach((user) => {
-                    user.game.forEach((game) => {
-                        game.usage = 0
-                    });
-                });
-                (users[i] as any).save();
-                
-            }
+            // Update the usage of the found game
+            foundUser.game[gameIndex].usage = input.usage;
+
+
+
+            await foundUser.save();
             return { status: 200, success: true };
-    } catch (err) {
-        return { status: 500, success: false };
-    }
-}),
-teamScoreReset: privateProcedure
-.mutation<Promise<any>>(async ({ ctx }) => {
-     try {
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
+    teamUsageReset: privateProcedure
+        .mutation<Promise<any>>(async ({ ctx }) => {
+            try {
+                const { userEmail } = ctx;
+                await dbConnect();
+                const foundUser = await UserSchema.findOne({ email: userEmail });
+                if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+
+                const users = await UserSchema.find<TUser>({ team: foundUser.team });
+
+                for (let i = 0; i < users.length; i++) {
+                    users.forEach((user) => {
+                        user.game.forEach((game) => {
+                            game.usage = 0
+                        });
+                    });
+                    (users[i] as any).save();
+
+                }
+                return { status: 200, success: true };
+            } catch (err) {
+                return { status: 500, success: false };
+            }
+        }),
+    teamScoreReset: privateProcedure
+        .mutation<Promise<any>>(async ({ ctx }) => {
+            try {
+                const { userEmail } = ctx;
+                await dbConnect();
+                const foundUser = await UserSchema.findOne({ email: userEmail });
+                if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+
+                const users = await UserSchema.find<TUser>({ team: foundUser.team });
+
+                for (let i = 0; i < users.length; i++) {
+                    users.forEach((user) => {
+                        user.game.forEach((game) => {
+                            game.score = 0
+                        });
+                    });
+                    (users[i] as any).save();
+
+                }
+                return { status: 200, success: true };
+            } catch (err) {
+                return { status: 500, success: false };
+            }
+        }),
+    userRank: privateProcedure.input(z.object({
+        rank: z.number(),
+    })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+
+        try {
             const { userEmail } = ctx;
+            console.log("email", userEmail)
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
             await dbConnect();
             const foundUser = await UserSchema.findOne({ email: userEmail });
-            if (!foundUser) throw new TRPCError({ code: "UNAUTHORIZED" })
+            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
 
-            const users = await UserSchema.find<TUser>({ team: foundUser.team });
+            foundUser.rank = input.rank;
 
-            for(let i = 0; i < users.length; i++) {
-                users.forEach((user) => {
-                    user.game.forEach((game) => {
-                        game.score = 0
-                    });
-                });
-                (users[i] as any).save();
-                
-            }
+
+            await foundUser.save();
             return { status: 200, success: true };
-    } catch (err) {
-        return { status: 500, success: false };
-    }
-}),
-userRank: privateProcedure.input(z.object({
-    rank: z.number(),
-})
-).mutation<Promise<any>>(async ({ ctx, input }) => {
- 
-    try {
-        const { userEmail } = ctx;
-        console.log("email", userEmail)
-        if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-        await dbConnect();
-        const foundUser = await UserSchema.findOne({ email: userEmail });
-        if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-        
-        foundUser.rank = input.rank;
-         
-        
-         await foundUser.save();
-         return { status: 200, success: true };
-} catch (err) {
- console.log(err)
- return { status: 500, success: false };
-}
-}),
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
 
-nameQuizScore: privateProcedure.input(z.object({
-    score: z.number(),
-})
-).mutation<Promise<any>>(async ({ ctx, input }) => {
- console.log("score", input.score)
-    try {
-        const { userEmail } = ctx;
-        console.log("email", userEmail)
-        if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-        await dbConnect();
-        const foundUser = await UserSchema.findOne({ email: userEmail });
-        if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-        
-        const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "nameQuiz");
-         if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+    nameQuizScore: privateProcedure.input(z.object({
+        score: z.number(),
+    })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        console.log("score", input.score)
+        try {
+            const { userEmail } = ctx;
+            console.log("email", userEmail)
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
 
-         
-         // add input.score to the current score
-         foundUser.game[gameIndex].score += input.score;
-         // foundUser.game[gameIndex].score = input.score;
-         await foundUser.save();
-         return { status: 200, success: true };
-} catch (err) {
- console.log(err)
- return { status: 500, success: false };
-}
-}),
+            const gameIndex = foundUser.game.findIndex((game: Game) => game.name === "nameQuiz");
+            if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
 
-nameQuizData: privateProcedure
-   .query(async ({ ctx, input }) => {
-       try {
-           const { userEmail } = ctx;
-           if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-           await dbConnect();
-           const foundUser = await UserSchema.findOne({ email: userEmail });
-           if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-           
-           const gameData = foundUser.game.find((game : Game) => game.name === "nameQuiz");
-           return { data: gameData, status: 200, success: true };
-       } catch (err) {
-           console.log(err)
-           return { data: [], status: 500, success: false };
-       }
-   }), 
 
-nameQuizUsage: privateProcedure.input(z.object({
-    usage: z.number(),
-})
-).mutation<Promise<any>>(async ({ ctx, input }) => {
-    try {
-        const { userEmail } = ctx;
-        if(!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
-        await dbConnect();
-        const foundUser = await UserSchema.findOne({ email: userEmail });
-        if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
-        
-        const gameIndex = foundUser.game.findIndex((game : Game) => game.name === "nameQuiz");
-         if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+            // add input.score to the current score
+            foundUser.game[gameIndex].score += input.score;
+            // foundUser.game[gameIndex].score = input.score;
+            await foundUser.save();
+            return { status: 200, success: true };
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
 
-     // Update the usage of the found game
-     foundUser.game[gameIndex].usage = input.usage;
+    nameQuizData: privateProcedure
+        .query(async ({ ctx, input }) => {
+            try {
+                const { userEmail } = ctx;
+                if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+                await dbConnect();
+                const foundUser = await UserSchema.findOne({ email: userEmail });
+                if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
 
-       
-         
-         await foundUser.save();
-         return { status: 200, success: true };
-    } catch (err) {
-        console.log(err)
-        return { status: 500, success: false };
-    }
-}),
+                const gameData = foundUser.game.find((game: Game) => game.name === "nameQuiz");
+                return { data: gameData, status: 200, success: true };
+            } catch (err) {
+                console.log(err)
+                return { data: [], status: 500, success: false };
+            }
+        }),
+
+    nameQuizUsage: privateProcedure.input(z.object({
+        usage: z.number(),
+    })
+    ).mutation<Promise<any>>(async ({ ctx, input }) => {
+        try {
+            const { userEmail } = ctx;
+            if (!userEmail) throw new TRPCError({ code: "UNAUTHORIZED" })
+            await dbConnect();
+            const foundUser = await UserSchema.findOne({ email: userEmail });
+            if (!foundUser) throw new TRPCError({ code: "NOT_FOUND" })
+
+            const gameIndex = foundUser.game.findIndex((game: Game) => game.name === "nameQuiz");
+            if (gameIndex === -1) throw new TRPCError({ code: "NOT_FOUND" });
+
+            // Update the usage of the found game
+            foundUser.game[gameIndex].usage = input.usage;
+
+
+
+            await foundUser.save();
+            return { status: 200, success: true };
+        } catch (err) {
+            console.log(err)
+            return { status: 500, success: false };
+        }
+    }),
 
 })
 

@@ -1,9 +1,7 @@
 "use client"
 import React, {useEffect, useMemo} from 'react';
-import { useRouter, useSearchParams, redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { trpc } from "../../_trpc/client";
-import { Suspense } from 'react';
-// import { Loader } from "lucide-react";
 import { useToast } from "../../../components/shadcn/use-toast";
 
 const Page = () => {
@@ -37,7 +35,6 @@ const Page = () => {
       router.push("/");
     }
   }, [isSuccess, data.isError, router, toast]);
-
 
 
   return (

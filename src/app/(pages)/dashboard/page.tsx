@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useRouter, redirect } from "next/navigation";
 import AddUserForm from '../../../components/AddUserForm';
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { trpc } from "../../_trpc/client";
 import { CldUploadWidget } from 'next-cloudinary';
 import { useToast } from "../../../components/shadcn/use-toast";
@@ -11,15 +10,15 @@ import Spinner from '../../../components/Spinner';
 import Navbar from '../../../components/navbar';
 import Link from 'next/link';
 
-
 const page = () => {
 
-
-    let displayName: string | null | undefined
-    let currentUser: string | null | undefined;
-    let organisation: string | null | undefined;
-    let role: string | null | undefined;
-    let roleArray: string[] | undefined;
+    const [displayName, setDisplayName] = useState('')
+    const [currentUser, setCurrentUser] = useState('')
+    const [organisation, setOrganisation] = useState('')
+    const [role, setRole] = useState('')
+    const [roleArray, setRoleArray] = useState([])
+    const [kindeUserData, setKindeUserData] = useState<any>({})
+    const [roleData, setRoleData] = useState<any>({})
 
     const router = useRouter()
     const { toast } = useToast();
@@ -29,15 +28,49 @@ const page = () => {
     const [isManagerEditMode, setManagerEditMode] = useState(false)
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-    const { isAuthenticated, isLoading, user, permissions } = useKindeBrowserClient();
-    const kindeUserData = user
-    const roleData = permissions
+    const { isAuthenticated, isLoading, user, permissions, getPermissions, getToken} = useKindeBrowserClient();
+    
+    const {data: refreshed} = trpc.refreshUser.useQuery();
+    if (refreshed?.success === false) {
+        toast({
+            title: "Error!",
+            description: "Could not obtain manager data.",
+            variant: "destructive",
+        })
+    }
 
-    displayName = (kindeUserData?.given_name ? kindeUserData?.given_name : "") + " " + (kindeUserData?.family_name ? kindeUserData?.family_name : "")
-    currentUser = kindeUserData?.email;
-    organisation = roleData.orgCode
-    roleArray = roleData?.permissions
-    role = roleArray ? roleArray[0] : null
+    useEffect(() => {
+        if (!isLoading && refreshed?.success === true) {
+            getToken()
+            setKindeUserData(user)
+            setRoleData(permissions)
+            setDisplayName((kindeUserData?.given_name ? kindeUserData?.given_name : "") + " " + (kindeUserData?.family_name ? kindeUserData?.family_name : ""));
+            setCurrentUser(kindeUserData?.email);
+            setOrganisation(roleData.orgCode)
+            setRoleArray(roleData?.permissions)
+            setRole(roleArray ? roleArray[0] : "")
+        }
+    }, [refreshed, isLoading, user, permissions])
+
+
+    useEffect(() => {
+        if (isLoading === false && isAuthenticated === false) {
+            toast({
+                title: "You are not logged in.",
+                description: "Redirecting you to landing page...",
+            })
+            setLoading(false)
+            router.push('/');
+        }
+        else if (isLoading === false && refreshed && roleData && roleData.permissions && roleData.permissions.includes("manager")) {
+            setIsManager(true)
+            setLoading(false)
+        } else if (isLoading === false) {
+            setLoading(false)
+        }
+    }, [isLoading, refreshed])
+
+
 
     const { data: userData } = trpc.getUsers.useQuery();
     if (userData?.success === false) {
@@ -163,23 +196,6 @@ const page = () => {
     const currentUserRole = currentUserProfile?.role.toString()
     const currentUserImage = currentUserProfile?.image.toString()
 
-
-    useEffect(() => {
-        if (isLoading === false && isAuthenticated === false) {
-            toast({
-                title: "You are not logged in.",
-                description: "Redirecting you to landing page...",
-            })
-            setLoading(false)
-            router.push('/');
-        }
-        else if (isLoading === false && roleData && roleData.permissions && roleData.permissions.includes("manager")) {
-            setIsManager(true)
-            setLoading(false)
-        } else if (isLoading === false) {
-            setLoading(false)
-        }
-    }, [isLoading])
 
     const handleManagerSubmit = async (e: any) => {
         e.preventDefault()

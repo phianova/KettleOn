@@ -4,6 +4,7 @@ import { useKindeAuth } from '@kinde-oss/kinde-auth-react'
 const page = () => {
 
   const { register } = useKindeAuth()
+  
 
   return (
     <div className="h-screen">

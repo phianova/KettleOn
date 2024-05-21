@@ -1,12 +1,11 @@
 import { initTRPC } from "@trpc/server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/dist/types";
+import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
 
 const t = initTRPC.create()
 
 const isAuth = t.middleware(async(opts) => {
     const { getUser } = getKindeServerSession() 
-    console.log("got to isAuth")
     const user = (await getUser()) as KindeUser | null;
     
     if (!user || !user.email) {
