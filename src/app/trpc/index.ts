@@ -85,11 +85,8 @@ export const appRouter = router({
                 .then(function (res) {
                     return res.json();
                 });
-
             organisation = newOrgCode
         }
-        const { refreshTokens } = getKindeServerSession();
-        await refreshTokens();
 
         if (!user.id || !user.email) {
             throw new TRPCError({
@@ -358,17 +355,18 @@ export const appRouter = router({
                 return { data: emptyUser, status: 500, success: false };
             }
         }),
-    refreshUser: privateProcedure.query(async ({ ctx, input }) => {
-        const { refreshTokens } = getKindeServerSession()
-        const tokens = (await refreshTokens()) as { accessToken: string, refreshToken: string };
-        console.log(tokens)
-        const{ getPermissions } = getKindeServerSession()
-        const permissions = (await getPermissions()) as KindePermissions | null;
-        console.log(permissions)
-        return { data: permissions?.permissions, status: 200, success: true };
-    }),
-
-
+    // refreshUser: privateProcedure.query(async ({ ctx, input }) => {
+    //     const { refreshTokens } = getKindeServerSession()
+    //     const tokens = (await refreshTokens()) as { accessToken: string, refreshToken: string };
+    //     console.log(tokens)
+    //     return { status: 200, success: true };
+    // }),
+    // getRefreshedPermissions: privateProcedure.query(async ({ ctx, input }) => {
+    //     const { getPermissions } = getKindeServerSession()
+    //     const permissions = (await getPermissions()) as KindePermissions | null;
+    //     console.log(permissions)
+    //     return { data: permissions?.permissions, status: 200, success: true };
+    // }),
 
     ///////// GAME & QUIZ FUNCTIONS
     numberGameData: privateProcedure

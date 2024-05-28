@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react'
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { useRouter, redirect } from "next/navigation";
 import AddUserForm from '../../../components/AddUserForm';
 import { trpc } from "../../_trpc/client";
@@ -28,20 +29,10 @@ const page = () => {
     const [isManagerEditMode, setManagerEditMode] = useState(false)
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-    const { isAuthenticated, isLoading, user, permissions, getPermissions, getToken} = useKindeBrowserClient();
-    
-    const {data: refreshed} = trpc.refreshUser.useQuery();
-    if (refreshed?.success === false) {
-        toast({
-            title: "Error!",
-            description: "Could not obtain manager data.",
-            variant: "destructive",
-        })
-    }
+    const { isAuthenticated, isLoading, user, permissions, getPermissions} = useKindeBrowserClient();
 
     useEffect(() => {
-        if (!isLoading && refreshed?.success === true) {
-            getToken()
+        if (!isLoading) {
             setKindeUserData(user)
             setRoleData(permissions)
             setDisplayName((kindeUserData?.given_name ? kindeUserData?.given_name : "") + " " + (kindeUserData?.family_name ? kindeUserData?.family_name : ""));
@@ -50,27 +41,29 @@ const page = () => {
             setRoleArray(roleData?.permissions)
             setRole(roleArray ? roleArray[0] : "")
         }
-    }, [refreshed, isLoading, user, permissions])
+    }, [isLoading, user, permissions])
 
+    // const {data: refreshed} = trpc.refreshUser.useQuery();
+    // if (refreshed?.success === false) {
+    //     console.log("not refreshed", refreshed)
+    //     toast({
+    //         title: "Error!",
+    //         description: "Could not obtain manager data.",
+    //         variant: "destructive",
+    //     })
+    // }
+    // console.log("refreshed", refreshed)
 
-    useEffect(() => {
-        if (isLoading === false && isAuthenticated === false) {
-            toast({
-                title: "You are not logged in.",
-                description: "Redirecting you to landing page...",
-            })
-            setLoading(false)
-            router.push('/');
-        }
-        else if (isLoading === false && refreshed && roleData && roleData.permissions && roleData.permissions.includes("manager")) {
-            setIsManager(true)
-            setLoading(false)
-        } else if (isLoading === false) {
-            setLoading(false)
-        }
-    }, [isLoading, refreshed])
-
-
+    // const {data: refreshedPermissions} = trpc.getRefreshedPermissions.useQuery();
+    // if (refreshedPermissions?.success === false) {
+    //     console.log("not refreshed", refreshedPermissions)
+    //     toast({
+    //         title: "Error!",
+    //         description: "Could not obtain manager data.",
+    //         variant: "destructive",
+    //     })
+    // }
+    // console.log("refreshedPermissions", refreshedPermissions)
 
     const { data: userData } = trpc.getUsers.useQuery();
     if (userData?.success === false) {
@@ -197,6 +190,23 @@ const page = () => {
     const currentUserImage = currentUserProfile?.image.toString()
 
 
+    useEffect(() => {
+        if (isLoading === false && isAuthenticated === false) {
+            toast({
+                title: "You are not logged in.",
+                description: "Redirecting you to landing page...",
+            })
+            setLoading(false)
+            router.push('/');
+        }
+        else if (isLoading === false && roleData && roleData.permissions && roleData.permissions.includes("manager")) {
+            setIsManager(true)
+            setLoading(false)
+        } else if (isLoading === false) {
+            setLoading(false)
+        }
+    }, [isLoading])
+
     const handleManagerSubmit = async (e: any) => {
         e.preventDefault()
         const inputs = {
@@ -276,7 +286,7 @@ const page = () => {
                     </div>
                 </div>
 
-                {isManager &&
+                {isManager && 
                     <div className='ml-10 mt-6 shadow-xl rounded-xl w-full-screen mr-10 px-4 py-10 bg-[#FAF2F0] text-[#292929]'>
                         <div className='text-center text-2xl mb-6'>Add a new member to your team</div>
                         <AddUserForm currentUser={currentUserEmail} organisation={organisation} role={role}></AddUserForm>
