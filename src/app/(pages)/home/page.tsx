@@ -116,8 +116,8 @@ export default function Home() {
     },
   ])
 
-  const { mutate: teamUsageReset } = trpc.teamUsageReset.useMutation();
-  const { mutate: teamScoreReset } = trpc.teamScoreReset.useMutation();
+  // const { mutate: teamUsageReset } = trpc.teamUsageReset.useMutation();
+  // const { mutate: teamScoreReset } = trpc.teamScoreReset.useMutation();
   
   
 
