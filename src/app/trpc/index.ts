@@ -130,6 +130,10 @@ export const appRouter = router({
                 rank: 0
             })
         }
+        const { refreshTokens } = getKindeServerSession()
+        const tokens = (await refreshTokens()) as { accessToken: string, refreshToken: string };
+        console.log(tokens)
+        return { status: 200, success: true };
         return {
             success: true,
         }
