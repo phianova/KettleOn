@@ -1,8 +1,14 @@
 "use client"
-// import Image from "next/image";
+import Image from "next/image";
 // import { serverClient } from "../trpc/server-client";
 import Navbar from '@/components/navbar';
 import React from 'react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/shadcn/accordion"
 import { InfiniteMovingCards } from "../../../components/ui/infinite-moving-cards";
 import { AnimatedTooltip } from "../../../components/ui/animated-tooltip";
 import { useState, useEffect } from "react";
@@ -165,6 +171,8 @@ export default function Home() {
   const { data: questionData } = trpc.askQuestion.useQuery()
   const question = questionData?.data.askQuestion;
   const asked = questionData?.data.alreadyAsked;
+  
+  
 
   useEffect(() => {
     if (asked === true) {
@@ -221,7 +229,80 @@ export default function Home() {
         {/* <!--     <button onClick={() => run.refetch()} className='text-6xl'>Test</button> --> */}
         <h1 className="teamTitle text-center mx-auto mb-10 text-6xl ">{currentUserTeamName}</h1>
 
-        <div className="flex flex-col items-center">
+        <div className="md:invisible">
+        <Accordion type="single" collapsible className="text-center w-full">
+      <AccordionItem  value="item-1">
+        <AccordionTrigger className='justify-center text-xl '>General Knowledge Quiz</AccordionTrigger>
+        <AccordionContent>
+          <a href="/quiz">
+        <Image
+            src="/aiquiz.png"
+            width={200}
+            height={200}
+            alt="gamesscreen"
+            className="rounded-xl mx-auto"
+            
+          />
+          </a>
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger className='justify-center text-xl '>Big Fat Quiz of the Week</AccordionTrigger>
+        <AccordionContent>
+          <a href="/weeklyquiz">
+        <Image
+            src="/weeklyquiz.png"
+            width={200}
+            height={200}
+            alt="gamesscreen"
+            className="rounded-xl mx-auto"
+          />
+          </a>
+        
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-3">
+        <AccordionTrigger className='justify-center text-xl '>Number Game</AccordionTrigger>
+        <AccordionContent>
+        <a href="/NumberGame/start">
+        <Image
+            src="/numbergame.png"
+            width={200}
+            height={200}
+            alt="gamesscreen"
+            className="rounded-xl mx-auto"
+          />
+          </a>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="item-4">
+        <AccordionTrigger className='justify-center text-xl '>Name Game</AccordionTrigger>
+        <AccordionContent>
+        <a href="/games">
+        <Image
+            src="/namequiz.png"
+            width={200}
+            height={200}
+            alt="gamesscreen"
+            className="rounded-xl mx-auto"
+          />
+          </a>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+        </div>
+
+
+
+
+
+
+
+
+        
+
+        <div className="flex flex-col items-center invisible md:visible">
           <InfiniteMovingCards items={content} className={undefined} />
           <div className="flex flex-row items-center justify-center my-5 w-full">
             <AnimatedTooltip icons={users} />
